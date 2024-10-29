@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mondongo/routes/app_router.gr.dart';
 import 'package:mondongo/services/auth_services.dart';
+import '../../theme/theme.dart';
 
 @RoutePage()
 class LoginPage extends StatefulWidget {
@@ -26,29 +27,66 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Iniciar Sesión'),
-      ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.all(16.0),
+      backgroundColor: AppColors.background,
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 32.0),
+          child: Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16.0),
+            ),
+            elevation: 8,
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
               child: Form(
                 key: _formKey,
-                child: ListView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
+                    Icon(
+                      Icons.lock_outline,
+                      size: 80,
+                      color: AppColors.primary,
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      'Bienvenido',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
                     TextFormField(
-                      decoration: const InputDecoration(labelText: 'Email'),
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(Icons.email, color: AppColors.primary),
+                        hintText: 'Correo Electrónico',
+                        filled: true,
+                        fillColor: AppColors.primaryLight.withOpacity(0.1),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
                       keyboardType: TextInputType.emailAddress,
                       validator: (val) => val == null || !val.contains('@')
                           ? 'Ingresa un email válido'
                           : null,
                       onSaved: (val) => _email = val!.trim(),
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 15),
                     TextFormField(
-                      decoration:
-                          const InputDecoration(labelText: 'Contraseña'),
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(Icons.lock, color: AppColors.primary),
+                        hintText: 'Contraseña',
+                        filled: true,
+                        fillColor: AppColors.primaryLight.withOpacity(0.1),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
                       obscureText: true,
                       validator: (val) => val == null || val.isEmpty
                           ? 'Ingresa tu contraseña'
@@ -56,28 +94,58 @@ class _LoginPageState extends State<LoginPage> {
                       onSaved: (val) => _password = val!.trim(),
                     ),
                     const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: _login,
-                      child: const Text('Iniciar Sesión'),
-                    ),
+                    _isLoading
+                        ? CircularProgressIndicator(
+                            color: AppColors.primary,
+                          )
+                        : SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: _login,
+                              style: ElevatedButton.styleFrom(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 15),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                ),
+                                backgroundColor: AppColors.primary,
+                              ),
+                              child: const Text(
+                                'Iniciar Sesión',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
                     const SizedBox(height: 10),
                     TextButton(
                       onPressed: () {
                         AutoRouter.of(context)
                             .push(RegisterRoute(onResult: widget.onResult));
                       },
-                      child:
-                          const Text('¿No tienes una cuenta? Regístrate aquí'),
+                      child: Text(
+                        '¿No tienes una cuenta? Regístrate aquí',
+                        style: TextStyle(color: AppColors.primary),
+                      ),
                     ),
                     if (_errorMessage.isNotEmpty)
-                      Text(
-                        _errorMessage,
-                        style: const TextStyle(color: Colors.red),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: Text(
+                          _errorMessage,
+                          style: const TextStyle(color: Colors.red),
+                        ),
                       ),
                   ],
                 ),
               ),
             ),
+          ),
+        ),
+      ),
     );
   }
 
