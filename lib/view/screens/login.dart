@@ -1,4 +1,3 @@
-// lib/view/screens/login.dart
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -38,7 +37,6 @@ class _LoginPageState extends State<LoginPage> {
                 key: _formKey,
                 child: ListView(
                   children: [
-                    // Campo de Email
                     TextFormField(
                       decoration: const InputDecoration(labelText: 'Email'),
                       keyboardType: TextInputType.emailAddress,
@@ -48,7 +46,6 @@ class _LoginPageState extends State<LoginPage> {
                       onSaved: (val) => _email = val!.trim(),
                     ),
                     const SizedBox(height: 10),
-                    // Campo de Contraseña
                     TextFormField(
                       decoration:
                           const InputDecoration(labelText: 'Contraseña'),
@@ -59,24 +56,19 @@ class _LoginPageState extends State<LoginPage> {
                       onSaved: (val) => _password = val!.trim(),
                     ),
                     const SizedBox(height: 20),
-                    // Botón de Iniciar Sesión
                     ElevatedButton(
                       onPressed: _login,
                       child: const Text('Iniciar Sesión'),
                     ),
                     const SizedBox(height: 10),
-                    // Botón para Navegar al Registro
                     TextButton(
                       onPressed: () {
-                        // Navegar al registro
                         AutoRouter.of(context)
                             .push(RegisterRoute(onResult: widget.onResult));
                       },
                       child:
                           const Text('¿No tienes una cuenta? Regístrate aquí'),
                     ),
-                    const SizedBox(height: 10),
-                    // Mensaje de Error
                     if (_errorMessage.isNotEmpty)
                       Text(
                         _errorMessage,
@@ -101,7 +93,6 @@ class _LoginPageState extends State<LoginPage> {
       try {
         final user = await _authService.signInWithEmail(_email, _password);
         if (user != null) {
-          // Informar al caller que el login fue exitoso
           widget.onResult(true);
         } else {
           setState(() {

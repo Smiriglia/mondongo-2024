@@ -27,7 +27,6 @@ class AuthService {
     return null;
   }
 
-  // Sign In with email and password
   Future<User?> signInWithEmail(String email, String password) async {
     try {
       final response = await _supabaseClient.auth
@@ -51,21 +50,5 @@ class AuthService {
 
   User? getUser() {
     return _supabaseClient.auth.currentUser;
-  }
-
-  Future<void> createUserProfile({
-    required String id,
-    required String email,
-    required String fullName,
-  }) async {
-    try {
-      await _supabaseClient.from('profiles').insert({
-        'id': id,
-        'email': email,
-        'full_name': fullName,
-      });
-    } catch (e) {
-      print('Error creando el perfil del usuario: $e');
-    }
   }
 }

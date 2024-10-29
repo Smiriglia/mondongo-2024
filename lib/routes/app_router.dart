@@ -1,6 +1,6 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:mondongo/routes/app_router.gr.dart';
 import 'package:mondongo/routes/guards/auth_guard.dart';
-import 'app_router.gr.dart';
 
 @AutoRouterConfig()
 class AppRouter extends RootStackRouter {

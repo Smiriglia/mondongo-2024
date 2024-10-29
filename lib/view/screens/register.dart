@@ -1,8 +1,6 @@
-// lib/view/screens/register.dart
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:mondongo/routes/app_router.gr.dart';
 import 'package:mondongo/services/auth_services.dart';
 
 @RoutePage()
@@ -17,8 +15,6 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   final AuthService _authService = GetIt.instance<AuthService>();
   final _formKey = GlobalKey<FormState>();
-
-  // Controladores para las contraseñas
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
@@ -31,7 +27,6 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   void dispose() {
-    // Liberar los controladores cuando el widget se elimine
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
@@ -51,7 +46,6 @@ class _RegisterPageState extends State<RegisterPage> {
                 key: _formKey,
                 child: ListView(
                   children: [
-                    // Campo para el Nombre Completo
                     TextFormField(
                       decoration:
                           const InputDecoration(labelText: 'Nombre Completo'),
@@ -61,7 +55,6 @@ class _RegisterPageState extends State<RegisterPage> {
                       onSaved: (val) => _fullName = val!.trim(),
                     ),
                     const SizedBox(height: 10),
-                    // Campo para el Email
                     TextFormField(
                       decoration: const InputDecoration(labelText: 'Email'),
                       keyboardType: TextInputType.emailAddress,
@@ -71,7 +64,6 @@ class _RegisterPageState extends State<RegisterPage> {
                       onSaved: (val) => _email = val!.trim(),
                     ),
                     const SizedBox(height: 10),
-                    // Campo para la Contraseña
                     TextFormField(
                       controller: _passwordController,
                       decoration:
@@ -82,7 +74,6 @@ class _RegisterPageState extends State<RegisterPage> {
                           : null,
                     ),
                     const SizedBox(height: 10),
-                    // Campo para Confirmar la Contraseña
                     TextFormField(
                       controller: _confirmPasswordController,
                       decoration: const InputDecoration(
@@ -98,27 +89,15 @@ class _RegisterPageState extends State<RegisterPage> {
                       },
                     ),
                     const SizedBox(height: 20),
-                    // Botón de Registro
                     ElevatedButton(
                       onPressed: _register,
                       child: const Text('Registrarse'),
                     ),
-                    const SizedBox(height: 10),
-                    // Mensaje de Error
                     if (_errorMessage.isNotEmpty)
                       Text(
                         _errorMessage,
                         style: const TextStyle(color: Colors.red),
                       ),
-                    // Botón para Navegar al Login
-                    TextButton(
-                      onPressed: () {
-                        // Navegar al login
-                        AutoRouter.of(context)
-                            .replace(RegisterRoute(onResult: widget.onResult));
-                      },
-                      child: const Text('¿Ya tienes una cuenta? Inicia sesión'),
-                    ),
                   ],
                 ),
               ),
@@ -128,7 +107,6 @@ class _RegisterPageState extends State<RegisterPage> {
 
   Future<void> _register() async {
     if (_formKey.currentState!.validate()) {
-      // Guardar los campos del formulario
       _formKey.currentState!.save();
 
       setState(() {
@@ -137,18 +115,9 @@ class _RegisterPageState extends State<RegisterPage> {
       });
 
       try {
-        // Registrarse con Email y Contraseña
         final user = await _authService.signUpWithEmail(
             _email, _passwordController.text);
         if (user != null) {
-          // Crear el perfil del usuario en la tabla 'profiles'
-          await _authService.createUserProfile(
-            id: user.id,
-            email: _email,
-            fullName: _fullName,
-          );
-
-          // Informar al caller que el registro fue exitoso
           widget.onResult(true);
         } else {
           setState(() {
