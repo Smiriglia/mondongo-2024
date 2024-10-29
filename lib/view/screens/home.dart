@@ -1,7 +1,9 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:mondongo/routes/app_router.gr.dart';
 import 'package:mondongo/services/auth_services.dart';
 import 'package:get_it/get_it.dart';
+import '../../theme/theme.dart';
 
 @RoutePage()
 class HomePage extends StatelessWidget {
@@ -13,23 +15,96 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.white,
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: GestureDetector(
-            onTap: () async {
-              var router = AutoRouter.of(context);
-              await authService
-                  .signOut(); // Make sure authService is properly defined
-              router.reevaluateGuards(); // Reevaluates route guards
+        backgroundColor: AppColors.primary,
+        title: Text('Inicio', style: TextStyle(color: AppColors.onPrimary)),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.logout, color: AppColors.onPrimary),
+            onPressed: () async {
+              await authService.signOut();
+              context.router.replace(LoginRoute(onResult: (result) {}));
             },
-            child: Icon(
-                Icons.menu), // Add a child widget, such as an icon or button
           ),
+        ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: GridView.count(
+          crossAxisCount: 2,
+          mainAxisSpacing: 20,
+          crossAxisSpacing: 20,
+          children: [
+            _buildMenuCard(
+              context,
+              title: 'Registrar Empleado',
+              icon: Icons.person_add,
+              color: AppColors.primaryLight,
+              onTap: () {
+                context.router.push(const RegisterEmpleadoRoute());
+              },
+            ),
+            _buildMenuCard(
+              context,
+              title: 'Registrar Dueño/Supervisor',
+              icon: Icons.admin_panel_settings,
+              color: AppColors.primaryLight,
+              onTap: () {
+                context.router.push(const RegisterDuenoSupervisorRoute());
+              },
+            ),
+            _buildMenuCard(
+              context,
+              title: 'Registrar Cliente',
+              icon: Icons.person_outline,
+              color: AppColors.primaryLight,
+              onTap: () {
+                context.router.push(const RegisterClienteRoute());
+              },
+            ),
+            _buildMenuCard(
+              context,
+              title: 'Registrar Mesa',
+              icon: Icons.table_chart,
+              color: AppColors.primaryLight,
+              onTap: () {
+                context.router.push(const RegisterMesaRoute());
+              },
+            ),
+          ],
         ),
       ),
-      body: Center(
-        child: const Text('Home'),
+    );
+  }
+
+  Widget _buildMenuCard(BuildContext context,
+      {required String title,
+      required IconData icon,
+      required Color color,
+      required VoidCallback onTap}) {
+    return Card(
+      color: color,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      elevation: 4,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, size: 50, color: AppColors.onBackground),
+              SizedBox(height: 10),
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: AppTypography.bodyText1.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.onBackground,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
