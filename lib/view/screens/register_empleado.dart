@@ -5,7 +5,7 @@ import 'package:mondongo/services/storage_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:auto_route/auto_route.dart';
 
-@RoutePage() // Añade esta línea
+@RoutePage()
 class RegisterEmpleadoPage extends StatefulWidget {
   @override
   _RegisterEmpleadoPageState createState() => _RegisterEmpleadoPageState();
@@ -25,6 +25,41 @@ class _RegisterEmpleadoPageState extends State<RegisterEmpleadoPage> {
 
   final ImagePicker _picker = ImagePicker();
 
+  // Definición de colores y estilos
+  final Color primaryColor = Color(0xFF4B2C20); // Marrón oscuro
+  final Color accentColor = Colors.white; // Blanco
+  final Color backgroundColor = Color(0xFFF0EDE5); // Gris claro
+
+  InputDecoration _inputDecoration(String label, IconData icon) {
+    return InputDecoration(
+      labelText: label,
+      labelStyle: TextStyle(color: primaryColor),
+      prefixIcon: Icon(icon, color: primaryColor),
+      filled: true,
+      fillColor: accentColor,
+      enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: primaryColor),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: primaryColor, width: 2),
+        borderRadius: BorderRadius.circular(8),
+      ),
+    );
+  }
+
+  ButtonStyle _buttonStyle() {
+    return ElevatedButton.styleFrom(
+      backgroundColor: primaryColor,
+      foregroundColor: accentColor,
+      textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      padding: EdgeInsets.symmetric(vertical: 12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+    );
+  }
+
   /// Selecciona una foto desde la cámara
   Future<void> _pickFoto() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.camera);
@@ -43,7 +78,7 @@ class _RegisterEmpleadoPageState extends State<RegisterEmpleadoPage> {
       String? fotoUrl;
       if (_foto != null) {
         fotoUrl = await _storageService.uploadProfileImage(_foto!);
-        debugPrint('URL de la foto: $fotoUrl'); // Log adicional
+        debugPrint('URL de la foto: $fotoUrl');
         if (fotoUrl == null) {
           if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
@@ -54,9 +89,8 @@ class _RegisterEmpleadoPageState extends State<RegisterEmpleadoPage> {
       }
 
       debugPrint(
-          'Datos del empleado: Nombre=$_nombre, Apellido=$_apellido, DNI=$_dni, CUIL=$_cuil, Tipo=$_tipoEmpleado, FotoURL=$fotoUrl'); // Log adicional
+          'Datos del empleado: Nombre=$_nombre, Apellido=$_apellido, DNI=$_dni, CUIL=$_cuil, Tipo=$_tipoEmpleado, FotoURL=$fotoUrl');
 
-      // Crea un nuevo registro en la tabla 'empleados'
       final response = await _client.from('empleados').insert({
         'nombre': _nombre,
         'apellido': _apellido,
@@ -80,7 +114,7 @@ class _RegisterEmpleadoPageState extends State<RegisterEmpleadoPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(e.toString())),
         );
-        debugPrint('Error al registrar empleado: $e'); // Log adicional
+        debugPrint('Error al registrar empleado: $e');
       }
     }
   }
@@ -88,8 +122,14 @@ class _RegisterEmpleadoPageState extends State<RegisterEmpleadoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: backgroundColor,
         appBar: AppBar(
-          title: Text('Registrar Empleado'),
+          title: Text(
+            'Registrar Empleado',
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: primaryColor,
+          elevation: 0,
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -99,33 +139,38 @@ class _RegisterEmpleadoPageState extends State<RegisterEmpleadoPage> {
                 children: [
                   // Nombre
                   TextFormField(
-                    decoration: InputDecoration(labelText: 'Nombre'),
+                    decoration: _inputDecoration('Nombre', Icons.person),
                     validator: (val) =>
                         val == null || val.isEmpty ? 'Ingresa el nombre' : null,
                     onSaved: (val) => _nombre = val!.trim(),
                   ),
+                  SizedBox(height: 16),
                   // Apellido
                   TextFormField(
-                    decoration: InputDecoration(labelText: 'Apellido'),
+                    decoration:
+                        _inputDecoration('Apellido', Icons.person_outline),
                     validator: (val) => val == null || val.isEmpty
                         ? 'Ingresa el apellido'
                         : null,
                     onSaved: (val) => _apellido = val!.trim(),
                   ),
+                  SizedBox(height: 16),
                   // DNI
                   TextFormField(
-                    decoration: InputDecoration(labelText: 'DNI'),
+                    decoration: _inputDecoration('DNI', Icons.credit_card),
                     validator: (val) =>
                         val == null || val.isEmpty ? 'Ingresa el DNI' : null,
                     onSaved: (val) => _dni = val!.trim(),
                   ),
+                  SizedBox(height: 16),
                   // CUIL
                   TextFormField(
-                    decoration: InputDecoration(labelText: 'CUIL'),
+                    decoration: _inputDecoration('CUIL', Icons.account_balance),
                     validator: (val) =>
                         val == null || val.isEmpty ? 'Ingresa el CUIL' : null,
                     onSaved: (val) => _cuil = val!.trim(),
                   ),
+                  SizedBox(height: 16),
                   // Tipo de Empleado
                   DropdownButtonFormField<String>(
                     value: _tipoEmpleado,
@@ -142,21 +187,36 @@ class _RegisterEmpleadoPageState extends State<RegisterEmpleadoPage> {
                         _tipoEmpleado = val!;
                       });
                     },
-                    decoration: InputDecoration(labelText: 'Tipo de Empleado'),
+                    decoration:
+                        _inputDecoration('Tipo de Empleado', Icons.work),
                   ),
-                  SizedBox(height: 10),
+                  SizedBox(height: 16),
                   // Foto
                   _foto != null
-                      ? Image.file(_foto!, height: 100)
-                      : Text('No se ha seleccionado ninguna foto'),
-                  ElevatedButton(
+                      ? Center(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.file(_foto!, height: 150),
+                          ),
+                        )
+                      : Center(
+                          child: Text(
+                            'No se ha seleccionado ninguna foto',
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ),
+                  SizedBox(height: 16),
+                  ElevatedButton.icon(
                     onPressed: _pickFoto,
-                    child: Text('Tomar Foto'),
+                    icon: Icon(Icons.camera_alt),
+                    label: Text('Tomar Foto'),
+                    style: _buttonStyle(),
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 24),
                   ElevatedButton(
                     onPressed: _submit,
                     child: Text('Registrar Empleado'),
+                    style: _buttonStyle(),
                   ),
                 ],
               )),

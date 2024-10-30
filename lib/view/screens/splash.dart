@@ -1,4 +1,3 @@
-// lib/view/screens/splash.dart
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:get_it/get_it.dart';
@@ -203,9 +202,24 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
                   position: _textSlideAnimation,
                   child: FadeTransition(
                     opacity: _textFadeAnimation,
-                    child: Text(
-                      'Mondongo Div - 2',
-                      style: AppTypography.headline1,
+                    child: Column(
+                      children: [
+                        Text(
+                          'Mondongo Div - 2',
+                          style: AppTypography.headline1.copyWith(
+                            color: Colors.black,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        // Nombres de Bosco Massimo y Smiriglia Fausto
+                        Text(
+                          'Bosco Massimo & Smiriglia Fausto',
+                          style: AppTypography.bodyText1.copyWith(
+                            color: Colors.black,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),

@@ -37,11 +37,12 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Colors.brown[100],
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 32.0),
           child: Card(
+            color: Colors.brown[800],
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16.0),
             ),
@@ -53,89 +54,92 @@ class _RegisterPageState extends State<RegisterPage> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
-                      Icons.person_add_alt_1,
-                      size: 80,
-                      color: AppColors.primary,
-                    ),
-                    const SizedBox(height: 20),
+                    Icon(Icons.restaurant, size: 80, color: Colors.white),
+                    SizedBox(height: 20),
                     Text(
-                      'Crear Cuenta',
+                      'Crear una Cuenta',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.primary,
+                        color: Colors.white,
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    SizedBox(height: 20),
                     TextFormField(
                       decoration: InputDecoration(
-                        prefixIcon:
-                            Icon(Icons.person, color: AppColors.primary),
+                        prefixIcon: Icon(Icons.person, color: Colors.white),
                         hintText: 'Nombre Completo',
+                        hintStyle: TextStyle(color: Colors.white),
                         filled: true,
-                        fillColor: AppColors.primaryLight.withOpacity(0.1),
+                        fillColor: Colors.brown[600]!.withOpacity(0.5),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12.0),
                           borderSide: BorderSide.none,
                         ),
                       ),
+                      style: TextStyle(color: Colors.white),
                       validator: (val) => val == null || val.isEmpty
                           ? 'Ingresa tu nombre completo'
                           : null,
                       onSaved: (val) => _fullName = val!.trim(),
                     ),
-                    const SizedBox(height: 15),
+                    SizedBox(height: 15),
                     TextFormField(
                       decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.email, color: AppColors.primary),
+                        prefixIcon: Icon(Icons.email, color: Colors.white),
                         hintText: 'Correo Electrónico',
+                        hintStyle: TextStyle(color: Colors.white),
                         filled: true,
-                        fillColor: AppColors.primaryLight.withOpacity(0.1),
+                        fillColor: Colors.brown[600]!.withOpacity(0.5),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12.0),
                           borderSide: BorderSide.none,
                         ),
                       ),
                       keyboardType: TextInputType.emailAddress,
+                      style: TextStyle(color: Colors.white),
                       validator: (val) => val == null || !val.contains('@')
                           ? 'Ingresa un email válido'
                           : null,
                       onSaved: (val) => _email = val!.trim(),
                     ),
-                    const SizedBox(height: 15),
+                    SizedBox(height: 15),
                     TextFormField(
                       controller: _passwordController,
                       decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.lock, color: AppColors.primary),
+                        prefixIcon: Icon(Icons.lock, color: Colors.white),
                         hintText: 'Contraseña',
+                        hintStyle: TextStyle(color: Colors.white),
                         filled: true,
-                        fillColor: AppColors.primaryLight.withOpacity(0.1),
+                        fillColor: Colors.brown[600]!.withOpacity(0.5),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12.0),
                           borderSide: BorderSide.none,
                         ),
                       ),
                       obscureText: true,
+                      style: TextStyle(color: Colors.white),
                       validator: (val) => val == null || val.length < 6
                           ? 'La contraseña debe tener al menos 6 caracteres'
                           : null,
                     ),
-                    const SizedBox(height: 15),
+                    SizedBox(height: 15),
                     TextFormField(
                       controller: _confirmPasswordController,
                       decoration: InputDecoration(
                         prefixIcon:
-                            Icon(Icons.lock_outline, color: AppColors.primary),
+                            Icon(Icons.lock_outline, color: Colors.white),
                         hintText: 'Confirmar Contraseña',
+                        hintStyle: TextStyle(color: Colors.white),
                         filled: true,
-                        fillColor: AppColors.primaryLight.withOpacity(0.1),
+                        fillColor: Colors.brown[600]!.withOpacity(0.5),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12.0),
                           borderSide: BorderSide.none,
                         ),
                       ),
                       obscureText: true,
+                      style: TextStyle(color: Colors.white),
                       validator: (val) {
                         if (val == null || val.isEmpty) {
                           return 'Confirma tu contraseña';
@@ -145,11 +149,9 @@ class _RegisterPageState extends State<RegisterPage> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 20),
+                    SizedBox(height: 20),
                     _isLoading
-                        ? CircularProgressIndicator(
-                            color: AppColors.primary,
-                          )
+                        ? CircularProgressIndicator(color: Colors.white)
                         : SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
@@ -160,9 +162,9 @@ class _RegisterPageState extends State<RegisterPage> {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12.0),
                                 ),
-                                backgroundColor: AppColors.primary,
+                                backgroundColor: Colors.brown[600],
                               ),
-                              child: const Text(
+                              child: Text(
                                 'Registrarse',
                                 style: TextStyle(
                                   color: Colors.white,
@@ -172,7 +174,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               ),
                             ),
                           ),
-                    const SizedBox(height: 10),
+                    SizedBox(height: 10),
                     TextButton(
                       onPressed: () {
                         AutoRouter.of(context)
@@ -180,16 +182,15 @@ class _RegisterPageState extends State<RegisterPage> {
                       },
                       child: Text(
                         '¿Ya tiene una cuenta? Ingresa por aquí',
-                        style: TextStyle(color: AppColors.primary),
+                        style: TextStyle(color: Colors.white),
                       ),
                     ),
-                    const SizedBox(height: 10),
                     if (_errorMessage.isNotEmpty)
                       Padding(
                         padding: const EdgeInsets.only(top: 10),
                         child: Text(
                           _errorMessage,
-                          style: const TextStyle(color: Colors.red),
+                          style: TextStyle(color: Colors.red),
                         ),
                       ),
                   ],

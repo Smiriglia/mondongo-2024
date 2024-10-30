@@ -25,6 +25,41 @@ class _RegisterMesaPageState extends State<RegisterMesaPage> {
 
   final ImagePicker _picker = ImagePicker();
 
+  // Definición de colores y estilos
+  final Color primaryColor = Color(0xFF4B2C20); // Marrón oscuro
+  final Color accentColor = Colors.white; // Blanco
+  final Color backgroundColor = Color(0xFFF0EDE5); // Gris claro
+
+  InputDecoration _inputDecoration(String label, IconData icon) {
+    return InputDecoration(
+      labelText: label,
+      labelStyle: TextStyle(color: primaryColor),
+      prefixIcon: Icon(icon, color: primaryColor),
+      filled: true,
+      fillColor: accentColor,
+      enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: primaryColor),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: primaryColor, width: 2),
+        borderRadius: BorderRadius.circular(8),
+      ),
+    );
+  }
+
+  ButtonStyle _buttonStyle() {
+    return ElevatedButton.styleFrom(
+      backgroundColor: primaryColor,
+      foregroundColor: accentColor,
+      textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      padding: EdgeInsets.symmetric(vertical: 12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+    );
+  }
+
   /// Selecciona una foto desde la cámara
   Future<void> _pickFoto() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.camera);
@@ -92,8 +127,14 @@ class _RegisterMesaPageState extends State<RegisterMesaPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: backgroundColor,
         appBar: AppBar(
-          title: Text('Registrar Mesa'),
+          title: Text(
+            'Registrar Mesa',
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: primaryColor,
+          elevation: 0,
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -103,7 +144,8 @@ class _RegisterMesaPageState extends State<RegisterMesaPage> {
                 children: [
                   // Número de Mesa
                   TextFormField(
-                    decoration: InputDecoration(labelText: 'Número de Mesa'),
+                    decoration:
+                        _inputDecoration('Número de Mesa', Icons.table_chart),
                     keyboardType: TextInputType.number,
                     validator: (val) {
                       if (val == null || val.isEmpty)
@@ -114,10 +156,11 @@ class _RegisterMesaPageState extends State<RegisterMesaPage> {
                     },
                     onSaved: (val) => _numero = int.parse(val!.trim()),
                   ),
+                  SizedBox(height: 16),
                   // Cantidad de Comensales
                   TextFormField(
-                    decoration:
-                        InputDecoration(labelText: 'Cantidad de Comensales'),
+                    decoration: _inputDecoration(
+                        'Cantidad de Comensales', Icons.people),
                     keyboardType: TextInputType.number,
                     initialValue: '1',
                     validator: (val) {
@@ -130,6 +173,7 @@ class _RegisterMesaPageState extends State<RegisterMesaPage> {
                     onSaved: (val) =>
                         _cantidadComensales = int.parse(val!.trim()),
                   ),
+                  SizedBox(height: 16),
                   // Tipo de Mesa
                   DropdownButtonFormField<String>(
                     value: _tipoMesa,
@@ -147,21 +191,36 @@ class _RegisterMesaPageState extends State<RegisterMesaPage> {
                         _tipoMesa = val!;
                       });
                     },
-                    decoration: InputDecoration(labelText: 'Tipo de Mesa'),
+                    decoration:
+                        _inputDecoration('Tipo de Mesa', Icons.event_seat),
                   ),
-                  SizedBox(height: 10),
+                  SizedBox(height: 16),
                   // Foto de la Mesa
                   _foto != null
-                      ? Image.file(_foto!, height: 100)
-                      : Text('No se ha seleccionado ninguna foto'),
-                  ElevatedButton(
+                      ? Center(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.file(_foto!, height: 150),
+                          ),
+                        )
+                      : Center(
+                          child: Text(
+                            'No se ha seleccionado ninguna foto',
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ),
+                  SizedBox(height: 16),
+                  ElevatedButton.icon(
                     onPressed: _pickFoto,
-                    child: Text('Tomar Foto'),
+                    icon: Icon(Icons.camera_alt),
+                    label: Text('Tomar Foto'),
+                    style: _buttonStyle(),
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 24),
                   ElevatedButton(
                     onPressed: _submit,
                     child: Text('Registrar Mesa'),
+                    style: _buttonStyle(),
                   ),
                 ],
               )),

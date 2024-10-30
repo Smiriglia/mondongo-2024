@@ -6,7 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:mondongo/view/screens/qr_reader_page.dart';
 import 'package:auto_route/auto_route.dart';
 
-@RoutePage() // Añade esta línea
+@RoutePage()
 class RegisterClientePage extends StatefulWidget {
   const RegisterClientePage({Key? key}) : super(key: key);
 
@@ -26,6 +26,12 @@ class _RegisterClientePageState extends State<RegisterClientePage> {
   File? _foto;
 
   final ImagePicker _picker = ImagePicker();
+
+  // Colores personalizados
+  final Color primaryColor = Color(0xFF4B2C20); // Marrón
+  final Color accentColor = Color(0xFFD2B48C); // Canela
+  final Color backgroundColor = Color(0xFFF5F5F5); // Gris claro
+  final Color textColor = Colors.black87;
 
   /// Selecciona una foto desde la cámara
   Future<void> _pickFoto() async {
@@ -70,120 +76,172 @@ class _RegisterClientePageState extends State<RegisterClientePage> {
 
       if (response.error == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Cliente registrado exitosamente')),
+          SnackBar(
+            content: Text(
+              'Cliente registrado exitosamente',
+              style: TextStyle(color: Colors.white),
+            ),
+            backgroundColor: primaryColor,
+          ),
         );
         Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(
-                  'Error al registrar el cliente: ${response.error!.message}')),
+            content: Text(
+              'Error al registrar el cliente: ${response.error!.message}',
+              style: TextStyle(color: Colors.white),
+            ),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     }
   }
 
+  InputDecoration _buildInputDecoration(String labelText) {
+    return InputDecoration(
+      labelText: labelText,
+      labelStyle: TextStyle(color: primaryColor),
+      focusedBorder: UnderlineInputBorder(
+        borderSide: BorderSide(color: primaryColor),
+      ),
+    );
+  }
+
+  TextStyle _buildTextStyle() {
+    return TextStyle(color: textColor);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: backgroundColor,
       appBar: AppBar(
-        title: const Text('Registrar Cliente'), // Añade 'const'
+        title: const Text(
+          'Registrar Cliente',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: primaryColor,
+        elevation: 0,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-            key: _formKey,
-            child: ListView(
-              children: [
-                // Nombre
-                TextFormField(
-                  decoration:
-                      const InputDecoration(labelText: 'Nombre'), // 'const'
-                  validator: (val) =>
-                      val == null || val.isEmpty ? 'Ingresa el nombre' : null,
-                  onSaved: (val) => _nombre = val!.trim(),
-                ),
-                // Apellido (solo si no es anónimo)
-                if (!_isAnonymous)
-                  TextFormField(
-                    decoration:
-                        const InputDecoration(labelText: 'Apellido'), // 'const'
-                    validator: (val) =>
-                        !_isAnonymous && (val == null || val.isEmpty)
-                            ? 'Ingresa el apellido'
-                            : null,
-                    onSaved: (val) => _apellido = val!.trim(),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  // Foto
+                  GestureDetector(
+                    onTap: _pickFoto,
+                    child: CircleAvatar(
+                      radius: 60,
+                      backgroundColor: accentColor,
+                      backgroundImage: _foto != null ? FileImage(_foto!) : null,
+                      child: _foto == null
+                          ? Icon(
+                              Icons.camera_alt,
+                              size: 50,
+                              color: Colors.white,
+                            )
+                          : null,
+                    ),
                   ),
-                // DNI (solo si no es anónimo)
-                if (!_isAnonymous)
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextFormField(
-                          decoration: const InputDecoration(
-                              labelText: 'DNI'), // 'const'
-                          validator: (val) =>
-                              !_isAnonymous && (val == null || val.isEmpty)
-                                  ? 'Ingresa el DNI'
-                                  : null,
-                          onSaved: (val) => _dni = val!.trim(),
+                  const SizedBox(height: 20),
+                  // Nombre
+                  TextFormField(
+                    decoration: _buildInputDecoration('Nombre'),
+                    style: _buildTextStyle(),
+                    validator: (val) =>
+                        val == null || val.isEmpty ? 'Ingresa el nombre' : null,
+                    onSaved: (val) => _nombre = val!.trim(),
+                  ),
+                  const SizedBox(height: 10),
+                  // Apellido (solo si no es anónimo)
+                  if (!_isAnonymous)
+                    TextFormField(
+                      decoration: _buildInputDecoration('Apellido'),
+                      style: _buildTextStyle(),
+                      validator: (val) => val == null || val.isEmpty
+                          ? 'Ingresa el apellido'
+                          : null,
+                      onSaved: (val) => _apellido = val!.trim(),
+                    ),
+                  if (!_isAnonymous) const SizedBox(height: 10),
+                  // DNI (solo si no es anónimo)
+                  if (!_isAnonymous)
+                    TextFormField(
+                      decoration: _buildInputDecoration('DNI').copyWith(
+                        suffixIcon: IconButton(
+                          icon:
+                              Icon(Icons.qr_code_scanner, color: primaryColor),
+                          onPressed: () async {
+                            // Navega al lector de QR y espera el resultado
+                            final qrData = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => QRReaderPage(
+                                  onQRRead: (data) {
+                                    // Procesa el dato leído
+                                    _dni = data;
+                                  },
+                                ),
+                              ),
+                            );
+                            if (qrData != null && qrData.isNotEmpty) {
+                              if (!mounted)
+                                return; // Verifica antes de usar 'context'
+                              setState(() {
+                                _dni = qrData;
+                              });
+                            }
+                          },
                         ),
                       ),
-                      // IconButton para QR Reader
-                      IconButton(
-                        icon: const Icon(Icons.qr_code_scanner), // 'const'
-                        onPressed: () async {
-                          // Navega al lector de QR y espera el resultado
-                          final qrData = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => QRReaderPage(
-                                onQRRead: (data) {
-                                  // Procesa el dato leído
-                                  _dni =
-                                      data; // Suponiendo que el QR contiene el DNI
-                                },
-                              ),
-                            ),
-                          );
-                          if (qrData != null && qrData.isNotEmpty) {
-                            if (!mounted)
-                              return; // Verifica antes de usar 'context'
-                            setState(() {
-                              _dni = qrData;
-                            });
-                          }
-                        },
-                      ),
-                    ],
+                      style: _buildTextStyle(),
+                      validator: (val) =>
+                          val == null || val.isEmpty ? 'Ingresa el DNI' : null,
+                      onSaved: (val) => _dni = val!.trim(),
+                      keyboardType: TextInputType.number,
+                    ),
+                  if (!_isAnonymous) const SizedBox(height: 10),
+                  // Checkbox para ser anónimo
+                  CheckboxListTile(
+                    activeColor: primaryColor,
+                    title: Text('Registrar como Anónimo',
+                        style: _buildTextStyle()),
+                    value: _isAnonymous,
+                    onChanged: (val) {
+                      setState(() {
+                        _isAnonymous = val ?? false;
+                      });
+                    },
+                    controlAffinity: ListTileControlAffinity.leading,
                   ),
-                // Checkbox para ser anónimo
-                CheckboxListTile(
-                  title: const Text('Registrar como Anónimo'), // 'const'
-                  value: _isAnonymous,
-                  onChanged: (val) {
-                    setState(() {
-                      _isAnonymous = val ?? false;
-                    });
-                  },
-                ),
-                const SizedBox(height: 10), // 'const'
-                // Foto
-                _foto != null
-                    ? Image.file(_foto!, height: 100)
-                    : const Text(
-                        'No se ha seleccionado ninguna foto'), // 'const'
-                ElevatedButton(
-                  onPressed: _pickFoto,
-                  child: const Text('Tomar Foto'), // 'const'
-                ),
-                const SizedBox(height: 20), // 'const'
-                ElevatedButton(
-                  onPressed: _submit,
-                  child: const Text('Registrar Cliente'), // 'const'
-                ),
-              ],
-            )),
+                  const SizedBox(height: 20),
+                  // Botón de registrar
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: _submit,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: primaryColor,
+                        foregroundColor: Colors.white,
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: Text(
+                        'Registrar Cliente',
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ),
+                  ),
+                ],
+              )),
+        ),
       ),
     );
   }
