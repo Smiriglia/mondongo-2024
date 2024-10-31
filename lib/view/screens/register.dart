@@ -177,8 +177,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     SizedBox(height: 10),
                     TextButton(
                       onPressed: () {
-                        AutoRouter.of(context)
-                            .push(LoginRoute(onResult: widget.onResult));
+                        AutoRouter.of(context).removeLast();
                       },
                       child: Text(
                         '¿Ya tiene una cuenta? Ingresa por aquí',

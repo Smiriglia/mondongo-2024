@@ -122,8 +122,11 @@ class _LoginPageState extends State<LoginPage> {
                     SizedBox(height: 10),
                     TextButton(
                       onPressed: () {
-                        AutoRouter.of(context)
-                            .push(RegisterRoute(onResult: widget.onResult));
+                        final router = AutoRouter.of(context);
+                        router.push(RegisterRoute(onResult: (result) {
+                          router.removeLast();
+                          widget.onResult(result);
+                        }));
                       },
                       child: Text(
                         '¿No tienes una cuenta? Regístrate aquí',

@@ -96,21 +96,11 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
   }
 
   Future<void> _initializeApp() async {
-    // Simular un proceso de carga
     await Future.delayed(const Duration(seconds: 4));
+    final router = AutoRouter.of(context);
 
-    User? user = _authService.getUser();
-    if (user != null) {
-      context.router.replace(const HomeRoute());
-    } else {
-      context.router.replace(LoginRoute(onResult: (result) {
-        if (result) {
-          context.router.replace(const HomeRoute());
-        } else {
-          // Manejar según sea necesario
-        }
-      }));
-    }
+    router.removeLast();
+    router.push(HomeRoute());
   }
 
   @override

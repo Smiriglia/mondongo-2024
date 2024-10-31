@@ -33,8 +33,9 @@ class HomePage extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.logout, color: Colors.white),
             onPressed: () async {
+              final router = AutoRouter.of(context);
               await authService.signOut();
-              context.router.replace(LoginRoute(onResult: (result) {}));
+              router.reevaluateGuards();
             },
           ),
         ],
