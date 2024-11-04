@@ -8,21 +8,41 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:auto_route/auto_route.dart' as _i9;
-import 'package:flutter/material.dart' as _i10;
-import 'package:mondongo/view/screens/home.dart' as _i1;
-import 'package:mondongo/view/screens/login.dart' as _i2;
-import 'package:mondongo/view/screens/register.dart' as _i7;
-import 'package:mondongo/view/screens/register_cliente.dart' as _i3;
-import 'package:mondongo/view/screens/register_dueno_supervisor.dart' as _i4;
-import 'package:mondongo/view/screens/register_empleado.dart' as _i5;
-import 'package:mondongo/view/screens/register_mesa.dart' as _i6;
-import 'package:mondongo/view/screens/splash.dart' as _i8;
+import 'package:auto_route/auto_route.dart' as _i10;
+import 'package:flutter/material.dart' as _i11;
+import 'package:mondongo/view/screens/aprobacionClientes.dart' as _i1;
+import 'package:mondongo/view/screens/home.dart' as _i2;
+import 'package:mondongo/view/screens/login.dart' as _i3;
+import 'package:mondongo/view/screens/register.dart' as _i8;
+import 'package:mondongo/view/screens/register_cliente.dart' as _i4;
+import 'package:mondongo/view/screens/register_dueno_supervisor.dart' as _i5;
+import 'package:mondongo/view/screens/register_empleado.dart' as _i6;
+import 'package:mondongo/view/screens/register_mesa.dart' as _i7;
+import 'package:mondongo/view/screens/splash.dart' as _i9;
 
 /// generated route for
-/// [_i1.HomePage]
-class HomeRoute extends _i9.PageRouteInfo<void> {
-  const HomeRoute({List<_i9.PageRouteInfo>? children})
+/// [_i1.AprobacionClientesPage]
+class AprobacionClientesRoute extends _i10.PageRouteInfo<void> {
+  const AprobacionClientesRoute({List<_i10.PageRouteInfo>? children})
+      : super(
+          AprobacionClientesRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'AprobacionClientesRoute';
+
+  static _i10.PageInfo page = _i10.PageInfo(
+    name,
+    builder: (data) {
+      return const _i1.AprobacionClientesPage();
+    },
+  );
+}
+
+/// generated route for
+/// [_i2.HomePage]
+class HomeRoute extends _i10.PageRouteInfo<void> {
+  const HomeRoute({List<_i10.PageRouteInfo>? children})
       : super(
           HomeRoute.name,
           initialChildren: children,
@@ -30,21 +50,21 @@ class HomeRoute extends _i9.PageRouteInfo<void> {
 
   static const String name = 'HomeRoute';
 
-  static _i9.PageInfo page = _i9.PageInfo(
+  static _i10.PageInfo page = _i10.PageInfo(
     name,
     builder: (data) {
-      return const _i1.HomePage();
+      return const _i2.HomePage();
     },
   );
 }
 
 /// generated route for
-/// [_i2.LoginPage]
-class LoginRoute extends _i9.PageRouteInfo<LoginRouteArgs> {
+/// [_i3.LoginPage]
+class LoginRoute extends _i10.PageRouteInfo<LoginRouteArgs> {
   LoginRoute({
-    _i10.Key? key,
+    _i11.Key? key,
     required dynamic Function(bool) onResult,
-    List<_i9.PageRouteInfo>? children,
+    List<_i10.PageRouteInfo>? children,
   }) : super(
           LoginRoute.name,
           args: LoginRouteArgs(
@@ -56,11 +76,11 @@ class LoginRoute extends _i9.PageRouteInfo<LoginRouteArgs> {
 
   static const String name = 'LoginRoute';
 
-  static _i9.PageInfo page = _i9.PageInfo(
+  static _i10.PageInfo page = _i10.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<LoginRouteArgs>();
-      return _i2.LoginPage(
+      return _i3.LoginPage(
         key: args.key,
         onResult: args.onResult,
       );
@@ -74,7 +94,7 @@ class LoginRouteArgs {
     required this.onResult,
   });
 
-  final _i10.Key? key;
+  final _i11.Key? key;
 
   final dynamic Function(bool) onResult;
 
@@ -85,9 +105,9 @@ class LoginRouteArgs {
 }
 
 /// generated route for
-/// [_i3.RegisterClientePage]
-class RegisterClienteRoute extends _i9.PageRouteInfo<void> {
-  const RegisterClienteRoute({List<_i9.PageRouteInfo>? children})
+/// [_i4.RegisterClientePage]
+class RegisterClienteRoute extends _i10.PageRouteInfo<void> {
+  const RegisterClienteRoute({List<_i10.PageRouteInfo>? children})
       : super(
           RegisterClienteRoute.name,
           initialChildren: children,
@@ -95,18 +115,18 @@ class RegisterClienteRoute extends _i9.PageRouteInfo<void> {
 
   static const String name = 'RegisterClienteRoute';
 
-  static _i9.PageInfo page = _i9.PageInfo(
+  static _i10.PageInfo page = _i10.PageInfo(
     name,
     builder: (data) {
-      return const _i3.RegisterClientePage();
+      return const _i4.RegisterClientePage();
     },
   );
 }
 
 /// generated route for
-/// [_i4.RegisterDuenoSupervisorPage]
-class RegisterDuenoSupervisorRoute extends _i9.PageRouteInfo<void> {
-  const RegisterDuenoSupervisorRoute({List<_i9.PageRouteInfo>? children})
+/// [_i5.RegisterDuenoSupervisorPage]
+class RegisterDuenoSupervisorRoute extends _i10.PageRouteInfo<void> {
+  const RegisterDuenoSupervisorRoute({List<_i10.PageRouteInfo>? children})
       : super(
           RegisterDuenoSupervisorRoute.name,
           initialChildren: children,
@@ -114,18 +134,18 @@ class RegisterDuenoSupervisorRoute extends _i9.PageRouteInfo<void> {
 
   static const String name = 'RegisterDuenoSupervisorRoute';
 
-  static _i9.PageInfo page = _i9.PageInfo(
+  static _i10.PageInfo page = _i10.PageInfo(
     name,
     builder: (data) {
-      return _i4.RegisterDuenoSupervisorPage();
+      return _i5.RegisterDuenoSupervisorPage();
     },
   );
 }
 
 /// generated route for
-/// [_i5.RegisterEmpleadoPage]
-class RegisterEmpleadoRoute extends _i9.PageRouteInfo<void> {
-  const RegisterEmpleadoRoute({List<_i9.PageRouteInfo>? children})
+/// [_i6.RegisterEmpleadoPage]
+class RegisterEmpleadoRoute extends _i10.PageRouteInfo<void> {
+  const RegisterEmpleadoRoute({List<_i10.PageRouteInfo>? children})
       : super(
           RegisterEmpleadoRoute.name,
           initialChildren: children,
@@ -133,18 +153,18 @@ class RegisterEmpleadoRoute extends _i9.PageRouteInfo<void> {
 
   static const String name = 'RegisterEmpleadoRoute';
 
-  static _i9.PageInfo page = _i9.PageInfo(
+  static _i10.PageInfo page = _i10.PageInfo(
     name,
     builder: (data) {
-      return _i5.RegisterEmpleadoPage();
+      return _i6.RegisterEmpleadoPage();
     },
   );
 }
 
 /// generated route for
-/// [_i6.RegisterMesaPage]
-class RegisterMesaRoute extends _i9.PageRouteInfo<void> {
-  const RegisterMesaRoute({List<_i9.PageRouteInfo>? children})
+/// [_i7.RegisterMesaPage]
+class RegisterMesaRoute extends _i10.PageRouteInfo<void> {
+  const RegisterMesaRoute({List<_i10.PageRouteInfo>? children})
       : super(
           RegisterMesaRoute.name,
           initialChildren: children,
@@ -152,21 +172,21 @@ class RegisterMesaRoute extends _i9.PageRouteInfo<void> {
 
   static const String name = 'RegisterMesaRoute';
 
-  static _i9.PageInfo page = _i9.PageInfo(
+  static _i10.PageInfo page = _i10.PageInfo(
     name,
     builder: (data) {
-      return _i6.RegisterMesaPage();
+      return _i7.RegisterMesaPage();
     },
   );
 }
 
 /// generated route for
-/// [_i7.RegisterPage]
-class RegisterRoute extends _i9.PageRouteInfo<RegisterRouteArgs> {
+/// [_i8.RegisterPage]
+class RegisterRoute extends _i10.PageRouteInfo<RegisterRouteArgs> {
   RegisterRoute({
-    _i10.Key? key,
+    _i11.Key? key,
     required dynamic Function(bool) onResult,
-    List<_i9.PageRouteInfo>? children,
+    List<_i10.PageRouteInfo>? children,
   }) : super(
           RegisterRoute.name,
           args: RegisterRouteArgs(
@@ -178,11 +198,11 @@ class RegisterRoute extends _i9.PageRouteInfo<RegisterRouteArgs> {
 
   static const String name = 'RegisterRoute';
 
-  static _i9.PageInfo page = _i9.PageInfo(
+  static _i10.PageInfo page = _i10.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<RegisterRouteArgs>();
-      return _i7.RegisterPage(
+      return _i8.RegisterPage(
         key: args.key,
         onResult: args.onResult,
       );
@@ -196,7 +216,7 @@ class RegisterRouteArgs {
     required this.onResult,
   });
 
-  final _i10.Key? key;
+  final _i11.Key? key;
 
   final dynamic Function(bool) onResult;
 
@@ -207,9 +227,9 @@ class RegisterRouteArgs {
 }
 
 /// generated route for
-/// [_i8.SplashPage]
-class SplashRoute extends _i9.PageRouteInfo<void> {
-  const SplashRoute({List<_i9.PageRouteInfo>? children})
+/// [_i9.SplashPage]
+class SplashRoute extends _i10.PageRouteInfo<void> {
+  const SplashRoute({List<_i10.PageRouteInfo>? children})
       : super(
           SplashRoute.name,
           initialChildren: children,
@@ -217,10 +237,10 @@ class SplashRoute extends _i9.PageRouteInfo<void> {
 
   static const String name = 'SplashRoute';
 
-  static _i9.PageInfo page = _i9.PageInfo(
+  static _i10.PageInfo page = _i10.PageInfo(
     name,
     builder: (data) {
-      return const _i8.SplashPage();
+      return const _i9.SplashPage();
     },
   );
 }

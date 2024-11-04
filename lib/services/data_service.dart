@@ -69,6 +69,27 @@ class DataService {
     return null;
   }
 
+  // --- Métodos para "clientes" ---
+
+  // Obtener clientes pendientes
+  Future<List<Cliente>> fetchPendingClientes() async {
+    final data = await _supabaseClient
+        .from(TABLES.clientes.name)
+        .select()
+        .eq('estado', 'pendiente');
+
+    return (data as List)
+        .map<Cliente>((cliente) => Cliente.fromJson(cliente))
+        .toList();
+  }
+
+  // Actualizar estado del cliente
+  Future<void> updateClienteEstado(String clienteId, String nuevoEstado) async {
+    await _supabaseClient
+        .from(TABLES.clientes.name)
+        .update({'estado': nuevoEstado}).eq('id', clienteId);
+  }
+
   // --- Métodos para "empleados" ---
   Future<void> addEmpleado(Empleado empleado) async {
     await _supabaseClient.from(TABLES.empleados.name).insert(empleado.toJson());

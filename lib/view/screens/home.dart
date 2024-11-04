@@ -5,6 +5,7 @@ import 'package:mondongo/services/auth_services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+@RoutePage()
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
@@ -223,7 +224,8 @@ class HomePage extends StatelessWidget {
                           icon: Icons.percent,
                           color: Color(0xFF5D4037),
                           onTap: () {
-                            context.router.push(const RegisterMesaRoute());
+                            context.router
+                                .push(const AprobacionClientesRoute());
                           },
                         ),
                         _buildMenuCard(

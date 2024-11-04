@@ -87,6 +87,7 @@ class RegisterClientePageState extends State<RegisterClientePage> {
           dni: _dni,
           fotoUrl: fotoUrl,
           createdAt: DateTime.now(),
+          estado: 'pendiente',
         );
 
         await _dataService.addCliente(newCliente);

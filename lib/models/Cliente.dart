@@ -1,4 +1,4 @@
-// cliente.dart
+// lib/models/Cliente.dart
 class Cliente {
   final String id;
   final String nombre;
@@ -6,6 +6,7 @@ class Cliente {
   final String dni;
   final String? fotoUrl;
   final DateTime createdAt;
+  final String estado;
 
   Cliente({
     required this.id,
@@ -14,6 +15,7 @@ class Cliente {
     required this.dni,
     this.fotoUrl,
     required this.createdAt,
+    required this.estado,
   });
 
   factory Cliente.fromJson(Map<String, dynamic> json) {
@@ -24,6 +26,7 @@ class Cliente {
       dni: json['dni'] as String,
       fotoUrl: json['foto_url'] as String?,
       createdAt: DateTime.parse(json['created_at'] as String),
+      estado: json['estado'] as String,
     );
   }
 
@@ -35,6 +38,7 @@ class Cliente {
       'dni': dni,
       'foto_url': fotoUrl,
       'created_at': createdAt.toIso8601String(),
+      'estado': estado,
     };
   }
 }

@@ -14,5 +14,6 @@ class AppRouter extends RootStackRouter {
         AutoRoute(page: RegisterDuenoSupervisorRoute.page),
         AutoRoute(page: RegisterClienteRoute.page),
         AutoRoute(page: RegisterMesaRoute.page),
+        AutoRoute(page: AprobacionClientesRoute.page),
       ];
 }
