@@ -21,7 +21,7 @@ class HomePage extends StatelessWidget {
             ),
             SizedBox(width: 8),
             Text(
-              'Restaurante La Mondongo',
+              'Restaurante Mondongo',
               style:
                   TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
             ),

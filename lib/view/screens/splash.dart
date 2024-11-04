@@ -203,7 +203,7 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
                         const SizedBox(height: 10),
                         // Nombres de Bosco Massimo y Smiriglia Fausto
                         Text(
-                          'Bosco Massimo & Smiriglia Fausto',
+                          'Bosco Massimo y Smiriglia Fausto',
                           style: AppTypography.bodyText1.copyWith(
                             color: Colors.black,
                             fontSize: 18,

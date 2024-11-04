@@ -47,9 +47,9 @@ class _LoginPageState extends State<LoginPage> {
                     Icon(Icons.restaurant, size: 80, color: Colors.white),
                     SizedBox(height: 20),
                     Text(
-                      'Bienvenido a La Mondongo',
+                      'Bienvenido a Mondongo',
                       style: TextStyle(
-                        fontSize: 24,
+                        fontSize: 22,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
@@ -140,11 +140,15 @@ class _LoginPageState extends State<LoginPage> {
                       style: TextStyle(color: Colors.white),
                     ),
                     SizedBox(height: 10),
-                    _buildQuickLoginButton('cliente@gmail.com', '112233'),
-                    SizedBox(height: 5),
-                    _buildQuickLoginButton('empleado@gmail.com', '112233'),
-                    SizedBox(height: 5),
-                    _buildQuickLoginButton('supervisor@gmail.com', '112233'),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        _buildQuickLoginButton('cliente@gmail.com', '112233','cliente'),
+                        _buildQuickLoginButton('empleado@gmail.com', '112233', 'empleado'),
+                        _buildQuickLoginButton('supervisor@gmail.com', '112233', 'supervisor'),
+                      ],
+                    ),
                     if (_errorMessage.isNotEmpty)
                       Padding(
                         padding: const EdgeInsets.only(top: 10),
@@ -163,9 +167,9 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _buildQuickLoginButton(String email, String password) {
+  Widget _buildQuickLoginButton(String email, String password, String role) {
     return SizedBox(
-      width: double.infinity,
+      // width: double.infinity,
       child: ElevatedButton(
         onPressed: () {
           setState(() {
@@ -180,12 +184,10 @@ class _LoginPageState extends State<LoginPage> {
           ),
           backgroundColor: Colors.brown[700],
         ),
-        child: Text(
-          'Iniciar como $email',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 14,
-          ),
+        child: Image.asset(
+          'assets/login/$role.png',
+          color: Colors.white,
+          width: 30,
         ),
       ),
     );

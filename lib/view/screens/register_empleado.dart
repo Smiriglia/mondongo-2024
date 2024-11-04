@@ -137,6 +137,7 @@ class _RegisterEmpleadoPageState extends State<RegisterEmpleadoPage> {
               key: _formKey,
               child: ListView(
                 children: [
+                  SizedBox(height: 5),
                   // Nombre
                   TextFormField(
                     decoration: _inputDecoration('Nombre', Icons.person),
