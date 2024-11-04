@@ -1,6 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mondongo/main.dart';
+import 'package:mondongo/models/empleado.dart';
+import 'package:mondongo/services/auth_services.dart';
+import 'package:mondongo/services/data_service.dart';
 import 'package:mondongo/services/storage_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:auto_route/auto_route.dart';
@@ -14,13 +18,16 @@ class RegisterEmpleadoPage extends StatefulWidget {
 class _RegisterEmpleadoPageState extends State<RegisterEmpleadoPage> {
   final _formKey = GlobalKey<FormState>();
   final StorageService _storageService = StorageService();
-  final SupabaseClient _client = Supabase.instance.client;
+  final _dataService = getIt.get<DataService>();
+  final _authService = getIt.get<AuthService>();
 
   String _nombre = '';
   String _apellido = '';
   String _dni = '';
   String _cuil = '';
   String _tipoEmpleado = 'cocinero';
+  String _email = 'abc@gmail.com';
+  String _password = 'test123';
   File? _foto;
 
   final ImagePicker _picker = ImagePicker();
@@ -74,6 +81,8 @@ class _RegisterEmpleadoPageState extends State<RegisterEmpleadoPage> {
   Future<void> _submit() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
+      User? newUser = await _authService.signUpWithEmail(_email, _password);
+      if (newUser == null) return; // TODO generar mensaje de error
 
       String? fotoUrl;
       if (_foto != null) {
@@ -88,32 +97,30 @@ class _RegisterEmpleadoPageState extends State<RegisterEmpleadoPage> {
         }
       }
 
+      Empleado newEmpleado = Empleado(
+          id: newUser!.id,
+          nombre: _nombre,
+          apellido: _apellido,
+          fotoUrl: fotoUrl,
+          dni: _dni,
+          cuil: _cuil,
+          tipoEmpleado: _tipoEmpleado,
+          createdAt: DateTime.now());
+
       debugPrint(
           'Datos del empleado: Nombre=$_nombre, Apellido=$_apellido, DNI=$_dni, CUIL=$_cuil, Tipo=$_tipoEmpleado, FotoURL=$fotoUrl');
 
-      final response = await _client.from('empleados').insert({
-        'nombre': _nombre,
-        'apellido': _apellido,
-        'dni': _dni,
-        'cuil': _cuil,
-        'foto_url': fotoUrl,
-        'tipo_empleado': _tipoEmpleado,
-      });
-
       try {
-        if (response.error == null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Empleado registrado exitosamente')),
-          );
-          Navigator.pop(context);
-        } else {
-          throw Exception(
-              'Error al registrar el empleado: ${response.error!.message}');
-        }
-      } catch (e) {
+        final response = await _dataService.addEmpleado(newEmpleado);
+
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString())),
+          SnackBar(content: Text('Empleado registrado exitosamente')),
         );
+        Navigator.pop(context);
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Error al registrar el empleado'),
+        ));
         debugPrint('Error al registrar empleado: $e');
       }
     }

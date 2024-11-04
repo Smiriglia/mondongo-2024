@@ -4,6 +4,9 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mondongo/routes/app_router.dart';
 import 'package:mondongo/services/auth_services.dart';
+import 'package:mondongo/services/data_service.dart';
+import 'package:mondongo/services/qr_service.dart';
+import 'package:mondongo/services/storage_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 GetIt getIt = GetIt.instance;
@@ -21,6 +24,9 @@ void main() async {
   );
   getIt.registerSingleton(AppRouter());
   getIt.registerSingleton(AuthService());
+  getIt.registerSingleton(DataService());
+  getIt.registerSingleton(StorageService());
+  getIt.registerSingleton(QRService());
   runApp(MyApp());
 }
 

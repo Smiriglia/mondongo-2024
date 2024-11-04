@@ -1,13 +1,17 @@
+import 'package:mondongo/models/empleado.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:mondongo/models/profile.dart'; // Asegúrate de tener un modelo Profile
 
 enum TABLES {
-  profiles;
+  profiles,
+  empleados;
 
   String get name {
     switch (this) {
       case TABLES.profiles:
         return 'profiles';
+      case TABLES.empleados:
+        return 'empleados';
     }
   }
 }
@@ -24,6 +28,10 @@ class DataService {
   // Add a new profile
   Future<void> addProfile(Profile profile) async {
     await _supabaseClient.from(TABLES.profiles.name).insert(profile.toJson());
+  }
+
+  Future<void> addEmpleado(Empleado empleado) async {
+    await _supabaseClient.from(TABLES.empleados.name).insert(empleado.toJson());
   }
 
   // Update an existing profile
