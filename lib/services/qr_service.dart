@@ -34,17 +34,15 @@ class QRService {
 
       // Guarda la imagen temporalmente
       final tempDir = await getTemporaryDirectory();
-      final filePath = path.join(tempDir.path, '$pathName.png');
+      final filePath = path.join(tempDir.path, '${pathName.split('/').last}.png');
       final file = File(filePath);
       await file.writeAsBytes(pngBytes);
 
-      // Sube el archivo al bucket
       final storageResponse = await _client.storage.from(bucket).upload(
           '$pathName.png', file,
           fileOptions: const FileOptions(cacheControl: '3600', upsert: false));
 
-      if (storageResponse.isEmpty) {
-        // Obtiene la URL pública
+      if (storageResponse.isNotEmpty) {
         final String publicUrl =
             _client.storage.from(bucket).getPublicUrl('$pathName.png');
         return publicUrl;
