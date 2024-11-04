@@ -28,14 +28,15 @@ class _RegisterEmpleadoPageState extends State<RegisterEmpleadoPage> {
   String _tipoEmpleado = 'cocinero';
   String _email = 'abc@gmail.com';
   String _password = 'test123';
+  bool _obscureText = true;
   File? _foto;
 
   final ImagePicker _picker = ImagePicker();
 
   // Definición de colores y estilos
-  final Color primaryColor = Color(0xFF4B2C20); // Marrón oscuro
-  final Color accentColor = Colors.white; // Blanco
-  final Color backgroundColor = Color(0xFFF0EDE5); // Gris claro
+  final Color primaryColor = Color(0xFF4B2C20);
+  final Color accentColor = Colors.white;
+  final Color backgroundColor = Color(0xFFF0EDE5);
 
   InputDecoration _inputDecoration(String label, IconData icon) {
     return InputDecoration(
@@ -81,47 +82,64 @@ class _RegisterEmpleadoPageState extends State<RegisterEmpleadoPage> {
   Future<void> _submit() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      User? newUser = await _authService.signUpWithEmail(_email, _password);
-      if (newUser == null) return; // TODO generar mensaje de error
 
-      String? fotoUrl;
-      if (_foto != null) {
-        fotoUrl = await _storageService.uploadProfileImage(_foto!);
-        debugPrint('URL de la foto: $fotoUrl');
-        if (fotoUrl == null) {
-          if (!mounted) return;
+      try {
+        User? newUser = await _authService.signUpWithEmail(_email, _password);
+        if (newUser == null) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Error al subir la foto')),
+            const SnackBar(
+                content: Text('Error: No se pudo registrar el empleado.')),
           );
           return;
         }
-      }
 
-      Empleado newEmpleado = Empleado(
-          id: newUser!.id,
+        String? fotoUrl;
+        if (_foto != null) {
+          fotoUrl = await _storageService.uploadProfileImage(_foto!);
+          debugPrint('URL de la foto: $fotoUrl');
+          if (fotoUrl == null) {
+            if (!mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Error al subir la foto')),
+            );
+            return;
+          }
+        }
+
+        Empleado newEmpleado = Empleado(
+          id: newUser.id,
           nombre: _nombre,
           apellido: _apellido,
           fotoUrl: fotoUrl,
           dni: _dni,
           cuil: _cuil,
           tipoEmpleado: _tipoEmpleado,
-          createdAt: DateTime.now());
-
-      debugPrint(
-          'Datos del empleado: Nombre=$_nombre, Apellido=$_apellido, DNI=$_dni, CUIL=$_cuil, Tipo=$_tipoEmpleado, FotoURL=$fotoUrl');
-
-      try {
-        final response = await _dataService.addEmpleado(newEmpleado);
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Empleado registrado exitosamente')),
+          createdAt: DateTime.now(),
         );
-        Navigator.pop(context);
+
+        debugPrint(
+            'Datos del empleado: Nombre=$_nombre, Apellido=$_apellido, DNI=$_dni, CUIL=$_cuil, Tipo=$_tipoEmpleado, FotoURL=$fotoUrl');
+
+        try {
+          final response = await _dataService.addEmpleado(newEmpleado);
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Empleado registrado exitosamente')),
+          );
+          Navigator.pop(context);
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content:
+                    Text('Error al registrar el empleado: ${e.toString()}')),
+          );
+          debugPrint('Error al registrar empleado: $e');
+        }
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Error al registrar el empleado'),
-        ));
-        debugPrint('Error al registrar empleado: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al crear el usuario: ${e.toString()}')),
+        );
+        debugPrint('Error al crear el usuario: $e');
       }
     }
   }
@@ -177,6 +195,38 @@ class _RegisterEmpleadoPageState extends State<RegisterEmpleadoPage> {
                     validator: (val) =>
                         val == null || val.isEmpty ? 'Ingresa el CUIL' : null,
                     onSaved: (val) => _cuil = val!.trim(),
+                  ),
+                  SizedBox(height: 16),
+                  TextFormField(
+                    decoration: _inputDecoration('Correo', Icons.email),
+                    validator: (val) =>
+                        val == null || val.isEmpty ? 'Ingresa el Correo' : null,
+                    onSaved: (val) => _email = val!.trim(),
+                  ),
+                  SizedBox(height: 16),
+                  // Contraseña
+                  TextFormField(
+                    decoration:
+                        _inputDecoration('Contraseña', Icons.lock).copyWith(
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscureText
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                          color: primaryColor,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscureText = !_obscureText;
+                          });
+                        },
+                      ),
+                    ),
+                    obscureText: _obscureText,
+                    validator: (val) => val == null || val.isEmpty
+                        ? 'Ingresa la contraseña'
+                        : null,
+                    onSaved: (val) => _password = val!.trim(),
                   ),
                   SizedBox(height: 16),
                   // Tipo de Empleado

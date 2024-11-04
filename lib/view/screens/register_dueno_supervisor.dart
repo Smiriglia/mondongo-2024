@@ -2,8 +2,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mondongo/main.dart';
 import 'package:mondongo/models/dueno_supervisor.dart';
-import 'package:mondongo/services/dueno_supervisor_service.dart';
+import 'package:mondongo/services/auth_services.dart';
+import 'package:mondongo/services/data_service.dart';
+import 'package:mondongo/services/storage_service.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 @RoutePage()
 class RegisterDuenoSupervisorPage extends StatefulWidget {
@@ -15,13 +19,18 @@ class RegisterDuenoSupervisorPage extends StatefulWidget {
 class _RegisterDuenoSupervisorPageState
     extends State<RegisterDuenoSupervisorPage> {
   final _formKey = GlobalKey<FormState>();
-  final DuenoSupervisorService _service = DuenoSupervisorService();
+  final StorageService _storageService = StorageService();
+  final _dataService = getIt.get<DataService>();
+  final _authService = getIt.get<AuthService>();
 
   String _nombre = '';
   String _apellido = '';
   String _dni = '';
   String _cuil = '';
   String _perfil = 'dueño';
+  String _email = '';
+  String _password = '';
+  bool _obscureText = true;
   File? _foto;
 
   final ImagePicker _picker = ImagePicker();
@@ -45,34 +54,44 @@ class _RegisterDuenoSupervisorPageState
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      String? fotoUrl;
-      if (_foto != null) {
-        fotoUrl = await _service.uploadFoto(_foto!, _dni);
-        if (fotoUrl == null) {
+      try {
+        User? newUser = await _authService.signUpWithEmail(_email, _password);
+        if (newUser == null) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error al subir la foto',
-                  style: TextStyle(color: Colors.white)),
-              backgroundColor: Colors.red,
-            ),
+            const SnackBar(
+                content: Text('Error: No se pudo registrar el usuario.')),
           );
           return;
         }
-      }
 
-      final dueno = DuenoSupervisor(
-        id: '', // Será generado por la base de datos
-        nombre: _nombre,
-        apellido: _apellido,
-        dni: _dni,
-        cuil: _cuil,
-        fotoUrl: fotoUrl,
-        perfil: _perfil,
-        createdAt: DateTime.now(),
-      );
+        String? fotoUrl;
+        if (_foto != null) {
+          fotoUrl = await _storageService.uploadProfileImage(_foto!);
+          if (fotoUrl == null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Error al subir la foto',
+                    style: TextStyle(color: Colors.white)),
+                backgroundColor: Colors.red,
+              ),
+            );
+            return;
+          }
+        }
 
-      final success = await _service.crearDuenoSupervisor(dueno);
-      if (success) {
+        final dueno = DuenoSupervisor(
+          id: newUser.id,
+          nombre: _nombre,
+          apellido: _apellido,
+          dni: _dni,
+          cuil: _cuil,
+          fotoUrl: fotoUrl,
+          perfil: _perfil,
+          createdAt: DateTime.now(),
+        );
+
+        await _dataService.addDuenoSupervisor(dueno);
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content:
@@ -81,10 +100,10 @@ class _RegisterDuenoSupervisorPageState
           ),
         );
         Navigator.pop(context);
-      } else {
+      } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error al registrar',
+            content: Text('Error al registrar: ${e.toString()}',
                 style: TextStyle(color: Colors.white)),
             backgroundColor: Colors.red,
           ),
@@ -201,6 +220,40 @@ class _RegisterDuenoSupervisorPageState
                       decoration: _buildInputDecoration('Perfil'),
                       style: _buildTextStyle(),
                       dropdownColor: backgroundColor,
+                    ),
+                    const SizedBox(height: 10),
+                    TextFormField(
+                      decoration: _buildInputDecoration('Email'),
+                      style: _buildTextStyle(),
+                      validator: (val) => val == null || val.isEmpty
+                          ? 'Ingresa el email'
+                          : null,
+                      onSaved: (val) => _email = val!.trim(),
+                      keyboardType: TextInputType.emailAddress,
+                    ),
+                    const SizedBox(height: 10),
+                    TextFormField(
+                      decoration: _buildInputDecoration('Contraseña').copyWith(
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _obscureText
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                            color: primaryColor,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _obscureText = !_obscureText;
+                            });
+                          },
+                        ),
+                      ),
+                      obscureText: _obscureText,
+                      style: _buildTextStyle(),
+                      validator: (val) => val == null || val.isEmpty
+                          ? 'Ingresa la contraseña'
+                          : null,
+                      onSaved: (val) => _password = val!.trim(),
                     ),
                     const SizedBox(height: 20),
                     // Botón de registrar

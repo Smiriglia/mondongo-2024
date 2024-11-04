@@ -1,10 +1,16 @@
 import 'package:mondongo/models/empleado.dart';
+import 'package:mondongo/models/dueno_supervisor.dart';
+import 'package:mondongo/models/Cliente.dart';
+import 'package:mondongo/models/Mesa.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:mondongo/models/profile.dart'; // Asegúrate de tener un modelo Profile
 
 enum TABLES {
   profiles,
-  empleados;
+  empleados,
+  duenos_supervisores,
+  clientes,
+  mesas;
 
   String get name {
     switch (this) {
@@ -12,6 +18,12 @@ enum TABLES {
         return 'profiles';
       case TABLES.empleados:
         return 'empleados';
+      case TABLES.duenos_supervisores:
+        return 'dueños_supervisores';
+      case TABLES.clientes:
+        return 'clientes';
+      case TABLES.mesas:
+        return 'mesas';
     }
   }
 }
@@ -19,19 +31,16 @@ enum TABLES {
 class DataService {
   final SupabaseClient _supabaseClient = Supabase.instance.client;
 
+  // --- Métodos para "profiles" ---
   // Fetch all profiles
   Future<List<Profile>> fetchProfiles() async {
     final data = await _supabaseClient.from(TABLES.profiles.name).select();
-    return data.map((p) => Profile.fromJson(p)).toList();
+    return data.map<Profile>((p) => Profile.fromJson(p)).toList();
   }
 
   // Add a new profile
   Future<void> addProfile(Profile profile) async {
     await _supabaseClient.from(TABLES.profiles.name).insert(profile.toJson());
-  }
-
-  Future<void> addEmpleado(Empleado empleado) async {
-    await _supabaseClient.from(TABLES.empleados.name).insert(empleado.toJson());
   }
 
   // Update an existing profile
@@ -58,5 +67,27 @@ class DataService {
       return Profile.fromJson(data);
     }
     return null;
+  }
+
+  // --- Métodos para "empleados" ---
+  Future<void> addEmpleado(Empleado empleado) async {
+    await _supabaseClient.from(TABLES.empleados.name).insert(empleado.toJson());
+  }
+
+  // --- Métodos para "dueños/supervisores" ---
+  Future<void> addDuenoSupervisor(DuenoSupervisor duenoSupervisor) async {
+    await _supabaseClient
+        .from(TABLES.duenos_supervisores.name)
+        .insert(duenoSupervisor.toJson());
+  }
+
+  // --- Métodos para "clientes" ---
+  Future<void> addCliente(Cliente cliente) async {
+    await _supabaseClient.from(TABLES.clientes.name).insert(cliente.toJson());
+  }
+
+  // --- Métodos para "mesas" ---
+  Future<void> addMesa(Mesa mesa) async {
+    await _supabaseClient.from(TABLES.mesas.name).insert(mesa.toJson());
   }
 }

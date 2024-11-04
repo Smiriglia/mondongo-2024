@@ -1,8 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:mondongo/main.dart';
+import 'package:mondongo/models/Mesa.dart';
+import 'package:mondongo/services/data_service.dart';
 import 'package:mondongo/services/qr_service.dart';
 import 'package:mondongo/services/storage_service.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:auto_route/auto_route.dart';
 
@@ -16,7 +18,7 @@ class _RegisterMesaPageState extends State<RegisterMesaPage> {
   final _formKey = GlobalKey<FormState>();
   final StorageService _storageService = StorageService();
   final QRService _qrService = QRService();
-  final SupabaseClient _client = Supabase.instance.client;
+  final _dataService = getIt.get<DataService>();
 
   int _numero = 0;
   int _cantidadComensales = 1;
@@ -75,50 +77,51 @@ class _RegisterMesaPageState extends State<RegisterMesaPage> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      // Genera el código QR (por ejemplo, usando el número de mesa)
-      String qrData = 'Mesa-$_numero';
-      String qrPathName = 'mesas/mesa_$_numero';
+      try {
+        // Genera el código QR (por ejemplo, usando el número de mesa)
+        String qrData = 'Mesa-$_numero';
+        String qrPathName = 'mesas/mesa_$_numero';
 
-      String? qrUrl = await _qrService.generateAndUploadQRCode(
-          qrData, 'qr_codes', qrPathName);
-      if (qrUrl == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error al generar el código QR')),
-        );
-        return;
-      }
-
-      // Sube la foto de la mesa
-      String? fotoUrl;
-      if (_foto != null) {
-        fotoUrl = await _storageService.uploadProfileImage(_foto!);
-        if (fotoUrl == null) {
+        String? qrUrl = await _qrService.generateAndUploadQRCode(
+            qrData, 'qr_codes', qrPathName);
+        if (qrUrl == null) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error al subir la foto')),
+            SnackBar(content: Text('Error al generar el código QR')),
           );
           return;
         }
-      }
 
-      // Crea un nuevo registro en la tabla 'mesas'
-      final response = await _client.from('mesas').insert({
-        'numero': _numero,
-        'cantidad_comensales': _cantidadComensales,
-        'tipo': _tipoMesa,
-        'foto_url': fotoUrl,
-        'qr_code_url': qrUrl,
-      });
+        // Sube la foto de la mesa
+        String? fotoUrl;
+        if (_foto != null) {
+          fotoUrl = await _storageService.uploadProfileImage(_foto!);
+          if (fotoUrl == null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Error al subir la foto')),
+            );
+            return;
+          }
+        }
 
-      if (response.error == null) {
+        Mesa newMesa = Mesa(
+          numero: _numero,
+          cantidadComensales: _cantidadComensales,
+          tipo: _tipoMesa,
+          fotoUrl: fotoUrl,
+          qrCodeUrl: qrUrl,
+          createdAt: DateTime.now(),
+        );
+
+        await _dataService.addMesa(newMesa);
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Mesa registrada exitosamente')),
         );
         Navigator.pop(context);
-      } else {
+      } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(
-                  'Error al registrar la mesa: ${response.error!.message}')),
+              content: Text('Error al registrar la mesa: ${e.toString()}')),
         );
       }
     }

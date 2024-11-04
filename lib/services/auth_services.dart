@@ -1,54 +1,59 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:logging/logging.dart';
 
 class AuthService {
   final SupabaseClient _supabaseClient = Supabase.instance.client;
+  final _logger = Logger('AuthService');
 
   Future<User?> signInWithGoogle() async {
     try {
-      final response =
-          await _supabaseClient.auth.signInWithOAuth(OAuthProvider.google);
+      await _supabaseClient.auth.signInWithOAuth(OAuthProvider.google);
       return _supabaseClient.auth.currentUser;
     } catch (e) {
-      print('Error signing in with Google: $e');
+      _logger.severe('Error signing in with Google: $e');
+      return null;
     }
-    return null;
   }
 
   Future<User?> signUpWithEmail(String email, String password) async {
     try {
       final response =
           await _supabaseClient.auth.signUp(email: email, password: password);
-      if (response.user != null) {
-        return response.user;
-      }
+      return response.user;
     } catch (e) {
-      print('Error signing up with email: $e');
+      _logger.severe('Error signing up with email: $e');
+      return null;
     }
-    return null;
   }
 
   Future<User?> signInWithEmail(String email, String password) async {
     try {
       final response = await _supabaseClient.auth
           .signInWithPassword(email: email, password: password);
-      if (response.user != null) {
-        return response.user;
-      }
+      return response.user;
     } catch (e) {
-      print('Error signing in with email: $e');
+      _logger.severe('Error signing in with email: $e');
+      return null;
     }
-    return null;
   }
 
   Future<void> signOut() async {
     try {
       await _supabaseClient.auth.signOut();
     } catch (e) {
-      print('Error signing out: $e');
+      _logger.severe('Error signing out: $e');
     }
   }
 
   User? getUser() {
     return _supabaseClient.auth.currentUser;
+  }
+
+  Future<void> deleteUser(String userId) async {
+    try {
+      await _supabaseClient.auth.admin.deleteUser(userId);
+    } catch (e) {
+      _logger.severe('Error deleting user: $e');
+    }
   }
 }

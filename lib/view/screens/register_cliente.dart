@@ -1,28 +1,34 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mondongo/main.dart';
+import 'package:mondongo/models/Cliente.dart';
+import 'package:mondongo/services/auth_services.dart';
+import 'package:mondongo/services/data_service.dart';
 import 'package:mondongo/services/storage_service.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:mondongo/view/screens/qr_reader_page.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 @RoutePage()
 class RegisterClientePage extends StatefulWidget {
   const RegisterClientePage({Key? key}) : super(key: key);
 
   @override
-  _RegisterClientePageState createState() => _RegisterClientePageState();
+  RegisterClientePageState createState() => RegisterClientePageState();
 }
 
-class _RegisterClientePageState extends State<RegisterClientePage> {
+class RegisterClientePageState extends State<RegisterClientePage> {
   final _formKey = GlobalKey<FormState>();
   final StorageService _storageService = StorageService();
-  final SupabaseClient _client = Supabase.instance.client;
+  final _dataService = getIt.get<DataService>();
+  final _authService = getIt.get<AuthService>();
 
   String _nombre = '';
   String _apellido = '';
   String _dni = '';
-  bool _isAnonymous = false;
+  String _email = '';
+  String _password = '';
+  bool _obscureText = true;
   File? _foto;
 
   final ImagePicker _picker = ImagePicker();
@@ -49,32 +55,43 @@ class _RegisterClientePageState extends State<RegisterClientePage> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      String? fotoUrl;
-      if (_foto != null) {
-        fotoUrl = await _storageService.uploadProfileImage(
-          _foto!,
-        );
-        if (fotoUrl == null) {
-          if (!mounted) return; // Verifica antes de usar 'context'
+      try {
+        User? newUser = await _authService.signUpWithEmail(_email, _password);
+        if (newUser == null) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Error al subir la foto')),
+            const SnackBar(
+                content: Text('Error: No se pudo registrar el empleado.')),
           );
           return;
         }
-      }
 
-      // Crea un nuevo registro en la tabla 'clientes'
-      final response = await _client.from('clientes').insert({
-        'nombre': _nombre,
-        'apellido': _isAnonymous ? null : _apellido,
-        'dni': _isAnonymous ? null : _dni,
-        'foto_url': fotoUrl,
-        'is_anonymous': _isAnonymous,
-      });
+        String? fotoUrl;
+        if (_foto != null) {
+          fotoUrl = await _storageService.uploadProfileImage(_foto!);
+          debugPrint('URL de la foto: $fotoUrl');
+          if (fotoUrl == null) {
+            if (!mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Error al subir la foto')),
+            );
+            return;
+          }
+        }
 
-      if (!mounted) return; // Verifica antes de usar 'context'
+        String userId = newUser.id;
 
-      if (response.error == null) {
+        Cliente newCliente = Cliente(
+          id: userId,
+          nombre: _nombre,
+          apellido: _apellido,
+          dni: _dni,
+          fotoUrl: fotoUrl,
+          createdAt: DateTime.now(),
+        );
+
+        await _dataService.addCliente(newCliente);
+
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -85,11 +102,12 @@ class _RegisterClientePageState extends State<RegisterClientePage> {
           ),
         );
         Navigator.pop(context);
-      } else {
+      } catch (e) {
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Error al registrar el cliente: ${response.error!.message}',
+              'Error al registrar el cliente: ${e.toString()}',
               style: TextStyle(color: Colors.white),
             ),
             backgroundColor: Colors.red,
@@ -158,66 +176,59 @@ class _RegisterClientePageState extends State<RegisterClientePage> {
                     onSaved: (val) => _nombre = val!.trim(),
                   ),
                   const SizedBox(height: 10),
-                  // Apellido (solo si no es anónimo)
-                  if (!_isAnonymous)
-                    TextFormField(
-                      decoration: _buildInputDecoration('Apellido'),
-                      style: _buildTextStyle(),
-                      validator: (val) => val == null || val.isEmpty
-                          ? 'Ingresa el apellido'
-                          : null,
-                      onSaved: (val) => _apellido = val!.trim(),
-                    ),
-                  if (!_isAnonymous) const SizedBox(height: 10),
-                  // DNI (solo si no es anónimo)
-                  if (!_isAnonymous)
-                    TextFormField(
-                      decoration: _buildInputDecoration('DNI').copyWith(
-                        suffixIcon: IconButton(
-                          icon:
-                              Icon(Icons.qr_code_scanner, color: primaryColor),
-                          onPressed: () async {
-                            // Navega al lector de QR y espera el resultado
-                            final qrData = await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => QRReaderPage(
-                                  onQRRead: (data) {
-                                    // Procesa el dato leído
-                                    _dni = data;
-                                  },
-                                ),
-                              ),
-                            );
-                            if (qrData != null && qrData.isNotEmpty) {
-                              if (!mounted)
-                                return; // Verifica antes de usar 'context'
-                              setState(() {
-                                _dni = qrData;
-                              });
-                            }
-                          },
+                  // Apellido
+                  TextFormField(
+                    decoration: _buildInputDecoration('Apellido'),
+                    style: _buildTextStyle(),
+                    validator: (val) => val == null || val.isEmpty
+                        ? 'Ingresa el apellido'
+                        : null,
+                    onSaved: (val) => _apellido = val!.trim(),
+                  ),
+                  const SizedBox(height: 10),
+                  // DNI
+                  TextFormField(
+                    decoration: _buildInputDecoration('DNI'),
+                    style: _buildTextStyle(),
+                    validator: (val) =>
+                        val == null || val.isEmpty ? 'Ingresa el DNI' : null,
+                    onSaved: (val) => _dni = val!.trim(),
+                    keyboardType: TextInputType.number,
+                  ),
+                  const SizedBox(height: 10),
+                  // Email
+                  TextFormField(
+                    decoration: _buildInputDecoration('Email'),
+                    style: _buildTextStyle(),
+                    validator: (val) =>
+                        val == null || val.isEmpty ? 'Ingresa el email' : null,
+                    onSaved: (val) => _email = val!.trim(),
+                    keyboardType: TextInputType.emailAddress,
+                  ),
+                  const SizedBox(height: 10),
+                  // Contraseña
+                  TextFormField(
+                    decoration: _buildInputDecoration('Contraseña').copyWith(
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscureText
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                          color: primaryColor,
                         ),
+                        onPressed: () {
+                          setState(() {
+                            _obscureText = !_obscureText;
+                          });
+                        },
                       ),
-                      style: _buildTextStyle(),
-                      validator: (val) =>
-                          val == null || val.isEmpty ? 'Ingresa el DNI' : null,
-                      onSaved: (val) => _dni = val!.trim(),
-                      keyboardType: TextInputType.number,
                     ),
-                  if (!_isAnonymous) const SizedBox(height: 10),
-                  // Checkbox para ser anónimo
-                  CheckboxListTile(
-                    activeColor: primaryColor,
-                    title: Text('Registrar como Anónimo',
-                        style: _buildTextStyle()),
-                    value: _isAnonymous,
-                    onChanged: (val) {
-                      setState(() {
-                        _isAnonymous = val ?? false;
-                      });
-                    },
-                    controlAffinity: ListTileControlAffinity.leading,
+                    obscureText: _obscureText,
+                    style: _buildTextStyle(),
+                    validator: (val) => val == null || val.isEmpty
+                        ? 'Ingresa la contraseña'
+                        : null,
+                    onSaved: (val) => _password = val!.trim(),
                   ),
                   const SizedBox(height: 20),
                   // Botón de registrar
