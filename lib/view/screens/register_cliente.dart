@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart'; // Import necesario para inputFormatters
 import 'package:image_picker/image_picker.dart';
 import 'package:mondongo/main.dart';
 import 'package:mondongo/models/cliente.dart';
@@ -76,11 +77,29 @@ class RegisterClientePageState extends State<RegisterClientePage> {
       _formKey.currentState!.save();
 
       try {
+        // bool emailExist = await _authService.emailExist(_email);
+        // if (emailExist) {
+        //   ScaffoldMessenger.of(context).showSnackBar(
+        //     const SnackBar(
+        //         content: Text('Error: El email ya está registrado.')),
+        //   );
+        //   backgroundColor:
+        //   Colors.red;
+        //   return;
+        // }
+
+        bool dniExist = await _dataService.dniExist(_dni);
+        if (dniExist) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Error: El DNI ya está registrado.')),
+          );
+          return;
+        }
+
         User? newUser = await _authService.signUpWithEmail(_email, _password);
         if (newUser == null) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-                content: Text('Error: No se pudo registrar el cliente.')),
+            const SnackBar(content: Text('Error: Ese email ya esta en uso.')),
           );
           return;
         }
@@ -241,10 +260,21 @@ class RegisterClientePageState extends State<RegisterClientePage> {
                       ),
                     ),
                     style: _buildTextStyle(),
-                    validator: (val) =>
-                        val == null || val.isEmpty ? 'Ingresa el DNI' : null,
-                    onSaved: (val) => _dni = val!.trim(),
                     keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(8),
+                    ],
+                    validator: (val) {
+                      if (val == null || val.isEmpty) {
+                        return 'Ingresa el DNI';
+                      }
+                      if (val.length != 8) {
+                        return 'El DNI debe tener exactamente 8 dígitos';
+                      }
+                      return null;
+                    },
+                    onSaved: (val) => _dni = val!.trim(),
                   ),
                   const SizedBox(height: 10),
                   // Email

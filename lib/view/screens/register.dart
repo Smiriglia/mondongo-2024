@@ -24,13 +24,14 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
 
-  String _email = '';
-  String _fullName = '';
-  String _errorMessage = '';
+  String _nombre = '';
+  String _apellido = '';
   String _dni = '';
+  String _email = '';
+  String _errorMessage = '';
 
   bool _isLoading = false;
-  
+
   DataService _dataService = getIt.get<DataService>();
 
   @override
@@ -87,7 +88,44 @@ class _RegisterPageState extends State<RegisterPage> {
                       validator: (val) => val == null || val.isEmpty
                           ? 'Ingresa tu nombre completo'
                           : null,
-                      onSaved: (val) => _fullName = val!.trim(),
+                      onSaved: (val) => _nombre = val!.trim(),
+                    ),
+                    SizedBox(height: 15),
+                    TextFormField(
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(Icons.person, color: Colors.white),
+                        hintText: 'Apellido Completo',
+                        hintStyle: TextStyle(color: Colors.white),
+                        filled: true,
+                        fillColor: Colors.brown[600]!.withOpacity(0.5),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                      style: TextStyle(color: Colors.white),
+                      validator: (val) => val == null || val.isEmpty
+                          ? 'Ingresa tu apellido completo'
+                          : null,
+                      onSaved: (val) => _apellido = val!.trim(),
+                    ),
+                    SizedBox(height: 15),
+                    TextFormField(
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(Icons.person, color: Colors.white),
+                        hintText: 'DNI',
+                        hintStyle: TextStyle(color: Colors.white),
+                        filled: true,
+                        fillColor: Colors.brown[600]!.withOpacity(0.5),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                      style: TextStyle(color: Colors.white),
+                      validator: (val) =>
+                          val == null || val.isEmpty ? 'Ingresa tu DNI' : null,
+                      onSaved: (val) => _dni = val!.trim(),
                     ),
                     SizedBox(height: 15),
                     TextFormField(
@@ -224,8 +262,8 @@ class _RegisterPageState extends State<RegisterPage> {
           Cliente newCliente = Cliente(
               estado: 'pendiente',
               id: user.id,
-              nombre: _fullName,
-              apellido: _fullName,
+              nombre: _nombre,
+              apellido: _apellido,
               dni: _dni,
               createdAt: DateTime.now());
           await _dataService.addCliente(newCliente);

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart'; // Import necesario para inputFormatters
 import 'package:image_picker/image_picker.dart';
 import 'package:mondongo/main.dart';
 import 'package:mondongo/models/empleado.dart';
@@ -104,11 +105,26 @@ class _RegisterEmpleadoPageState extends State<RegisterEmpleadoPage> {
       _formKey.currentState!.save();
 
       try {
+        bool dniExist = await _dataService.dniExist(_dni);
+        if (dniExist) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Error: El DNI ya está registrado.')),
+          );
+          return;
+        }
+
+        bool cuilExist = await _dataService.cuilExist(_cuil);
+        if (cuilExist) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Error: El Cuil ya está registrado.')),
+          );
+          return;
+        }
+
         User? newUser = await _authService.signUpWithEmail(_email, _password);
         if (newUser == null) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-                content: Text('Error: No se pudo registrar el empleado.')),
+            const SnackBar(content: Text('Error: Ese email ya esta en uso.')),
           );
           return;
         }
@@ -232,17 +248,58 @@ class _RegisterEmpleadoPageState extends State<RegisterEmpleadoPage> {
                         },
                       ),
                     ),
-                    validator: (val) =>
-                        val == null || val.isEmpty ? 'Ingresa el DNI' : null,
+                    validator: (val) {
+                      if (val == null || val.isEmpty) {
+                        return 'Ingresa el DNI';
+                      }
+                      if (val.length != 8) {
+                        return 'El DNI debe tener exactamente 8 dígitos';
+                      }
+                      return null;
+                    },
                     onSaved: (val) => _dni = val!.trim(),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(8),
+                    ],
                   ),
                   SizedBox(height: 16),
                   // CUIL
                   TextFormField(
-                    decoration: _inputDecoration('CUIL', Icons.account_balance),
-                    validator: (val) =>
-                        val == null || val.isEmpty ? 'Ingresa el CUIL' : null,
+                    decoration: _inputDecoration('CUIL', Icons.account_balance)
+                        .copyWith(
+                      suffixIcon: IconButton(
+                        icon: Icon(Icons.qr_code_scanner, color: primaryColor),
+                        onPressed: () async {
+                          final String? scannedData = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => QRReaderPage(
+                                onQRRead: (data) {
+                                  _processQRData(data);
+                                },
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    validator: (val) {
+                      if (val == null || val.isEmpty) {
+                        return 'Ingresa el CUIL';
+                      }
+                      if (val.length != 10) {
+                        return 'El CUIL debe tener exactamente 10 dígitos';
+                      }
+                      return null;
+                    },
                     onSaved: (val) => _cuil = val!.trim(),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(10),
+                    ],
                   ),
                   SizedBox(height: 16),
                   TextFormField(

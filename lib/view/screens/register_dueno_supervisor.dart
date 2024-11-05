@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart'; // Import necesario para inputFormatters
 import 'package:auto_route/auto_route.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mondongo/main.dart';
@@ -75,11 +76,26 @@ class _RegisterDuenoSupervisorPageState
       _formKey.currentState!.save();
 
       try {
+        bool dniExist = await _dataService.dniExist(_dni);
+        if (dniExist) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Error: El DNI ya está registrado.')),
+          );
+          return;
+        }
+
+        bool cuilExist = await _dataService.cuilExist(_cuil);
+        if (cuilExist) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Error: El Cuil ya está registrado.')),
+          );
+          return;
+        }
+
         User? newUser = await _authService.signUpWithEmail(_email, _password);
         if (newUser == null) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-                content: Text('Error: No se pudo registrar el usuario.')),
+            const SnackBar(content: Text('Error: Ese email ya esta en uso.')),
           );
           return;
         }
@@ -236,19 +252,61 @@ class _RegisterDuenoSupervisorPageState
                         ),
                       ),
                       style: _buildTextStyle(),
-                      validator: (val) =>
-                          val == null || val.isEmpty ? 'Ingresa el DNI' : null,
-                      onSaved: (val) => _dni = val!.trim(),
                       keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(8),
+                      ],
+                      validator: (val) {
+                        if (val == null || val.isEmpty) {
+                          return 'Ingresa el DNI';
+                        }
+                        if (val.length != 8) {
+                          return 'El DNI debe tener exactamente 8 dígitos';
+                        }
+                        return null;
+                      },
+                      onSaved: (val) => _dni = val!.trim(),
                     ),
                     const SizedBox(height: 10),
+                    // CUIL
                     TextFormField(
-                      decoration: _buildInputDecoration('CUIL'),
+                      decoration: _buildInputDecoration('CUIL').copyWith(
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            Icons.qr_code_scanner,
+                            color: primaryColor,
+                          ),
+                          onPressed: () async {
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => QRReaderPage(
+                                  onQRRead: (data) {
+                                    _processQRData(data);
+                                  },
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
                       style: _buildTextStyle(),
-                      validator: (val) =>
-                          val == null || val.isEmpty ? 'Ingresa el CUIL' : null,
-                      onSaved: (val) => _cuil = val!.trim(),
                       keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(10),
+                      ],
+                      validator: (val) {
+                        if (val == null || val.isEmpty) {
+                          return 'Ingresa el CUIL';
+                        }
+                        if (val.length != 10) {
+                          return 'El CUIL debe tener exactamente 10 dígitos';
+                        }
+                        return null;
+                      },
+                      onSaved: (val) => _cuil = val!.trim(),
                     ),
                     const SizedBox(height: 10),
                     DropdownButtonFormField<String>(

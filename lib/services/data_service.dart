@@ -60,6 +60,24 @@ class DataService {
     return null;
   }
 
+  Future<bool> dniExist(String dni) async {
+    final response = await _supabaseClient
+        .from(TABLES.profiles.name)
+        .select()
+        .eq('dni', dni);
+
+    return response.isNotEmpty;
+  }
+
+  Future<bool> cuilExist(String cuil) async {
+    final response = await _supabaseClient
+        .from(TABLES.profiles.name)
+        .select()
+        .eq('cuil', cuil);
+
+    return response.isNotEmpty;
+  }
+
   // --- Métodos para "clientes" ---
 
   // Obtener clientes pendientes
@@ -96,7 +114,6 @@ class DataService {
         .insert(duenoSupervisor.toJson());
   }
 
-  
   Future<void> addCliente(Cliente cliente) async {
     await _supabaseClient.from(TABLES.profiles.name).insert(cliente.toJson());
   }

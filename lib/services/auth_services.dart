@@ -1,5 +1,4 @@
 import 'dart:ffi';
-
 import 'package:mondongo/models/profile.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:logging/logging.dart';
@@ -64,15 +63,26 @@ class AuthService {
     return _supabaseClient.auth.currentUser;
   }
 
-  Profile? getProfile() {
-
-  }
+  Profile? getProfile() {}
 
   Future<void> deleteUser(String userId) async {
     try {
       await _supabaseClient.auth.admin.deleteUser(userId);
     } catch (e) {
       _logger.severe('Error deleting user: $e');
+    }
+  }
+
+  Future<bool> emailExist(String email) async {
+    try {
+      final a = await _supabaseClient.auth.admin.listUsers();
+      for (var u in a) {
+        if (u.email == email) return true;
+      }
+      return false;
+    } catch (e) {
+      _logger.severe('Error: $e');
+      return true;
     }
   }
 }
