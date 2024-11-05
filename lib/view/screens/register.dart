@@ -256,6 +256,13 @@ class _RegisterPageState extends State<RegisterPage> {
       });
 
       try {
+        bool dniExist = await _dataService.dniExist(_dni);
+        if (dniExist) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Error: El DNI ya está registrado.')),
+          );
+          return;
+        }
         final user = await _authService.signUpWithEmail(
             _email, _passwordController.text);
         if (user != null) {
