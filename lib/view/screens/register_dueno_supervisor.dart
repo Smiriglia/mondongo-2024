@@ -36,6 +36,11 @@ class _RegisterDuenoSupervisorPageState
 
   final ImagePicker _picker = ImagePicker();
 
+  // Controladores de texto
+  final TextEditingController _nombreController = TextEditingController();
+  final TextEditingController _apellidoController = TextEditingController();
+  final TextEditingController _dniController = TextEditingController();
+
   // Colores personalizados
   final Color primaryColor = Color(0xFF4B2C20); // Marrón
   final Color accentColor = Color(0xFFD2B48C); // Canela
@@ -49,6 +54,20 @@ class _RegisterDuenoSupervisorPageState
         _foto = File(pickedFile.path);
       });
     }
+  }
+
+  /// Procesa los datos del QR y actualiza los campos
+  void _processQRData(String data) {
+    final dniData = data.split('@');
+    setState(() {
+      _apellido = dniData.length > 1 ? dniData[1] : '';
+      _nombre = dniData.length > 2 ? dniData[2] : '';
+      _dni = dniData.length > 4 ? dniData[4] : '';
+
+      _apellidoController.text = _apellido;
+      _nombreController.text = _nombre;
+      _dniController.text = _dni;
+    });
   }
 
   Future<void> _submit() async {
@@ -128,6 +147,14 @@ class _RegisterDuenoSupervisorPageState
   }
 
   @override
+  void dispose() {
+    _nombreController.dispose();
+    _apellidoController.dispose();
+    _dniController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: backgroundColor,
@@ -166,6 +193,7 @@ class _RegisterDuenoSupervisorPageState
                     const SizedBox(height: 20),
                     // Campos del formulario
                     TextFormField(
+                      controller: _nombreController,
                       decoration: _buildInputDecoration('Nombre'),
                       style: _buildTextStyle(),
                       validator: (val) => val == null || val.isEmpty
@@ -175,6 +203,7 @@ class _RegisterDuenoSupervisorPageState
                     ),
                     const SizedBox(height: 10),
                     TextFormField(
+                      controller: _apellidoController,
                       decoration: _buildInputDecoration('Apellido'),
                       style: _buildTextStyle(),
                       validator: (val) => val == null || val.isEmpty
@@ -183,8 +212,9 @@ class _RegisterDuenoSupervisorPageState
                       onSaved: (val) => _apellido = val!.trim(),
                     ),
                     const SizedBox(height: 10),
-// DNI
+                    // DNI
                     TextFormField(
+                      controller: _dniController,
                       decoration: _buildInputDecoration('DNI').copyWith(
                         suffixIcon: IconButton(
                           icon: Icon(
@@ -197,9 +227,7 @@ class _RegisterDuenoSupervisorPageState
                               MaterialPageRoute(
                                 builder: (context) => QRReaderPage(
                                   onQRRead: (data) {
-                                    setState(() {
-                                      _dni = data;
-                                    });
+                                    _processQRData(data);
                                   },
                                 ),
                               ),
@@ -212,9 +240,7 @@ class _RegisterDuenoSupervisorPageState
                           val == null || val.isEmpty ? 'Ingresa el DNI' : null,
                       onSaved: (val) => _dni = val!.trim(),
                       keyboardType: TextInputType.number,
-                      controller: TextEditingController(text: _dni),
                     ),
-
                     const SizedBox(height: 10),
                     TextFormField(
                       decoration: _buildInputDecoration('CUIL'),

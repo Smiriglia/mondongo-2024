@@ -34,6 +34,11 @@ class RegisterClientePageState extends State<RegisterClientePage> {
 
   final ImagePicker _picker = ImagePicker();
 
+  // Controladores de texto
+  final TextEditingController _nombreController = TextEditingController();
+  final TextEditingController _apellidoController = TextEditingController();
+  final TextEditingController _dniController = TextEditingController();
+
   // Colores personalizados
   final Color primaryColor = Color(0xFF4B2C20); // Marrón
   final Color accentColor = Color(0xFFD2B48C); // Canela
@@ -51,6 +56,20 @@ class RegisterClientePageState extends State<RegisterClientePage> {
     }
   }
 
+  /// Procesa los datos del QR y actualiza los campos
+  void _processQRData(String data) {
+    final dniData = data.split('@');
+    setState(() {
+      _apellido = dniData.length > 1 ? dniData[1] : '';
+      _nombre = dniData.length > 2 ? dniData[2] : '';
+      _dni = dniData.length > 4 ? dniData[4] : '';
+
+      _apellidoController.text = _apellido;
+      _nombreController.text = _nombre;
+      _dniController.text = _dni;
+    });
+  }
+
   /// Envía el formulario y crea el cliente
   Future<void> _submit() async {
     if (_formKey.currentState!.validate()) {
@@ -61,7 +80,7 @@ class RegisterClientePageState extends State<RegisterClientePage> {
         if (newUser == null) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-                content: Text('Error: No se pudo registrar el empleado.')),
+                content: Text('Error: No se pudo registrar el cliente.')),
           );
           return;
         }
@@ -134,6 +153,14 @@ class RegisterClientePageState extends State<RegisterClientePage> {
   }
 
   @override
+  void dispose() {
+    _nombreController.dispose();
+    _apellidoController.dispose();
+    _dniController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -171,6 +198,7 @@ class RegisterClientePageState extends State<RegisterClientePage> {
                   const SizedBox(height: 20),
                   // Nombre
                   TextFormField(
+                    controller: _nombreController,
                     decoration: _buildInputDecoration('Nombre'),
                     style: _buildTextStyle(),
                     validator: (val) =>
@@ -180,6 +208,7 @@ class RegisterClientePageState extends State<RegisterClientePage> {
                   const SizedBox(height: 10),
                   // Apellido
                   TextFormField(
+                    controller: _apellidoController,
                     decoration: _buildInputDecoration('Apellido'),
                     style: _buildTextStyle(),
                     validator: (val) => val == null || val.isEmpty
@@ -189,8 +218,8 @@ class RegisterClientePageState extends State<RegisterClientePage> {
                   ),
                   const SizedBox(height: 10),
                   // DNI
-// DNI
                   TextFormField(
+                    controller: _dniController,
                     decoration: _buildInputDecoration('DNI').copyWith(
                       suffixIcon: IconButton(
                         icon: Icon(
@@ -203,9 +232,7 @@ class RegisterClientePageState extends State<RegisterClientePage> {
                             MaterialPageRoute(
                               builder: (context) => QRReaderPage(
                                 onQRRead: (data) {
-                                  setState(() {
-                                    _dni = data;
-                                  });
+                                  _processQRData(data);
                                 },
                               ),
                             ),
@@ -218,9 +245,7 @@ class RegisterClientePageState extends State<RegisterClientePage> {
                         val == null || val.isEmpty ? 'Ingresa el DNI' : null,
                     onSaved: (val) => _dni = val!.trim(),
                     keyboardType: TextInputType.number,
-                    controller: TextEditingController(text: _dni),
                   ),
-
                   const SizedBox(height: 10),
                   // Email
                   TextFormField(

@@ -27,12 +27,17 @@ class _RegisterEmpleadoPageState extends State<RegisterEmpleadoPage> {
   String _dni = '';
   String _cuil = '';
   String _tipoEmpleado = 'cocinero';
-  String _email = 'abc@gmail.com';
-  String _password = 'test123';
+  String _email = '';
+  String _password = '';
   bool _obscureText = true;
   File? _foto;
 
   final ImagePicker _picker = ImagePicker();
+
+  // Controladores de texto
+  final TextEditingController _nombreController = TextEditingController();
+  final TextEditingController _apellidoController = TextEditingController();
+  final TextEditingController _dniController = TextEditingController();
 
   // Definición de colores y estilos
   final Color primaryColor = Color(0xFF4B2C20);
@@ -77,6 +82,20 @@ class _RegisterEmpleadoPageState extends State<RegisterEmpleadoPage> {
         _foto = File(pickedFile.path);
       });
     }
+  }
+
+  /// Procesa los datos del QR y actualiza los campos
+  void _processQRData(String data) {
+    final dniData = data.split('@');
+    setState(() {
+      _apellido = dniData.length > 1 ? dniData[1] : '';
+      _nombre = dniData.length > 2 ? dniData[2] : '';
+      _dni = dniData.length > 4 ? dniData[4] : '';
+
+      _apellidoController.text = _apellido;
+      _nombreController.text = _nombre;
+      _dniController.text = _dni;
+    });
   }
 
   /// Envía el formulario y crea el empleado
@@ -146,6 +165,14 @@ class _RegisterEmpleadoPageState extends State<RegisterEmpleadoPage> {
   }
 
   @override
+  void dispose() {
+    _nombreController.dispose();
+    _apellidoController.dispose();
+    _dniController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: backgroundColor,
@@ -166,6 +193,7 @@ class _RegisterEmpleadoPageState extends State<RegisterEmpleadoPage> {
                   SizedBox(height: 5),
                   // Nombre
                   TextFormField(
+                    controller: _nombreController,
                     decoration: _inputDecoration('Nombre', Icons.person),
                     validator: (val) =>
                         val == null || val.isEmpty ? 'Ingresa el nombre' : null,
@@ -174,6 +202,7 @@ class _RegisterEmpleadoPageState extends State<RegisterEmpleadoPage> {
                   SizedBox(height: 16),
                   // Apellido
                   TextFormField(
+                    controller: _apellidoController,
                     decoration:
                         _inputDecoration('Apellido', Icons.person_outline),
                     validator: (val) => val == null || val.isEmpty
@@ -183,40 +212,30 @@ class _RegisterEmpleadoPageState extends State<RegisterEmpleadoPage> {
                   ),
                   SizedBox(height: 16),
                   // DNI
-// DNI
                   TextFormField(
+                    controller: _dniController,
                     decoration:
                         _inputDecoration('DNI', Icons.credit_card).copyWith(
                       suffixIcon: IconButton(
                         icon: Icon(Icons.qr_code_scanner, color: primaryColor),
                         onPressed: () async {
-                          // Open the QR reader and process the result
                           final String? scannedData = await Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => QRReaderPage(
                                 onQRRead: (data) {
-                                  setState(() {
-                                    _dni = data;
-                                  });
+                                  _processQRData(data);
                                 },
                               ),
                             ),
                           );
-                          if (scannedData != null) {
-                            setState(() {
-                              _dni = scannedData;
-                            });
-                          }
                         },
                       ),
                     ),
                     validator: (val) =>
                         val == null || val.isEmpty ? 'Ingresa el DNI' : null,
                     onSaved: (val) => _dni = val!.trim(),
-                    controller: TextEditingController(text: _dni),
                   ),
-
                   SizedBox(height: 16),
                   // CUIL
                   TextFormField(
@@ -229,7 +248,7 @@ class _RegisterEmpleadoPageState extends State<RegisterEmpleadoPage> {
                   TextFormField(
                     decoration: _inputDecoration('Correo', Icons.email),
                     validator: (val) =>
-                        val == null || val.isEmpty ? 'Ingresa el Correo' : null,
+                        val == null || val.isEmpty ? 'Ingresa el correo' : null,
                     onSaved: (val) => _email = val!.trim(),
                   ),
                   SizedBox(height: 16),
