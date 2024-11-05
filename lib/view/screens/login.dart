@@ -153,30 +153,8 @@ class _LoginPageState extends State<LoginPage> {
                             'empleado@gmail.com', '112233', 'empleado'),
                         _buildQuickLoginButton(
                             'supervisor@gmail.com', '112233', 'supervisor'),
+                        _buildAnonymousLoginButton(),
                       ],
-                    ),
-                    SizedBox(height: 10),
-                    SizedBox(
-                      width: double
-                          .infinity, // Para que el botón ocupe todo el ancho disponible
-                      child: ElevatedButton(
-                        onPressed: _loginAnonymously,
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 15),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.0),
-                          ),
-                          backgroundColor: Colors.grey[600],
-                        ),
-                        child: Text(
-                          'Ingresar como invitado',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
                     ),
                     if (_errorMessage.isNotEmpty)
                       Padding(
@@ -216,7 +194,7 @@ class _LoginPageState extends State<LoginPage> {
         child: Image.asset(
           'assets/login/$role.png',
           color: Colors.white,
-          width: 30,
+          width: 40,
         ),
       ),
     );
@@ -257,6 +235,26 @@ class _LoginPageState extends State<LoginPage> {
         });
       }
     }
+  }
+
+  Widget _buildAnonymousLoginButton() {
+    return SizedBox(
+      child: ElevatedButton(
+        onPressed: _loginAnonymously,
+        style: ElevatedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.0),
+          ),
+          backgroundColor: Colors.brown[700],
+        ),
+        child: Image.asset(
+          'assets/login/anonimo.png',
+          color: Colors.white,
+          width: 40,
+        ),
+      ),
+    );
   }
 
   Future<void> _loginAnonymously() async {

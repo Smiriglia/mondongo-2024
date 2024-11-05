@@ -10,6 +10,10 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
+  bool _isUserSupervisor(Profile? profile) {
+    return profile?.rol == 'supervisor';
+  }
+
   @override
   Widget build(BuildContext context) {
     final authService = GetIt.instance.get<AuthService>();
@@ -51,6 +55,7 @@ class HomePage extends StatelessWidget {
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
+            // Tarjeta de bienvenida
             Container(
               width: double.infinity,
               height: 180,
@@ -95,7 +100,7 @@ class HomePage extends StatelessWidget {
                         Row(
                           children: [
                             Container(
-                              padding: EdgeInsets.all(3),
+                              padding: EdgeInsets.all(2),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 shape: BoxShape.circle,
@@ -103,18 +108,18 @@ class HomePage extends StatelessWidget {
                               child: CircleAvatar(
                                 radius: 35,
                                 backgroundColor: Colors.brown[200],
-                                child: currentProfile != null &&
+                                backgroundImage: currentProfile != null &&
                                         currentProfile.fotoUrl != null
-                                    ? Image.network(
-                                        currentProfile.fotoUrl!,
-                                        height: 55,
-                                        width: 55,
-                                      )
-                                    : Icon(
+                                    ? NetworkImage(currentProfile.fotoUrl!)
+                                    : null,
+                                child: currentProfile == null ||
+                                        currentProfile.fotoUrl == null
+                                    ? Icon(
                                         Icons.person,
                                         color: Colors.brown[800],
-                                        size: 40,
-                                      ),
+                                        size: 50,
+                                      )
+                                    : null,
                               ),
                             ),
                             SizedBox(width: 20),
@@ -187,6 +192,7 @@ class HomePage extends StatelessWidget {
             Expanded(
               child: Column(
                 children: [
+                  // Grid de tarjetas de menú
                   Expanded(
                     child: GridView.count(
                       crossAxisCount: 2,
@@ -194,43 +200,59 @@ class HomePage extends StatelessWidget {
                       mainAxisSpacing: 20,
                       childAspectRatio: 1.1,
                       children: [
-                        _buildMenuCard(
-                          context,
-                          title: 'Registrar Empleado',
-                          icon: Icons.person_add,
-                          color: Color(0xFF5D4037),
-                          onTap: () {
-                            context.router.push(const RegisterEmpleadoRoute());
-                          },
-                        ),
-                        _buildMenuCard(
-                          context,
-                          title: 'Registrar Dueño/Sup',
-                          icon: Icons.supervisor_account,
-                          color: Color(0xFF5D4037),
-                          onTap: () {
-                            context.router
-                                .push(const RegisterDuenoSupervisorRoute());
-                          },
-                        ),
-                        _buildMenuCard(
-                          context,
-                          title: 'Registrar Cliente',
-                          icon: Icons.person_outline,
-                          color: Color(0xFF5D4037),
-                          onTap: () {
-                            context.router.push(const RegisterClienteRoute());
-                          },
-                        ),
-                        _buildMenuCard(
-                          context,
-                          title: 'Registrar Mesa',
-                          icon: Icons.table_restaurant,
-                          color: Color(0xFF5D4037),
-                          onTap: () {
-                            context.router.push(const RegisterMesaRoute());
-                          },
-                        ),
+                        if (_isUserSupervisor(currentProfile))
+                          _buildMenuCard(
+                            context,
+                            title: 'Aprobación de Clientes',
+                            icon: Icons.check_circle,
+                            color: Color(0xFF5D4037),
+                            onTap: () {
+                              context.router
+                                  .push(const AprobacionClientesRoute());
+                            },
+                          ),
+                        if (_isUserSupervisor(currentProfile))
+                          _buildMenuCard(
+                            context,
+                            title: 'Registrar Empleado',
+                            icon: Icons.person_add,
+                            color: Color(0xFF5D4037),
+                            onTap: () {
+                              context.router
+                                  .push(const RegisterEmpleadoRoute());
+                            },
+                          ),
+                        if (_isUserSupervisor(currentProfile))
+                          _buildMenuCard(
+                            context,
+                            title: 'Registrar Dueño/Sup',
+                            icon: Icons.supervisor_account,
+                            color: Color(0xFF5D4037),
+                            onTap: () {
+                              context.router
+                                  .push(const RegisterDuenoSupervisorRoute());
+                            },
+                          ),
+                        if (_isUserSupervisor(currentProfile))
+                          _buildMenuCard(
+                            context,
+                            title: 'Registrar Cliente',
+                            icon: Icons.person_outline,
+                            color: Color(0xFF5D4037),
+                            onTap: () {
+                              context.router.push(const RegisterClienteRoute());
+                            },
+                          ),
+                        if (_isUserSupervisor(currentProfile))
+                          _buildMenuCard(
+                            context,
+                            title: 'Registrar Mesa',
+                            icon: Icons.table_restaurant,
+                            color: Color(0xFF5D4037),
+                            onTap: () {
+                              context.router.push(const RegisterMesaRoute());
+                            },
+                          ),
                         _buildMenuCard(
                           context,
                           title: 'Descuentos para Clientes',

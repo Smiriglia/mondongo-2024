@@ -8,6 +8,7 @@ import 'package:mondongo/services/auth_services.dart';
 import 'package:mondongo/services/data_service.dart';
 import 'package:mondongo/services/storage_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:mondongo/view/screens/qr_reader_page.dart';
 
 @RoutePage()
 class RegisterDuenoSupervisorPage extends StatefulWidget {
@@ -182,14 +183,38 @@ class _RegisterDuenoSupervisorPageState
                       onSaved: (val) => _apellido = val!.trim(),
                     ),
                     const SizedBox(height: 10),
+// DNI
                     TextFormField(
-                      decoration: _buildInputDecoration('DNI'),
+                      decoration: _buildInputDecoration('DNI').copyWith(
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            Icons.qr_code_scanner,
+                            color: primaryColor,
+                          ),
+                          onPressed: () async {
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => QRReaderPage(
+                                  onQRRead: (data) {
+                                    setState(() {
+                                      _dni = data;
+                                    });
+                                  },
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
                       style: _buildTextStyle(),
                       validator: (val) =>
                           val == null || val.isEmpty ? 'Ingresa el DNI' : null,
                       onSaved: (val) => _dni = val!.trim(),
                       keyboardType: TextInputType.number,
+                      controller: TextEditingController(text: _dni),
                     ),
+
                     const SizedBox(height: 10),
                     TextFormField(
                       decoration: _buildInputDecoration('CUIL'),

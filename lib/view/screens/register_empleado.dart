@@ -8,6 +8,7 @@ import 'package:mondongo/services/data_service.dart';
 import 'package:mondongo/services/storage_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:mondongo/view/screens/qr_reader_page.dart';
 
 @RoutePage()
 class RegisterEmpleadoPage extends StatefulWidget {
@@ -182,12 +183,40 @@ class _RegisterEmpleadoPageState extends State<RegisterEmpleadoPage> {
                   ),
                   SizedBox(height: 16),
                   // DNI
+// DNI
                   TextFormField(
-                    decoration: _inputDecoration('DNI', Icons.credit_card),
+                    decoration:
+                        _inputDecoration('DNI', Icons.credit_card).copyWith(
+                      suffixIcon: IconButton(
+                        icon: Icon(Icons.qr_code_scanner, color: primaryColor),
+                        onPressed: () async {
+                          // Open the QR reader and process the result
+                          final String? scannedData = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => QRReaderPage(
+                                onQRRead: (data) {
+                                  setState(() {
+                                    _dni = data;
+                                  });
+                                },
+                              ),
+                            ),
+                          );
+                          if (scannedData != null) {
+                            setState(() {
+                              _dni = scannedData;
+                            });
+                          }
+                        },
+                      ),
+                    ),
                     validator: (val) =>
                         val == null || val.isEmpty ? 'Ingresa el DNI' : null,
                     onSaved: (val) => _dni = val!.trim(),
+                    controller: TextEditingController(text: _dni),
                   ),
+
                   SizedBox(height: 16),
                   // CUIL
                   TextFormField(
