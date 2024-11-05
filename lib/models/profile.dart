@@ -1,21 +1,42 @@
 import 'package:json_annotation/json_annotation.dart';
-
-part 'profile.g.dart';
+import 'package:mondongo/models/cliente.dart';
+import 'package:mondongo/models/dueno_supervisor.dart';
+import 'package:mondongo/models/empleado.dart';
 
 @JsonSerializable()
-class Profile {
+abstract class Profile {
   final String id;
-  final String email;
-  final String fullName;
+  final String nombre;
+  final String apellido;
+  final String dni;
+  final String? fotoUrl;
+  final DateTime createdAt;
+  final String rol;
+  
 
   Profile({
     required this.id,
-    required this.email,
-    required this.fullName,
+    required this.nombre,
+    required this.apellido,
+    required this.dni,
+    required this.createdAt,
+    required this.rol,
+    this.fotoUrl,
   });
 
-  Map<String, dynamic> toJson() => _$ProfileToJson(this);
+  Map<String, dynamic> toJson();
 
-  factory Profile.fromJson(Map<String, dynamic> json) =>
-      _$ProfileFromJson(json);
+  factory Profile.fromJson(Map<String, dynamic> json) {
+    switch (json['rol']) {
+      case 'cliente':
+        return Cliente.fromJson(json);
+      case 'empleado':
+        return Empleado.fromJson(json);
+      case 'supervisor':
+        return DuenoSupervisor.fromJson(json);
+      case 'dueño':
+        return DuenoSupervisor.fromJson(json);
+    }
+    throw Exception('rol invalido');
+  }
 }

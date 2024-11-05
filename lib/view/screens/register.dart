@@ -1,8 +1,11 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mondongo/main.dart';
+import 'package:mondongo/models/cliente.dart';
 import 'package:mondongo/routes/app_router.gr.dart';
 import 'package:mondongo/services/auth_services.dart';
+import 'package:mondongo/services/data_service.dart';
 import '../../theme/theme.dart';
 
 @RoutePage()
@@ -24,8 +27,11 @@ class _RegisterPageState extends State<RegisterPage> {
   String _email = '';
   String _fullName = '';
   String _errorMessage = '';
+  String _dni = '';
 
   bool _isLoading = false;
+  
+  DataService _dataService = getIt.get<DataService>();
 
   @override
   void dispose() {
@@ -215,6 +221,14 @@ class _RegisterPageState extends State<RegisterPage> {
         final user = await _authService.signUpWithEmail(
             _email, _passwordController.text);
         if (user != null) {
+          Cliente newCliente = Cliente(
+              estado: 'pendiente',
+              id: user.id,
+              nombre: _fullName,
+              apellido: _fullName,
+              dni: _dni,
+              createdAt: DateTime.now());
+          await _dataService.addCliente(newCliente);
           widget.onResult(true);
         } else {
           setState(() {

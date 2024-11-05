@@ -86,7 +86,7 @@ class _RegisterDuenoSupervisorPageState
           dni: _dni,
           cuil: _cuil,
           fotoUrl: fotoUrl,
-          perfil: _perfil,
+          rol: _perfil,
           createdAt: DateTime.now(),
         );
 

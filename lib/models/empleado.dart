@@ -1,51 +1,27 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mondongo/models/profile.dart';
 part 'empleado.g.dart';
 
 @JsonSerializable()
-class Empleado {
-  final String id;
-  final String nombre;
-  final String apellido;
-  final String dni;
+class Empleado extends Profile {
   final String cuil;
-  final String? fotoUrl;
   final String tipoEmpleado;
-  final DateTime createdAt;
 
   Empleado({
-    required this.id,
-    required this.nombre,
-    required this.apellido,
-    required this.dni,
     required this.cuil,
-    this.fotoUrl,
     required this.tipoEmpleado,
-    required this.createdAt,
+    required super.id,
+    required super.nombre,
+    required super.apellido,
+    required super.dni,
+    required super.createdAt,
+    super.rol = 'empleado',
+    super.fotoUrl,
   });
 
-  factory Empleado.fromJson(Map<String, dynamic> json) {
-    return Empleado(
-      id: json['id'],
-      nombre: json['nombre'],
-      apellido: json['apellido'],
-      dni: json['dni'],
-      cuil: json['cuil'],
-      fotoUrl: json['foto_url'],
-      tipoEmpleado: json['tipo_empleado'],
-      createdAt: DateTime.parse(json['created_at']),
-    );
-  }
+  @override
+  Map<String, dynamic> toJson() => _$EmpleadoToJson(this);
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'nombre': nombre,
-      'apellido': apellido,
-      'dni': dni,
-      'cuil': cuil,
-      'foto_url': fotoUrl,
-      'tipo_empleado': tipoEmpleado,
-      'created_at': createdAt.toIso8601String(),
-    };
-  }
+  factory Empleado.fromJson(Map<String, dynamic> json) =>
+      _$EmpleadoFromJson(json);
 }

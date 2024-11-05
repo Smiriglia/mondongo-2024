@@ -1,26 +1,20 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mondongo/models/profile.dart';
 part 'dueno_supervisor.g.dart';
 
 @JsonSerializable()
-class DuenoSupervisor {
-  final String id;
-  final String nombre;
-  final String apellido;
-  final String dni;
+class DuenoSupervisor extends Profile {
   final String cuil;
-  final String? fotoUrl;
-  final String perfil;
-  final DateTime createdAt;
 
   DuenoSupervisor({
-    required this.id,
-    required this.nombre,
-    required this.apellido,
-    required this.dni,
     required this.cuil,
-    this.fotoUrl,
-    required this.perfil,
-    required this.createdAt,
+    required super.id,
+    required super.nombre,
+    required super.apellido,
+    required super.dni,
+    required super.createdAt,
+    super.rol = 'dueño/supervisor',
+    super.fotoUrl,
   });
 
   Map<String, dynamic> toJson() => _$DuenoSupervisorToJson(this);

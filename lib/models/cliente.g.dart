@@ -7,13 +7,14 @@ part of 'cliente.dart';
 // **************************************************************************
 
 Cliente _$ClienteFromJson(Map<String, dynamic> json) => Cliente(
+      estado: json['estado'] as String,
       id: json['id'] as String,
       nombre: json['nombre'] as String,
       apellido: json['apellido'] as String,
       dni: json['dni'] as String,
-      fotoUrl: json['fotoUrl'] as String?,
       createdAt: DateTime.parse(json['createdAt'] as String),
-      estado: json['estado'] as String,
+      rol: json['rol'] as String? ?? 'cliente',
+      fotoUrl: json['fotoUrl'] as String?,
     );
 
 Map<String, dynamic> _$ClienteToJson(Cliente instance) => <String, dynamic>{
@@ -23,5 +24,6 @@ Map<String, dynamic> _$ClienteToJson(Cliente instance) => <String, dynamic>{
       'dni': instance.dni,
       'fotoUrl': instance.fotoUrl,
       'createdAt': instance.createdAt.toIso8601String(),
+      'rol': instance.rol,
       'estado': instance.estado,
     };

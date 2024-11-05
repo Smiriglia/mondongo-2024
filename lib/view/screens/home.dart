@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:mondongo/models/profile.dart';
 import 'package:mondongo/routes/app_router.gr.dart';
 import 'package:mondongo/services/auth_services.dart';
 import 'package:get_it/get_it.dart';
@@ -12,7 +13,8 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authService = GetIt.instance.get<AuthService>();
-    final User? currentUser = authService.getUser();
+    final User currentUser = authService.getUser()!;
+    final Profile? currentProfile = authService.profile;
 
     return Scaffold(
       appBar: AppBar(
@@ -101,11 +103,18 @@ class HomePage extends StatelessWidget {
                               child: CircleAvatar(
                                 radius: 35,
                                 backgroundColor: Colors.brown[200],
-                                child: Icon(
-                                  Icons.person,
-                                  color: Colors.brown[800],
-                                  size: 40,
-                                ),
+                                child: currentProfile != null &&
+                                        currentProfile.fotoUrl != null
+                                    ? Image.network(
+                                        currentProfile.fotoUrl!,
+                                        height: 55,
+                                        width: 55,
+                                      )
+                                    : Icon(
+                                        Icons.person,
+                                        color: Colors.brown[800],
+                                        size: 40,
+                                      ),
                               ),
                             ),
                             SizedBox(width: 20),
@@ -123,8 +132,9 @@ class HomePage extends StatelessWidget {
                                   ),
                                   SizedBox(height: 8),
                                   Text(
-                                    currentUser?.email?.split('@')[0] ??
-                                        'Usuario',
+                                    currentProfile != null
+                                        ? '${currentProfile.nombre} ${currentProfile.apellido}'
+                                        : 'Usuario',
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 20,
@@ -155,7 +165,10 @@ class HomePage extends StatelessWidget {
                               ),
                               SizedBox(width: 8),
                               Text(
-                                currentUser?.email ?? 'No email',
+                                currentUser.email != null &&
+                                        currentUser.email!.isNotEmpty
+                                    ? '${currentUser.email}'
+                                    : 'No email',
                                 style: TextStyle(
                                   color: Colors.white.withOpacity(0.9),
                                   fontSize: 14,

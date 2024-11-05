@@ -1,8 +1,11 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mondongo/models/cliente.dart';
+import 'package:mondongo/models/profile.dart';
 import 'package:mondongo/routes/app_router.gr.dart';
 import 'package:mondongo/services/auth_services.dart';
+import 'package:mondongo/services/data_service.dart';
 import '../../theme/theme.dart';
 
 @RoutePage()
@@ -16,6 +19,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final AuthService _authService = GetIt.instance<AuthService>();
+  final DataService _dataService = GetIt.instance<DataService>();
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _emailController = TextEditingController();
@@ -125,7 +129,6 @@ class _LoginPageState extends State<LoginPage> {
                         final router = AutoRouter.of(context);
                         router.push(RegisterRoute(onResult: (result) {
                           router.removeLast();
-                          widget.onResult(result);
                         }));
                       },
                       child: Text(
@@ -144,10 +147,36 @@ class _LoginPageState extends State<LoginPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        _buildQuickLoginButton('cliente@gmail.com', '112233','cliente'),
-                        _buildQuickLoginButton('empleado@gmail.com', '112233', 'empleado'),
-                        _buildQuickLoginButton('supervisor@gmail.com', '112233', 'supervisor'),
+                        _buildQuickLoginButton(
+                            'cliente@gmail.com', '112233', 'cliente'),
+                        _buildQuickLoginButton(
+                            'empleado@gmail.com', '112233', 'empleado'),
+                        _buildQuickLoginButton(
+                            'supervisor@gmail.com', '112233', 'supervisor'),
                       ],
+                    ),
+                    SizedBox(height: 10),
+                    SizedBox(
+                      width: double
+                          .infinity, // Para que el botón ocupe todo el ancho disponible
+                      child: ElevatedButton(
+                        onPressed: _loginAnonymously,
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          backgroundColor: Colors.grey[600],
+                        ),
+                        child: Text(
+                          'Ingresar como invitado',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
                     ),
                     if (_errorMessage.isNotEmpty)
                       Padding(
@@ -206,7 +235,14 @@ class _LoginPageState extends State<LoginPage> {
           _passwordController.text.trim(),
         );
         if (user != null) {
-          widget.onResult(true);
+          Profile? profile = await _dataService.fetchProfileById(user.id);
+          if (profile != null) {
+            if (profile is Cliente && profile.estado != 'aprobado') {
+              throw Exception('Cliente no aprobado');
+            }
+            _authService.profile = profile;
+            widget.onResult(true);
+          }
         } else {
           setState(() {
             _isLoading = false;
@@ -216,9 +252,35 @@ class _LoginPageState extends State<LoginPage> {
       } catch (e) {
         setState(() {
           _isLoading = false;
-          _errorMessage = 'Error: ${e.toString()}';
+          _errorMessage =
+              'Error: ${e.toString().replaceAll('Exception: ', '')}';
         });
       }
+    }
+  }
+
+  Future<void> _loginAnonymously() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = '';
+    });
+
+    try {
+      final user = await _authService.signInAnonymously();
+      if (user != null) {
+        _authService.profile = null;
+        widget.onResult(true);
+      } else {
+        setState(() {
+          _isLoading = false;
+          _errorMessage = 'Error en el inicio de sesión anónimo';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+        _errorMessage = 'Error: ${e.toString().replaceAll('Exception: ', '')}';
+      });
     }
   }
 }

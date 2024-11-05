@@ -1,9 +1,12 @@
+import 'dart:ffi';
+
 import 'package:mondongo/models/profile.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:logging/logging.dart';
 
 class AuthService {
   final SupabaseClient _supabaseClient = Supabase.instance.client;
+  Profile? profile;
   final _logger = Logger('AuthService');
 
   Future<User?> signInWithGoogle() async {
@@ -12,6 +15,16 @@ class AuthService {
       return _supabaseClient.auth.currentUser;
     } catch (e) {
       _logger.severe('Error signing in with Google: $e');
+      return null;
+    }
+  }
+
+  Future<User?> signInAnonymously() async {
+    try {
+      await _supabaseClient.auth.signInAnonymously();
+      return _supabaseClient.auth.currentUser;
+    } catch (e) {
+      _logger.severe('Error signing in Anonymously: $e');
       return null;
     }
   }
@@ -41,6 +54,7 @@ class AuthService {
   Future<void> signOut() async {
     try {
       await _supabaseClient.auth.signOut();
+      profile = null;
     } catch (e) {
       _logger.severe('Error signing out: $e');
     }
