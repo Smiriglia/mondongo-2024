@@ -1,3 +1,8 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'profile.g.dart';
+
+@JsonSerializable()
 class Profile {
   final String id;
   final String email;
@@ -9,21 +14,8 @@ class Profile {
     required this.fullName,
   });
 
-  // Convierte el JSON a un objeto Profile
-  factory Profile.fromJson(Map<String, dynamic> json) {
-    return Profile(
-      id: json['id'],
-      email: json['email'],
-      fullName: json['full_name'],
-    );
-  }
+  Map<String, dynamic> toJson() => _$ProfileToJson(this);
 
-  // Convierte un objeto Profile a JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'email': email,
-      'full_name': fullName,
-    };
-  }
+  factory Profile.fromJson(Map<String, dynamic> json) =>
+      _$ProfileFromJson(json);
 }

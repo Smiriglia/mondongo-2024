@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:mondongo/main.dart';
-import 'package:mondongo/models/Mesa.dart';
+import 'package:mondongo/models/mesa.dart';
 import 'package:mondongo/services/data_service.dart';
 import 'package:mondongo/services/qr_service.dart';
 import 'package:mondongo/services/storage_service.dart';

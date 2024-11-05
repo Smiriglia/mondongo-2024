@@ -1,3 +1,8 @@
+import 'package:json_annotation/json_annotation.dart';
+part 'mesa.g.dart';
+
+
+@JsonSerializable()
 class Mesa {
   final int numero;
   final int cantidadComensales;
@@ -15,25 +20,8 @@ class Mesa {
     required this.createdAt,
   });
 
-  factory Mesa.fromJson(Map<String, dynamic> json) {
-    return Mesa(
-      numero: json['numero'] as int,
-      cantidadComensales: json['cantidad_comensales'] as int,
-      tipo: json['tipo'] as String,
-      fotoUrl: json['foto_url'] as String?,
-      qrCodeUrl: json['qr_code_url'] as String,
-      createdAt: DateTime.parse(json['created_at'] as String),
-    );
-  }
+  Map<String, dynamic> toJson() => _$MesaToJson(this);
 
-  Map<String, dynamic> toJson() {
-    return {
-      'numero': numero,
-      'cantidad_comensales': cantidadComensales,
-      'tipo': tipo,
-      'foto_url': fotoUrl,
-      'qr_code_url': qrCodeUrl,
-      'created_at': createdAt.toIso8601String(),
-    };
-  }
+  factory Mesa.fromJson(Map<String, dynamic> json) =>
+      _$MesaFromJson(json);
 }

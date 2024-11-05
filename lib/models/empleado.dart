@@ -1,3 +1,7 @@
+import 'package:json_annotation/json_annotation.dart';
+part 'empleado.g.dart';
+
+@JsonSerializable()
 class Empleado {
   final String id;
   final String nombre;

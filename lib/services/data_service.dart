@@ -1,7 +1,7 @@
 import 'package:mondongo/models/empleado.dart';
 import 'package:mondongo/models/dueno_supervisor.dart';
-import 'package:mondongo/models/Cliente.dart';
-import 'package:mondongo/models/Mesa.dart';
+import 'package:mondongo/models/cliente.dart';
+import 'package:mondongo/models/mesa.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:mondongo/models/profile.dart'; // Asegúrate de tener un modelo Profile
 

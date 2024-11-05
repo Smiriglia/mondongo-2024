@@ -1,3 +1,4 @@
+import 'package:mondongo/models/profile.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:logging/logging.dart';
 
@@ -47,6 +48,10 @@ class AuthService {
 
   User? getUser() {
     return _supabaseClient.auth.currentUser;
+  }
+
+  Profile? getProfile() {
+
   }
 
   Future<void> deleteUser(String userId) async {

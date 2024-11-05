@@ -1,6 +1,6 @@
 // lib/view/screens/aprobacionClientes.dart
 import 'package:flutter/material.dart';
-import 'package:mondongo/models/Cliente.dart';
+import 'package:mondongo/models/cliente.dart';
 import 'package:mondongo/services/data_service.dart';
 import 'package:mondongo/main.dart';
 import 'package:auto_route/auto_route.dart';

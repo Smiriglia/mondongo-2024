@@ -1,3 +1,7 @@
+import 'package:json_annotation/json_annotation.dart';
+part 'dueno_supervisor.g.dart';
+
+@JsonSerializable()
 class DuenoSupervisor {
   final String id;
   final String nombre;
@@ -19,29 +23,8 @@ class DuenoSupervisor {
     required this.createdAt,
   });
 
-  factory DuenoSupervisor.fromJson(Map<String, dynamic> json) {
-    return DuenoSupervisor(
-      id: json['id'],
-      nombre: json['nombre'],
-      apellido: json['apellido'],
-      dni: json['dni'],
-      cuil: json['cuil'],
-      fotoUrl: json['foto_url'],
-      perfil: json['perfil'],
-      createdAt: DateTime.parse(json['created_at']),
-    );
-  }
+  Map<String, dynamic> toJson() => _$DuenoSupervisorToJson(this);
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'nombre': nombre,
-      'apellido': apellido,
-      'dni': dni,
-      'cuil': cuil,
-      'foto_url': fotoUrl,
-      'perfil': perfil,
-      'created_at': createdAt.toIso8601String(),
-    };
-  }
+  factory DuenoSupervisor.fromJson(Map<String, dynamic> json) =>
+      _$DuenoSupervisorFromJson(json);
 }

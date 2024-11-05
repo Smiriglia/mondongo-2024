@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mondongo/main.dart';
-import 'package:mondongo/models/Cliente.dart';
+import 'package:mondongo/models/cliente.dart';
 import 'package:mondongo/services/auth_services.dart';
 import 'package:mondongo/services/data_service.dart';
 import 'package:mondongo/services/storage_service.dart';
