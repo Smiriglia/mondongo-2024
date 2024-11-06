@@ -5,6 +5,7 @@ import 'package:get_it/get_it.dart';
 import 'package:mondongo/routes/app_router.dart';
 import 'package:mondongo/services/auth_services.dart';
 import 'package:mondongo/services/data_service.dart';
+import 'package:mondongo/services/email_service.dart';
 import 'package:mondongo/services/qr_service.dart';
 import 'package:mondongo/services/storage_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -27,10 +28,13 @@ void main() async {
   getIt.registerSingleton(DataService());
   getIt.registerSingleton(StorageService());
   getIt.registerSingleton(QRService());
+  getIt.registerSingleton(EmailService());
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     AppRouter appRouter = getIt.get<AppRouter>();
