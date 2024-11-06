@@ -2,12 +2,14 @@ import 'package:mondongo/models/empleado.dart';
 import 'package:mondongo/models/dueno_supervisor.dart';
 import 'package:mondongo/models/cliente.dart';
 import 'package:mondongo/models/mesa.dart';
+import 'package:mondongo/models/pedido.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:mondongo/models/profile.dart'; // Asegúrate de tener un modelo Profile
 
 enum TABLES {
   profiles,
-  mesas;
+  mesas,
+  pedidos;
 
   String get name {
     switch (this) {
@@ -15,6 +17,8 @@ enum TABLES {
         return 'profiles';
       case TABLES.mesas:
         return 'mesas';
+      case TABLES.pedidos:
+        return 'pedidos';
     }
   }
 }
@@ -27,6 +31,24 @@ class DataService {
   Future<List<Profile>> fetchProfiles() async {
     final data = await _supabaseClient.from(TABLES.profiles.name).select();
     return data.map<Profile>((p) => Profile.fromJson(p)).toList();
+  }
+
+  Future<Mesa?> fetchMesaByNumero(int numeroMesa) async {
+    try {
+
+      final data = await _supabaseClient.from(TABLES.mesas.name).select().eq('numero', numeroMesa);
+      if (data.isNotEmpty) {
+
+        return Mesa.fromJson(data[0]);
+      }
+      else {
+        return null;
+      }
+    }
+    catch (e) {
+      print(e);
+      return null;
+    }
   }
 
   // Add a new profile
@@ -124,22 +146,18 @@ class DataService {
   }
 
   Future<void> addToWaitList(String qrData) async {
-    final userId = Supabase.instance.client.auth.currentUser?.id;
+    final userId = _supabaseClient.auth.currentUser?.id;
 
     if (userId == null) {
       throw Exception('Usuario no autenticado');
     }
 
-    final response = await _supabaseClient.from('pedidos').insert({
-      'cliente_id': userId,
-      'mesa_numero': int.parse(qrData),
-      'estado': 'espera',
-      'fecha': DateTime.now().toIso8601String(),
-    });
-
-    if (response.error != null) {
-      throw Exception(
-          'Error al agregar a la lista de espera: ${response.error!.message}');
-    }
+    final response = await _supabaseClient.from(TABLES.pedidos.name).insert(
+      {
+        'clienteId': userId,
+        'estado': 'espera',
+        'fecha': DateTime.now().toIso8601String()
+      }
+    );
   }
 }

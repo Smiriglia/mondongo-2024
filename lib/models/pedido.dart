@@ -6,14 +6,14 @@ part 'pedido.g.dart';
 class Pedido {
   final String id;
   final String clienteId;
-  final int mesaNumero;
+  final int? mesaNumero;
   final String estado;
   final DateTime fecha;
 
   Pedido({
     required this.id,
     required this.clienteId,
-    required this.mesaNumero,
+    this.mesaNumero,
     required this.estado,
     required this.fecha,
   });

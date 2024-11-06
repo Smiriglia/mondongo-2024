@@ -1,6 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:mondongo/routes/app_router.gr.dart';
 import 'package:mondongo/routes/guards/auth_guard.dart';
+import 'package:mondongo/view/screens/qr_scan_page.dart';
+import 'package:mondongo/view/screens/qr_reader_page.dart';
 
 @AutoRouterConfig()
 class AppRouter extends RootStackRouter {
@@ -15,5 +17,7 @@ class AppRouter extends RootStackRouter {
         AutoRoute(page: RegisterClienteRoute.page),
         AutoRoute(page: RegisterMesaRoute.page),
         AutoRoute(page: AprobacionClientesRoute.page),
+        AutoRoute(page: QrScannerRoute.page, guards: [AuthGuard()]),
+        AutoRoute(page: MesaRoute.page, guards: [AuthGuard()]),
       ];
 }

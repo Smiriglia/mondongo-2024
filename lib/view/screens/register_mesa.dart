@@ -102,11 +102,11 @@ class _RegisterMesaPageState extends State<RegisterMesaPage> {
             return;
           }
         }
-
+        
         Mesa newMesa = Mesa(
           numero: _numero,
           cantidadComensales: _cantidadComensales,
-          tipo: _tipoMesa,
+          tipo: TipoMesa.getTipoMesa(_tipoMesa),
           fotoUrl: fotoUrl,
           qrCodeUrl: qrUrl,
           createdAt: DateTime.now(),

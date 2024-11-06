@@ -1,12 +1,30 @@
 import 'package:json_annotation/json_annotation.dart';
 part 'mesa.g.dart';
 
+enum TipoMesa {
+  VIP,
+  discapacitados,
+  estandar,
+  otro;
 
+  static TipoMesa getTipoMesa(String tipo) {
+    switch (tipo.toLowerCase()) {
+      case 'vip':
+        return TipoMesa.VIP;
+      case 'discapacitados':
+        return TipoMesa.discapacitados;
+      case 'estandar':
+        return TipoMesa.estandar;
+      default:
+        return TipoMesa.otro;
+    }
+  }
+}
 @JsonSerializable()
 class Mesa {
   final int numero;
   final int cantidadComensales;
-  final String tipo;
+  final TipoMesa tipo;
   final String? fotoUrl;
   final String qrCodeUrl;
   final DateTime createdAt;

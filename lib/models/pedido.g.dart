@@ -9,7 +9,7 @@ part of 'pedido.dart';
 Pedido _$PedidoFromJson(Map<String, dynamic> json) => Pedido(
       id: json['id'] as String,
       clienteId: json['clienteId'] as String,
-      mesaNumero: (json['mesaNumero'] as num).toInt(),
+      mesaNumero: (json['mesaNumero'] as num?)?.toInt(),
       estado: json['estado'] as String,
       fecha: DateTime.parse(json['fecha'] as String),
     );

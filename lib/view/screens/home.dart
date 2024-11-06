@@ -280,6 +280,10 @@ class HomePage extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 10),
+                  ElevatedButton(onPressed: () {
+                    final router = AutoRouter.of(context);
+                    router.push(const QrScannerRoute());
+                  }, child: Icon(Icons.qr_code))
                 ],
               ),
             ),
