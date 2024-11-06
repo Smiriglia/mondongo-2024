@@ -4,6 +4,7 @@ import 'package:mondongo/models/cliente.dart';
 import 'package:mondongo/services/data_service.dart';
 import 'package:mondongo/main.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:mondongo/services/email_service.dart';
 
 @RoutePage()
 class AprobacionClientesPage extends StatefulWidget {
@@ -15,6 +16,7 @@ class AprobacionClientesPage extends StatefulWidget {
 
 class _AprobacionClientesPageState extends State<AprobacionClientesPage> {
   final _dataService = getIt.get<DataService>();
+  final _emailService = getIt.get<EmailService>();
   List<Cliente> _clientesPendientes = [];
   bool _isLoading = false;
 
@@ -73,6 +75,7 @@ class _AprobacionClientesPageState extends State<AprobacionClientesPage> {
           backgroundColor: primaryColor,
         ),
       );
+      _emailService.sendEmail(cliente.email, 'Aprobacion Cuenta', 'Tu cuenta ha sido aprobada');
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -103,6 +106,7 @@ class _AprobacionClientesPageState extends State<AprobacionClientesPage> {
           backgroundColor: primaryColor,
         ),
       );
+      _emailService.sendEmail(cliente.email, 'Aprobacion Cuenta', 'Tu cuenta ha sido rechazada');
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
