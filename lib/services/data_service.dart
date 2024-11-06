@@ -35,17 +35,16 @@ class DataService {
 
   Future<Mesa?> fetchMesaByNumero(int numeroMesa) async {
     try {
-
-      final data = await _supabaseClient.from(TABLES.mesas.name).select().eq('numero', numeroMesa);
+      final data = await _supabaseClient
+          .from(TABLES.mesas.name)
+          .select()
+          .eq('numero', numeroMesa);
       if (data.isNotEmpty) {
-
         return Mesa.fromJson(data[0]);
-      }
-      else {
+      } else {
         return null;
       }
-    }
-    catch (e) {
+    } catch (e) {
       print(e);
       return null;
     }
@@ -152,12 +151,75 @@ class DataService {
       throw Exception('Usuario no autenticado');
     }
 
-    final response = await _supabaseClient.from(TABLES.pedidos.name).insert(
-      {
-        'clienteId': userId,
-        'estado': 'espera',
-        'fecha': DateTime.now().toIso8601String()
-      }
-    );
+    final response = await _supabaseClient.from(TABLES.pedidos.name).insert({
+      'clienteId': userId,
+      'estado': 'espera',
+      'fecha': DateTime.now().toIso8601String()
+    });
+  }
+
+  // Fetch pedidos with 'espera' estado
+  Future<List<Pedido>> fetchPendingPedidos() async {
+    final data = await _supabaseClient
+        .from(TABLES.pedidos.name)
+        .select()
+        .eq('estado', 'espera');
+
+    return data.map<Pedido>((p) => Pedido.fromJson(p)).toList();
+  }
+
+  Future<void> assignMesaToPedido(String pedidoId, int mesaNumero) async {
+    final existingPedido = await _supabaseClient
+        .from(TABLES.pedidos.name)
+        .select()
+        .eq('mesaNumero', mesaNumero)
+        .neq('estado', 'pagado')
+        .neq('estado', 'cancelado')
+        .maybeSingle();
+
+    if (existingPedido != null) {
+      throw Exception('La mesa ya está asignada a otro pedido.');
+    }
+
+    await _supabaseClient.from(TABLES.pedidos.name).update({
+      'mesaNumero': mesaNumero,
+      'estado': 'confirmacion',
+    }).eq('id', pedidoId);
+  }
+
+  Future<List<Mesa>> fetchAvailableMesas() async {
+    final allMesasData = await _supabaseClient.from(TABLES.mesas.name).select();
+    final allMesas = allMesasData.map<Mesa>((m) => Mesa.fromJson(m)).toList();
+    final assignedMesasData = await _supabaseClient
+        .from(TABLES.pedidos.name)
+        .select('mesaNumero')
+        .neq('estado', 'pagado')
+        .neq('estado', 'cancelado')
+        .not('mesaNumero', 'is', null);
+    final assignedMesaNumeros = assignedMesasData
+        .where((p) => p['mesaNumero'] != null)
+        .map<int>((p) => p['mesaNumero'] as int)
+        .toSet();
+
+    final availableMesas = allMesas
+        .where((mesa) => !assignedMesaNumeros.contains(mesa.numero))
+        .toList();
+
+    return availableMesas;
+  }
+
+  Future<Pedido?> fetchPedidoByClienteId(String clienteId) async {
+    final data = await _supabaseClient
+        .from(TABLES.pedidos.name)
+        .select()
+        .eq('clienteId', clienteId)
+        .order('fecha', ascending: false)
+        .limit(1)
+        .maybeSingle();
+
+    if (data != null) {
+      return Pedido.fromJson(data);
+    }
+    return null;
   }
 }

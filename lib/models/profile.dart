@@ -13,7 +13,6 @@ abstract class Profile {
   final DateTime createdAt;
   final String rol;
   final String email;
-  
 
   Profile({
     required this.id,
@@ -33,6 +32,8 @@ abstract class Profile {
       case 'cliente':
         return Cliente.fromJson(json);
       case 'empleado':
+        return Empleado.fromJson(json);
+      case 'maitre':
         return Empleado.fromJson(json);
       case 'supervisor':
         return DuenoSupervisor.fromJson(json);

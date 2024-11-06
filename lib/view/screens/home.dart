@@ -18,6 +18,10 @@ class HomePage extends StatelessWidget {
     return profile?.rol == 'cliente';
   }
 
+  bool _isUserMaitre(Profile? profile) {
+    return profile?.rol == 'maitre';
+  }
+
   @override
   Widget build(BuildContext context) {
     final authService = GetIt.instance.get<AuthService>();
@@ -276,14 +280,27 @@ class HomePage extends StatelessWidget {
                             context.router.push(const RegisterMesaRoute());
                           },
                         ),
+                        // In the build method's menu grid
+                        if (_isUserMaitre(currentProfile))
+                          _buildMenuCard(
+                            context,
+                            title: 'Asignar Mesas',
+                            icon: Icons.table_chart,
+                            color: Color(0xFF5D4037),
+                            onTap: () {
+                              context.router.push(PedidosListRoute());
+                            },
+                          ),
                       ],
                     ),
                   ),
                   SizedBox(height: 10),
-                  ElevatedButton(onPressed: () {
-                    final router = AutoRouter.of(context);
-                    router.push(const QrScannerRoute());
-                  }, child: Icon(Icons.qr_code))
+                  ElevatedButton(
+                      onPressed: () {
+                        final router = AutoRouter.of(context);
+                        router.push(const QrScannerRoute());
+                      },
+                      child: Icon(Icons.qr_code))
                 ],
               ),
             ),
