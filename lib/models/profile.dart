@@ -12,6 +12,7 @@ abstract class Profile {
   final String? fotoUrl;
   final DateTime createdAt;
   final String rol;
+  final String email;
   
 
   Profile({
@@ -21,6 +22,7 @@ abstract class Profile {
     required this.dni,
     required this.createdAt,
     required this.rol,
+    required this.email,
     this.fotoUrl,
   });
 

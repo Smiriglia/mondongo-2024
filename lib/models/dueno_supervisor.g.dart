@@ -14,6 +14,7 @@ DuenoSupervisor _$DuenoSupervisorFromJson(Map<String, dynamic> json) =>
       apellido: json['apellido'] as String,
       dni: json['dni'] as String,
       createdAt: DateTime.parse(json['createdAt'] as String),
+      email: json['email'] as String,
       rol: json['rol'] as String? ?? 'dueño/supervisor',
       fotoUrl: json['fotoUrl'] as String?,
     );
@@ -27,5 +28,6 @@ Map<String, dynamic> _$DuenoSupervisorToJson(DuenoSupervisor instance) =>
       'fotoUrl': instance.fotoUrl,
       'createdAt': instance.createdAt.toIso8601String(),
       'rol': instance.rol,
+      'email': instance.email,
       'cuil': instance.cuil,
     };

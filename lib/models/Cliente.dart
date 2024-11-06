@@ -13,6 +13,7 @@ class Cliente extends Profile {
     required super.apellido,
     required super.dni,
     required super.createdAt,
+    required super.email,
     super.rol = 'cliente',
     super.fotoUrl,
   });

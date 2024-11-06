@@ -151,6 +151,7 @@ class _RegisterEmpleadoPageState extends State<RegisterEmpleadoPage> {
           cuil: _cuil,
           tipoEmpleado: _tipoEmpleado,
           createdAt: DateTime.now(),
+          email: _email,
         );
 
         debugPrint(

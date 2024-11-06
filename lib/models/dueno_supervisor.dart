@@ -13,6 +13,7 @@ class DuenoSupervisor extends Profile {
     required super.apellido,
     required super.dni,
     required super.createdAt,
+    required super.email,
     super.rol = 'dueño/supervisor',
     super.fotoUrl,
   });

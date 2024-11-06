@@ -124,6 +124,7 @@ class _RegisterDuenoSupervisorPageState
           fotoUrl: fotoUrl,
           rol: _perfil,
           createdAt: DateTime.now(),
+          email: _email,
         );
 
         await _dataService.addDuenoSupervisor(dueno);

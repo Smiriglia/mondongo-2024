@@ -272,7 +272,8 @@ class _RegisterPageState extends State<RegisterPage> {
               nombre: _nombre,
               apellido: _apellido,
               dni: _dni,
-              createdAt: DateTime.now());
+              createdAt: DateTime.now(),
+              email: _email);
           await _dataService.addCliente(newCliente);
           widget.onResult(true);
         } else {

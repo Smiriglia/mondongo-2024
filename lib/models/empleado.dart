@@ -15,6 +15,7 @@ class Empleado extends Profile {
     required super.apellido,
     required super.dni,
     required super.createdAt,
+    required super.email,
     super.rol = 'empleado',
     super.fotoUrl,
   });
