@@ -14,6 +14,10 @@ class HomePage extends StatelessWidget {
     return profile?.rol == 'supervisor';
   }
 
+  bool _isUserCLiente(Profile? profile) {
+    return profile?.rol == 'cliente';
+  }
+
   @override
   Widget build(BuildContext context) {
     final authService = GetIt.instance.get<AuthService>();

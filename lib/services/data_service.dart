@@ -122,4 +122,24 @@ class DataService {
   Future<void> addMesa(Mesa mesa) async {
     await _supabaseClient.from(TABLES.mesas.name).insert(mesa.toJson());
   }
+
+  Future<void> addToWaitList(String qrData) async {
+    final userId = Supabase.instance.client.auth.currentUser?.id;
+
+    if (userId == null) {
+      throw Exception('Usuario no autenticado');
+    }
+
+    final response = await _supabaseClient.from('pedidos').insert({
+      'cliente_id': userId,
+      'mesa_numero': int.parse(qrData),
+      'estado': 'espera',
+      'fecha': DateTime.now().toIso8601String(),
+    });
+
+    if (response.error != null) {
+      throw Exception(
+          'Error al agregar a la lista de espera: ${response.error!.message}');
+    }
+  }
 }
