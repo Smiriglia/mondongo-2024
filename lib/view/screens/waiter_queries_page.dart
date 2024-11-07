@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mondongo/models/consulta.dart';
+import 'package:mondongo/services/auth_services.dart';
 import 'package:mondongo/services/data_service.dart';
 import 'package:auto_route/auto_route.dart';
 import 'dart:async';
@@ -15,6 +16,7 @@ class WaiterQueriesPage extends StatefulWidget {
 
 class _WaiterQueriesPageState extends State<WaiterQueriesPage> {
   final DataService _dataService = GetIt.instance.get<DataService>();
+  final AuthService _authService = GetIt.instance.get<AuthService>();
   List<Consulta> _consultas = [];
 
   @override
@@ -47,7 +49,7 @@ class _WaiterQueriesPageState extends State<WaiterQueriesPage> {
               consulta.respuesta = _responseController.text;
               consulta.estado = 'respondido';
               consulta.fechaRespuesta = DateTime.now();
-              consulta.mozoId = 'waiter-id';
+              consulta.mozoId = _authService.getUser()?.id;
 
               await _dataService.updateConsulta(consulta);
 

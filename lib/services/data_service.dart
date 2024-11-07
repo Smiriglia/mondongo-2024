@@ -251,7 +251,9 @@ class DataService {
   }
 
   Future<void> addConsulta(Consulta consulta) async {
-    await _supabaseClient.from(TABLES.consultas.name).insert(consulta.toJson());
+    final json = consulta.toJson();
+    json.remove('id');
+    await _supabaseClient.from(TABLES.consultas.name).insert(json);
   }
 
   Future<List<Consulta>> fetchPendingConsultas() async {
