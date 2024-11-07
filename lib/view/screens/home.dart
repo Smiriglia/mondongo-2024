@@ -286,7 +286,7 @@ class HomePage extends StatelessWidget {
                           icon: Icons.gps_fixed,
                           color: Color(0xFF5D4037),
                           onTap: () {
-                            context.router.push(const RegisterMesaRoute());
+                            context.router.push(const ConfirmacionMozoRoute());
                           },
                         ),
                         if (_isUserSupervisor(currentProfile))

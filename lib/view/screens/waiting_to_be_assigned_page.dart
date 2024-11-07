@@ -161,6 +161,7 @@ class WaitingToBeAssignedPageState extends State<WaitingToBeAssignedPage> {
               ElevatedButton.icon(
                 onPressed: () {
                   final router = AutoRouter.of(context);
+                  router.removeLast();
                   router.push(const QrScannerRoute());
                 },
                 icon: const Icon(Icons.qr_code),

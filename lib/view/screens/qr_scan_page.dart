@@ -11,6 +11,7 @@ import 'package:mondongo/models/pedido.dart';
 import 'package:mondongo/routes/app_router.gr.dart';
 import 'package:mondongo/services/auth_services.dart';
 import 'package:mondongo/services/data_service.dart';
+import 'package:mondongo/view/screens/confirmacionMozo.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 @RoutePage()
@@ -25,16 +26,19 @@ class QrScannerPageState extends State<QrScannerPage> {
   final DataService dataService = GetIt.instance.get<DataService>();
   final AuthService _authService = GetIt.instance.get<AuthService>();
   bool isProcessing = false;
+  MobileScannerController controller = MobileScannerController();
 
   @override
   Widget build(BuildContext context) {
+    controller.stop();
     return Scaffold(
       appBar: AppBar(
         title: Text('Escanear Código QR'),
       ),
       body: MobileScanner(
-        controller: MobileScannerController(),
+        controller: controller,
         onDetect: (barcodeCapture) async {
+          controller.stop();
           if (isProcessing) return;
           setState(() => isProcessing = true);
 
@@ -54,6 +58,7 @@ class QrScannerPageState extends State<QrScannerPage> {
               if (qrData == 'lista_espera') {
                 // User wants to join the waitlist
                 await dataService.addToWaitList(userId);
+                router.removeLast();
                 router.push(WaitingToBeAssignedRoute());
               } else if (qrData.contains('Mesa-')) {
                 // User scanned a table QR code
@@ -72,33 +77,43 @@ class QrScannerPageState extends State<QrScannerPage> {
                   return;
                 }
 
-                if (pedido.estado != 'confirmacion') {
-                  // The table hasn't been confirmed yet
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                          'Tu mesa aún no ha sido confirmada. Estado actual: ${pedido.estado}'),
-                    ),
-                  );
-                  router.push(WaitingToBeAssignedRoute());
-                  return;
-                }
+                switch (pedido.estado) {
+                  case 'confirmacion':
+                    if (pedido.mesaNumero != scannedMesaNumero) {
+                      // Client scanned a different table
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'Esta no es tu mesa asignada. Tu mesa es la número ${pedido.mesaNumero}',
+                          ),
+                        ),
+                      );
+                      // Optionally navigate back or handle accordingly
+                      return;
+                    }
 
-                if (pedido.mesaNumero != scannedMesaNumero) {
-                  // Client scanned a different table
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        'Esta no es tu mesa asignada. Tu mesa es la número ${pedido.mesaNumero}',
+                    // Proceed to products list page
+                    router.removeLast();
+                    router.push(ProductsListRoute(pedido: pedido));
+                    break;
+                  case 'orden':
+                    router.removeLast();
+                    router.push(EstatoPedidoRoute(pedido: pedido));
+                    break;
+                  case 'enPreparacion':
+                    router.removeLast();
+                    router.push(EstatoPedidoRoute(pedido: pedido));
+                  default:
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                            'Tu mesa aún no ha sido confirmada. Estado actual: ${pedido.estado}'),
                       ),
-                    ),
-                  );
-                  // Optionally navigate back or handle accordingly
-                  return;
+                    );
+                    router.removeLast();
+                    router.push(WaitingToBeAssignedRoute());
+                    return;
                 }
-
-                // Proceed to products list page
-                router.push(ProductsListRoute(pedido: pedido));
               } else {
                 // Handle other QR data if needed
                 ScaffoldMessenger.of(context).showSnackBar(

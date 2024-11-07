@@ -6,6 +6,7 @@ import 'package:mondongo/models/producto.dart';
 import 'package:mondongo/routes/app_router.gr.dart';
 import 'package:mondongo/services/data_service.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:mondongo/view/screens/home.dart';
 
 @RoutePage()
 class ProductsListPage extends StatefulWidget {
@@ -102,6 +103,7 @@ class ProductsListPageState extends State<ProductsListPage> {
               TextButton(
                 onPressed: () async {
                   final router = AutoRouter.of(context);
+                  router.removeLast();
                   await router.push(QrScannerRoute());
                 },
                 child: Text('Escanear QR'),

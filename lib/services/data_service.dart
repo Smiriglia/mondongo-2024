@@ -320,4 +320,22 @@ class DataService {
         .from(TABLES.pedidos.name)
         .update({'estado': nuevoEstado}).eq('id', pedidoId);
   }
+
+  Future<void> actualizarEstadoDetallePedidosPedidoId(
+      String pedidoId, String estado) async {
+    await _supabaseClient
+        .from(TABLES.detallePedido.name)
+        .update({'estado': estado}).eq('pedidoId', pedidoId);
+  }
+
+  Stream<List<DetallePedido>> listenToDetallePedidos(String pedidoId) {
+    return _supabaseClient
+        .from(TABLES.detallePedido.name)
+        .stream(primaryKey: ['id'])
+        .eq('pedidoId', pedidoId)
+        .order('fechaInicio')
+        .map((data) => data
+            .map<DetallePedido>((json) => DetallePedido.fromJson(json))
+            .toList());
+  }
 }

@@ -9,14 +9,14 @@ import 'package:auto_route/auto_route.dart';
 import 'package:mondongo/services/email_service.dart';
 
 @RoutePage()
-class ConfirmacionMozo extends StatefulWidget {
-  const ConfirmacionMozo({super.key});
+class ConfirmacionMozoPage extends StatefulWidget {
+  const ConfirmacionMozoPage({super.key});
 
   @override
-  _ConfirmacionMozoState createState() => _ConfirmacionMozoState();
+  _ConfirmacionMozoPageState createState() => _ConfirmacionMozoPageState();
 }
 
-class _ConfirmacionMozoState extends State<ConfirmacionMozo> {
+class _ConfirmacionMozoPageState extends State<ConfirmacionMozoPage> {
   final DataService _dataService = getIt<DataService>();
   final EmailService _emailService = getIt<EmailService>();
   List<Pedido> _pedidosEnOrden = [];
@@ -65,9 +65,8 @@ class _ConfirmacionMozoState extends State<ConfirmacionMozo> {
     try {
       // Actualizar el estado del pedido a 'enPreparacion'
       await _dataService.actualizarEstadoPedido(pedido.id, 'enPreparacion');
+      await _dataService.actualizarEstadoDetallePedidosPedidoId(pedido.id, 'ordenado');
 
-      // Opcional: Enviar notificación por correo electrónico al cliente
-      // await _emailService.enviarNotificacionPedidoEnPreparacion(pedido);
 
       setState(() {
         _pedidosEnOrden.remove(pedido);

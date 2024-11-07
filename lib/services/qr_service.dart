@@ -22,7 +22,7 @@ class QRService {
       );
 
       // Crear la imagen del QR
-      final qrImage = await qrPainter.toImage(200);
+      final qrImage = await qrPainter.toImage(1000);
       final byteData = await qrImage.toByteData(format: ui.ImageByteFormat.png);
 
       if (byteData == null) {
