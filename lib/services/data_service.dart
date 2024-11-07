@@ -236,7 +236,7 @@ class DataService {
       final response = await _supabaseClient
           .from(TABLES.productos.name)
           .select()
-          .order('created_at', ascending: false);
+          .order('createdAt', ascending: false);
 
       return response.map<Producto>((json) => Producto.fromJson(json)).toList();
     } catch (e) {
