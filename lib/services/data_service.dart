@@ -1,15 +1,19 @@
+import 'package:mondongo/models/consulta.dart';
 import 'package:mondongo/models/empleado.dart';
 import 'package:mondongo/models/dueno_supervisor.dart';
 import 'package:mondongo/models/cliente.dart';
 import 'package:mondongo/models/mesa.dart';
 import 'package:mondongo/models/pedido.dart';
+import 'package:mondongo/models/producto.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:mondongo/models/profile.dart'; // Asegúrate de tener un modelo Profile
+import 'package:mondongo/models/profile.dart';
 
 enum TABLES {
   profiles,
   mesas,
-  pedidos;
+  pedidos,
+  productos,
+  consultas;
 
   String get name {
     switch (this) {
@@ -18,6 +22,10 @@ enum TABLES {
       case TABLES.mesas:
         return 'mesas';
       case TABLES.pedidos:
+        return 'pedidos';
+      case TABLES.productos:
+        return 'pedidos';
+      case TABLES.consultas:
         return 'pedidos';
     }
   }
@@ -213,6 +221,57 @@ class DataService {
         .from(TABLES.pedidos.name)
         .select()
         .eq('clienteId', clienteId)
+        .order('fecha', ascending: false)
+        .limit(1)
+        .maybeSingle();
+
+    if (data != null) {
+      return Pedido.fromJson(data);
+    }
+    return null;
+  }
+
+  Future<List<Producto>> fetchProductos() async {
+    try {
+      final response = await _supabaseClient
+          .from('productos')
+          .select()
+          .order('created_at', ascending: false);
+
+      return response.map<Producto>((json) => Producto.fromJson(json)).toList();
+    } catch (e) {
+      throw Exception('Failed to fetch products: $e');
+    }
+  }
+
+  Future<void> addProducto(Producto producto) async {
+    await _supabaseClient.from('productos').insert(producto.toJson());
+  }
+
+  Future<void> addConsulta(Consulta consulta) async {
+    await _supabaseClient.from('consultas').insert(consulta.toJson());
+  }
+
+  Future<List<Consulta>> fetchPendingConsultas() async {
+    final data = await _supabaseClient
+        .from('consultas')
+        .select()
+        .eq('estado', 'pendiente');
+    return data.map<Consulta>((c) => Consulta.fromJson(c)).toList();
+  }
+
+  Future<void> updateConsulta(Consulta consulta) async {
+    await _supabaseClient
+        .from('consultas')
+        .update(consulta.toJson())
+        .eq('id', consulta.id);
+  }
+
+  Future<Pedido?> fetchCurrentPedido(String userId) async {
+    final data = await _supabaseClient
+        .from('pedidos')
+        .select()
+        .eq('clienteId', userId)
         .order('fecha', ascending: false)
         .limit(1)
         .maybeSingle();

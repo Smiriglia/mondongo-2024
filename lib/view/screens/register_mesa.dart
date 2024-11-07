@@ -102,7 +102,7 @@ class _RegisterMesaPageState extends State<RegisterMesaPage> {
             return;
           }
         }
-        
+
         Mesa newMesa = Mesa(
           numero: _numero,
           cantidadComensales: _cantidadComensales,

@@ -1,37 +1,31 @@
-// qr_scan_page.dart
-
-import 'dart:async';
+// mesa_qr_scanner_page.dart
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:mondongo/models/mesa.dart';
 import 'package:mondongo/models/pedido.dart';
 import 'package:mondongo/routes/app_router.gr.dart';
-import 'package:mondongo/services/auth_services.dart';
 import 'package:mondongo/services/data_service.dart';
+import 'package:get_it/get_it.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 @RoutePage()
-class QrScannerPage extends StatefulWidget {
-  const QrScannerPage({Key? key}) : super(key: key);
+class MesaQrScannerPage extends StatefulWidget {
+  const MesaQrScannerPage({Key? key}) : super(key: key);
 
   @override
-  QrScannerPageState createState() => QrScannerPageState();
+  MesaQrScannerPageState createState() => MesaQrScannerPageState();
 }
 
-class QrScannerPageState extends State<QrScannerPage> {
+class MesaQrScannerPageState extends State<MesaQrScannerPage> {
   final DataService dataService = GetIt.instance.get<DataService>();
-  final SupabaseClient _supabaseClient = Supabase.instance.client;
-  final AuthService _authService = GetIt.instance.get<AuthService>();
   bool isProcessing = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Escanear Código QR'),
+        title: Text('Escanear Código QR de la Mesa'),
       ),
       body: MobileScanner(
         onDetect: (barcodeCapture) async {
@@ -39,28 +33,16 @@ class QrScannerPageState extends State<QrScannerPage> {
           setState(() => isProcessing = true);
 
           final String? qrData = barcodeCapture.barcodes.first.rawValue;
-          print('QR Data: $qrData');
-
           if (qrData != null) {
             try {
               final router = AutoRouter.of(context);
-              final userId = _authService.getUser()?.id;
-
-              if (userId == null) {
-                throw Exception('Usuario no autenticado');
-              }
-
-              // Handle QR codes
-              if (qrData == 'lista_espera') {
-                // User wants to join the waitlist
-                await dataService.addToWaitList(userId);
-                router.pushAndPopUntil(
-                  WaitingToBeAssignedRoute(),
-                  predicate: (_) => false,
-                );
-              } else if (qrData.contains('Mesa-')) {
-                // User scanned a table QR code
+              if (qrData.contains('Mesa-')) {
                 int scannedMesaNumero = int.parse(qrData.split('-').last);
+
+                final userId = Supabase.instance.client.auth.currentUser?.id;
+                if (userId == null) {
+                  throw Exception('Usuario no autenticado');
+                }
 
                 // Fetch the client's current pedido
                 Pedido? pedido =
@@ -73,21 +55,6 @@ class QrScannerPageState extends State<QrScannerPage> {
                   );
                   router.pushAndPopUntil(
                     HomeRoute(),
-                    predicate: (_) => false,
-                  );
-                  return;
-                }
-
-                if (pedido.estado != 'confirmacion') {
-                  // The table hasn't been confirmed yet
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                          'Tu mesa aún no ha sido confirmada. Estado actual: ${pedido.estado}'),
-                    ),
-                  );
-                  router.pushAndPopUntil(
-                    WaitingToBeAssignedRoute(),
                     predicate: (_) => false,
                   );
                   return;
@@ -132,7 +99,6 @@ class QrScannerPageState extends State<QrScannerPage> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('No se pudo leer el código QR')),
             );
-            // Navigate back to home
             final router = AutoRouter.of(context);
             router.pushAndPopUntil(
               HomeRoute(),

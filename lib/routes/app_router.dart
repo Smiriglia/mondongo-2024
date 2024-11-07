@@ -19,5 +19,10 @@ class AppRouter extends RootStackRouter {
         AutoRoute(page: MesaRoute.page, guards: [AuthGuard()]),
         AutoRoute(page: WaitingToBeAssignedRoute.page, guards: [AuthGuard()]),
         AutoRoute(page: PedidosListRoute.page, guards: [AuthGuard()]),
+        AutoRoute(page: CreateProductRoute.page, guards: [AuthGuard()]),
+        AutoRoute(page: CustomerQueryRoute.page, guards: [AuthGuard()]),
+        AutoRoute(page: WaiterQueriesRoute.page, guards: [AuthGuard()]),
+        AutoRoute(page: ProductsListRoute.page, guards: [AuthGuard()]),
+        AutoRoute(page: MesaQrScannerRoute.page, guards: [AuthGuard()]),
       ];
 }

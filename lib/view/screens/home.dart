@@ -22,6 +22,10 @@ class HomePage extends StatelessWidget {
     return profile?.rol == 'maitre';
   }
 
+  bool _isUserMozo(Profile? profile) {
+    return profile?.rol == 'mozo';
+  }
+
   @override
   Widget build(BuildContext context) {
     final authService = GetIt.instance.get<AuthService>();
@@ -280,8 +284,30 @@ class HomePage extends StatelessWidget {
                             context.router.push(const RegisterMesaRoute());
                           },
                         ),
-                        // In the build method's menu grid
-                        if (_isUserMaitre(currentProfile))
+                        if (_isUserSupervisor(currentProfile))
+                          _buildMenuCard(
+                            context,
+                            title: 'Crear Productos',
+                            icon: Icons.gps_fixed,
+                            color: Color(0xFF5D4037),
+                            onTap: () {
+                              context.router.push(const CreateProductRoute());
+                            },
+                          ),
+                        if (_isUserMozo(currentProfile) ||
+                            _isUserMaitre(currentProfile) ||
+                            _isUserSupervisor(currentProfile))
+                          _buildMenuCard(
+                            context,
+                            title: 'Ver Consultas de Clientes',
+                            icon: Icons.gps_fixed,
+                            color: Color(0xFF5D4037),
+                            onTap: () {
+                              context.router.push(const WaiterQueriesRoute());
+                            },
+                          ),
+                        if (_isUserMaitre(currentProfile) ||
+                            _isUserSupervisor(currentProfile))
                           _buildMenuCard(
                             context,
                             title: 'Asignar Mesas',
