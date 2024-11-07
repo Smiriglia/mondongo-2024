@@ -10,22 +10,21 @@ Producto _$ProductoFromJson(Map<String, dynamic> json) => Producto(
       id: json['id'] as String,
       nombre: json['nombre'] as String,
       descripcion: json['descripcion'] as String?,
-      tiempoElaboracion: (json['tiempo_elaboracion'] as num).toInt(),
+      tiempoElaboracion: (json['tiempoElaboracion'] as num).toInt(),
       precio: (json['precio'] as num).toDouble(),
-      fotosUrls: (json['fotos_urls'] as List<dynamic>)
-          .map((e) => e as String)
-          .toList(),
-      qrCodeUrl: json['qr_code_url'] as String?,
-      createdAt: DateTime.parse(json['created_at'] as String),
+      fotosUrls:
+          (json['fotosUrls'] as List<dynamic>).map((e) => e as String).toList(),
+      qrCodeUrl: json['qrCodeUrl'] as String?,
+      createdAt: DateTime.parse(json['createdAt'] as String),
     );
 
 Map<String, dynamic> _$ProductoToJson(Producto instance) => <String, dynamic>{
       'id': instance.id,
       'nombre': instance.nombre,
       'descripcion': instance.descripcion,
-      'tiempo_elaboracion': instance.tiempoElaboracion,
+      'tiempoElaboracion': instance.tiempoElaboracion,
       'precio': instance.precio,
-      'fotos_urls': instance.fotosUrls,
-      'qr_code_url': instance.qrCodeUrl,
-      'created_at': instance.createdAt.toIso8601String(),
+      'fotosUrls': instance.fotosUrls,
+      'qrCodeUrl': instance.qrCodeUrl,
+      'createdAt': instance.createdAt.toIso8601String(),
     };

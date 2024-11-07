@@ -23,7 +23,6 @@ class QrScannerPage extends StatefulWidget {
 
 class QrScannerPageState extends State<QrScannerPage> {
   final DataService dataService = GetIt.instance.get<DataService>();
-  final SupabaseClient _supabaseClient = Supabase.instance.client;
   final AuthService _authService = GetIt.instance.get<AuthService>();
   bool isProcessing = false;
 
@@ -34,6 +33,7 @@ class QrScannerPageState extends State<QrScannerPage> {
         title: Text('Escanear Código QR'),
       ),
       body: MobileScanner(
+        controller: MobileScannerController(),
         onDetect: (barcodeCapture) async {
           if (isProcessing) return;
           setState(() => isProcessing = true);

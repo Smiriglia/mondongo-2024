@@ -36,6 +36,38 @@ class StorageService {
     }
   }
 
+  Future<List<String>?> uploadProductImages(List<File> files) async {
+    try {
+      List<String> productImages = [];
+      for (var file in files) {  
+        final fileName = path.basename(file.path);
+        final timestamp = DateTime.now().millisecondsSinceEpoch;
+        final fullPath = '$timestamp-$fileName';
+
+        final storageResponse = await _client.storage
+            .from('productos')
+            .upload(
+              fullPath,
+              file,
+              fileOptions: const FileOptions(cacheControl: '3600', upsert: false),
+            );
+
+        if (storageResponse.isNotEmpty) {
+          final String publicUrl =
+              _client.storage.from('productos').getPublicUrl(fullPath);
+          productImages.add(publicUrl);
+        } else {
+          debugPrint('Error al subir la imagen de perfil: Upload falló');
+          return null;
+        }
+      }
+      return productImages;
+    } catch (e) {
+      debugPrint('Error al subir la imagen de perfil: $e');
+      return null;
+    }
+  }
+
   /// Elimina una imagen de perfil
   Future<bool> deleteProfileImage(String pathName) async {
     try {

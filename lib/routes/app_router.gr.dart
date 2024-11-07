@@ -12,6 +12,7 @@ import 'package:auto_route/auto_route.dart' as _i19;
 import 'package:flutter/material.dart' as _i20;
 import 'package:mondongo/models/mesa.dart' as _i21;
 import 'package:mondongo/view/screens/aprobacionClientes.dart' as _i1;
+import 'package:mondongo/view/screens/create_product_page.dart' as _i2;
 import 'package:mondongo/view/screens/customer_query_page.dart' as _i3;
 import 'package:mondongo/view/screens/home.dart' as _i4;
 import 'package:mondongo/view/screens/login.dart' as _i5;
@@ -20,7 +21,6 @@ import 'package:mondongo/view/screens/mesa_qr_scanner_page.dart' as _i7;
 import 'package:mondongo/view/screens/PedidosListPage.dart' as _i8;
 import 'package:mondongo/view/screens/products_list_page.dart' as _i9;
 import 'package:mondongo/view/screens/qr_scan_page.dart' as _i10;
-import 'package:mondongo/view/screens/reate_product_page.dart' as _i2;
 import 'package:mondongo/view/screens/register.dart' as _i15;
 import 'package:mondongo/view/screens/register_cliente.dart' as _i11;
 import 'package:mondongo/view/screens/register_dueno_supervisor.dart' as _i12;
@@ -269,7 +269,7 @@ class QrScannerRoute extends _i19.PageRouteInfo<void> {
   static _i19.PageInfo page = _i19.PageInfo(
     name,
     builder: (data) {
-      return _i10.QrScannerPage();
+      return const _i10.QrScannerPage();
     },
   );
 }

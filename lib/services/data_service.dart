@@ -24,9 +24,9 @@ enum TABLES {
       case TABLES.pedidos:
         return 'pedidos';
       case TABLES.productos:
-        return 'pedidos';
+        return 'productos';
       case TABLES.consultas:
-        return 'pedidos';
+        return 'consultas';
     }
   }
 }
@@ -234,7 +234,7 @@ class DataService {
   Future<List<Producto>> fetchProductos() async {
     try {
       final response = await _supabaseClient
-          .from('productos')
+          .from(TABLES.productos.name)
           .select()
           .order('created_at', ascending: false);
 
@@ -245,16 +245,18 @@ class DataService {
   }
 
   Future<void> addProducto(Producto producto) async {
-    await _supabaseClient.from('productos').insert(producto.toJson());
+    final json = producto.toJson();
+    json.remove('id');
+    await _supabaseClient.from(TABLES.productos.name).insert(json);
   }
 
   Future<void> addConsulta(Consulta consulta) async {
-    await _supabaseClient.from('consultas').insert(consulta.toJson());
+    await _supabaseClient.from(TABLES.consultas.name).insert(consulta.toJson());
   }
 
   Future<List<Consulta>> fetchPendingConsultas() async {
     final data = await _supabaseClient
-        .from('consultas')
+        .from(TABLES.consultas.name)
         .select()
         .eq('estado', 'pendiente');
     return data.map<Consulta>((c) => Consulta.fromJson(c)).toList();
@@ -262,14 +264,14 @@ class DataService {
 
   Future<void> updateConsulta(Consulta consulta) async {
     await _supabaseClient
-        .from('consultas')
+        .from(TABLES.consultas.name)
         .update(consulta.toJson())
         .eq('id', consulta.id);
   }
 
   Future<Pedido?> fetchCurrentPedido(String userId) async {
     final data = await _supabaseClient
-        .from('pedidos')
+        .from(TABLES.pedidos.name)
         .select()
         .eq('clienteId', userId)
         .order('fecha', ascending: false)

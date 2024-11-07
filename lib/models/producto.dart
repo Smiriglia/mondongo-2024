@@ -7,14 +7,10 @@ class Producto {
   final String id;
   final String nombre;
   final String? descripcion;
-  @JsonKey(name: 'tiempo_elaboracion')
   final int tiempoElaboracion;
   final double precio;
-  @JsonKey(name: 'fotos_urls')
   final List<String> fotosUrls;
-  @JsonKey(name: 'qr_code_url')
   final String? qrCodeUrl;
-  @JsonKey(name: 'created_at')
   final DateTime createdAt;
 
   Producto({
