@@ -62,6 +62,21 @@ class HomePage extends StatelessWidget {
           ),
         ],
       ),
+      bottomNavigationBar: BottomAppBar(
+        shape: CircularNotchedRectangle(),
+        notchMargin: 10.0,
+        color: Color(0xFF4B2C20),
+        child: SizedBox(height: 60), // Altura de la barra inferior
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          context.router.push(const QrScannerRoute());
+        },
+        backgroundColor: Color(0xFF5D4037),
+        child: Icon(Icons.qr_code_scanner, size: 32, color: Colors.white),
+      ),
+      floatingActionButtonLocation:
+          FloatingActionButtonLocation.centerDocked, // Centra el botón
       backgroundColor: Colors.grey[500],
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -321,12 +336,6 @@ class HomePage extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 10),
-                  ElevatedButton(
-                      onPressed: () {
-                        final router = AutoRouter.of(context);
-                        router.push(const QrScannerRoute());
-                      },
-                      child: Icon(Icons.qr_code))
                 ],
               ),
             ),
