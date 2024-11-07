@@ -302,4 +302,22 @@ class DataService {
     json.remove('id');
     await _supabaseClient.from(TABLES.detallePedido.name).insert(json);
   }
+
+  /// Fetch all pedidos with estado 'orden'
+  Future<List<Pedido>> fetchPedidosEnOrden() async {
+    final data = await _supabaseClient
+        .from(TABLES.pedidos.name)
+        .select()
+        .eq('estado', 'orden');
+
+    return data.map<Pedido>((p) => Pedido.fromJson(p)).toList();
+  }
+
+  /// Update the estado of a pedido by its ID
+  Future<void> actualizarEstadoPedido(
+      String pedidoId, String nuevoEstado) async {
+    await _supabaseClient
+        .from(TABLES.pedidos.name)
+        .update({'estado': nuevoEstado}).eq('id', pedidoId);
+  }
 }

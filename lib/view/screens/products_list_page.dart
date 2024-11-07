@@ -19,7 +19,8 @@ class ProductsListPage extends StatefulWidget {
 class ProductsListPageState extends State<ProductsListPage> {
   final DataService _dataService = GetIt.instance.get<DataService>();
   late Future<List<Producto>> _productosFuture;
-  final Map<Producto, int> _cart = {}; // Para almacenar los productos y sus cantidades
+  final Map<Producto, int> _cart =
+      {}; // Para almacenar los productos y sus cantidades
   bool _isLoading = false; // Loader flag
 
   @override
@@ -89,15 +90,29 @@ class ProductsListPageState extends State<ProductsListPage> {
       widget.pedido.estado = 'orden';
       await _dataService.updatePedido(widget.pedido);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Orden completada exitosamente.'),
-          backgroundColor: Colors.green,
-        ),
+      // Mostrar diálogo de confirmación con botón para navegar a QrScannerRoute
+      showDialog(
+        context: context,
+        barrierDismissible: false, // Evita cerrar el diálogo al tocar fuera
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Orden Completada'),
+            content: Text('Tu orden ha sido completada exitosamente.'),
+            actions: [
+              TextButton(
+                onPressed: () async {
+                  final router = AutoRouter.of(context);
+                  await router.push(QrScannerRoute());
+                },
+                child: Text('Escanear QR'),
+              ),
+            ],
+          );
+        },
       );
 
-      router.removeLast();
-      
+      // Si prefieres navegar directamente sin un botón adicional, puedes usar:
+      // router.push(const QrScannerRoute());
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -164,14 +179,17 @@ class ProductsListPageState extends State<ProductsListPage> {
                                     ),
                                   ),
                                   SizedBox(
-                                    height: 100, // Altura del slider de imágenes
+                                    height:
+                                        100, // Altura del slider de imágenes
                                     child: PageView.builder(
                                       itemCount: producto.fotosUrls.length,
                                       itemBuilder: (context, imgIndex) {
                                         return Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8.0),
                                           child: ClipRRect(
-                                            borderRadius: BorderRadius.circular(8.0),
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
                                             child: Image.network(
                                               producto.fotosUrls[imgIndex],
                                               fit: BoxFit.contain,
@@ -184,7 +202,8 @@ class ProductsListPageState extends State<ProductsListPage> {
                                   Padding(
                                     padding: const EdgeInsets.only(top: 8.0),
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
                                           'Precio: \$${producto.precio.toStringAsFixed(2)}',
@@ -202,11 +221,13 @@ class ProductsListPageState extends State<ProductsListPage> {
                                     ),
                                   ),
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       IconButton(
                                         icon: Icon(Icons.remove),
-                                        onPressed: () => _removeFromCart(producto),
+                                        onPressed: () =>
+                                            _removeFromCart(producto),
                                         color: Colors.red,
                                       ),
                                       Text(

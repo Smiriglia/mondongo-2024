@@ -282,16 +282,6 @@ class HomePage extends StatelessWidget {
                           ),
                         _buildMenuCard(
                           context,
-                          title: 'Descuentos para Clientes',
-                          icon: Icons.percent,
-                          color: Color(0xFF5D4037),
-                          onTap: () {
-                            context.router
-                                .push(const AprobacionClientesRoute());
-                          },
-                        ),
-                        _buildMenuCard(
-                          context,
                           title: 'GPS para Delivery',
                           icon: Icons.gps_fixed,
                           color: Color(0xFF5D4037),

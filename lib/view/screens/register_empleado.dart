@@ -7,9 +7,9 @@ import 'package:mondongo/models/empleado.dart';
 import 'package:mondongo/services/auth_services.dart';
 import 'package:mondongo/services/data_service.dart';
 import 'package:mondongo/services/storage_service.dart';
+import 'package:mondongo/view/widgets/qr_reader_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:mondongo/view/screens/qr_reader_page.dart';
 
 @RoutePage()
 class RegisterEmpleadoPage extends StatefulWidget {
