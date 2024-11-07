@@ -1,4 +1,5 @@
 import 'package:mondongo/models/consulta.dart';
+import 'package:mondongo/models/detalle_pedido.dart';
 import 'package:mondongo/models/empleado.dart';
 import 'package:mondongo/models/dueno_supervisor.dart';
 import 'package:mondongo/models/cliente.dart';
@@ -13,7 +14,8 @@ enum TABLES {
   mesas,
   pedidos,
   productos,
-  consultas;
+  consultas,
+  detallePedido;
 
   String get name {
     switch (this) {
@@ -27,6 +29,8 @@ enum TABLES {
         return 'productos';
       case TABLES.consultas:
         return 'consultas';
+      case TABLES.detallePedido:
+        return 'detallePedido';
     }
   }
 }
@@ -250,6 +254,13 @@ class DataService {
     await _supabaseClient.from(TABLES.productos.name).insert(json);
   }
 
+  Future<void> updatePedido(Pedido pedido) async {
+    await _supabaseClient
+        .from(TABLES.pedidos.name)
+        .update(pedido.toJson())
+        .eq('id', pedido.id);
+  }
+
   Future<void> addConsulta(Consulta consulta) async {
     final json = consulta.toJson();
     json.remove('id');
@@ -284,5 +295,11 @@ class DataService {
       return Pedido.fromJson(data);
     }
     return null;
+  }
+
+  Future<void> addDetallePedido(DetallePedido detallePedido) async {
+    final json = detallePedido.toJson();
+    json.remove('id');
+    await _supabaseClient.from(TABLES.detallePedido.name).insert(json);
   }
 }

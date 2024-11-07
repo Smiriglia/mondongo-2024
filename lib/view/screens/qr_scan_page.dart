@@ -54,10 +54,7 @@ class QrScannerPageState extends State<QrScannerPage> {
               if (qrData == 'lista_espera') {
                 // User wants to join the waitlist
                 await dataService.addToWaitList(userId);
-                router.pushAndPopUntil(
-                  WaitingToBeAssignedRoute(),
-                  predicate: (_) => false,
-                );
+                router.push(WaitingToBeAssignedRoute());
               } else if (qrData.contains('Mesa-')) {
                 // User scanned a table QR code
                 int scannedMesaNumero = int.parse(qrData.split('-').last);
@@ -71,10 +68,7 @@ class QrScannerPageState extends State<QrScannerPage> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('No tienes una mesa asignada')),
                   );
-                  router.pushAndPopUntil(
-                    HomeRoute(),
-                    predicate: (_) => false,
-                  );
+                  router.removeLast();
                   return;
                 }
 
@@ -86,10 +80,7 @@ class QrScannerPageState extends State<QrScannerPage> {
                           'Tu mesa aún no ha sido confirmada. Estado actual: ${pedido.estado}'),
                     ),
                   );
-                  router.pushAndPopUntil(
-                    WaitingToBeAssignedRoute(),
-                    predicate: (_) => false,
-                  );
+                  router.push(WaitingToBeAssignedRoute());
                   return;
                 }
 
@@ -107,10 +98,7 @@ class QrScannerPageState extends State<QrScannerPage> {
                 }
 
                 // Proceed to products list page
-                router.pushAndPopUntil(
-                  ProductsListRoute(),
-                  predicate: (_) => false,
-                );
+                router.push(ProductsListRoute(pedido: pedido));
               } else {
                 // Handle other QR data if needed
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -123,10 +111,7 @@ class QrScannerPageState extends State<QrScannerPage> {
               );
               // Navigate back to home
               final router = AutoRouter.of(context);
-              router.pushAndPopUntil(
-                HomeRoute(),
-                predicate: (_) => false,
-              );
+              router.removeLast();
             }
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -134,10 +119,7 @@ class QrScannerPageState extends State<QrScannerPage> {
             );
             // Navigate back to home
             final router = AutoRouter.of(context);
-            router.pushAndPopUntil(
-              HomeRoute(),
-              predicate: (_) => false,
-            );
+            router.removeLast();
           }
 
           setState(() => isProcessing = false);

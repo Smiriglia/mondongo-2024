@@ -4,11 +4,11 @@ part 'pedido.g.dart';
 
 @JsonSerializable()
 class Pedido {
-  final String id;
-  final String clienteId;
-  final int? mesaNumero;
-  final String estado;
-  final DateTime fecha;
+  String id;
+  String clienteId;
+  int? mesaNumero;
+  String estado;
+  DateTime fecha;
 
   Pedido({
     required this.id,
