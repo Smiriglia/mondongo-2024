@@ -1,5 +1,3 @@
-// qr_scan_page.dart
-
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
@@ -12,6 +10,7 @@ import 'package:mondongo/routes/app_router.gr.dart';
 import 'package:mondongo/services/auth_services.dart';
 import 'package:mondongo/services/data_service.dart';
 import 'package:mondongo/view/screens/confirmacionMozo.dart';
+import 'package:mondongo/view/screens/survey_results_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 @RoutePage()
@@ -68,7 +67,26 @@ class QrScannerPageState extends State<QrScannerPage> {
                 Pedido? pedido =
                     await dataService.fetchPedidoByClienteId(userId);
 
-                if (pedido == null || pedido.mesaNumero == null) {
+                if (pedido == null) {
+                  // Client doesn't have any pedido
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('No tienes un pedido activo')),
+                  );
+                  router.removeLast();
+                  return;
+                }
+
+                // Check if the pedido is in 'Pagado' state
+                if (pedido.estado == 'pagado') {
+                  // Navigate to survey screen
+                  router.removeLast();
+                  router
+                      .push(SurveyResultsRoute(mesaNumero: scannedMesaNumero));
+                  return;
+                }
+
+                // Handle other states
+                if (pedido.mesaNumero == null) {
                   // Client doesn't have an assigned table
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('No tienes una mesa asignada')),
@@ -88,7 +106,6 @@ class QrScannerPageState extends State<QrScannerPage> {
                           ),
                         ),
                       );
-                      // Optionally navigate back or handle accordingly
                       return;
                     }
 
@@ -103,6 +120,7 @@ class QrScannerPageState extends State<QrScannerPage> {
                   case 'enPreparacion':
                     router.removeLast();
                     router.push(EstatoPedidoRoute(pedido: pedido));
+                    break;
                   default:
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -115,7 +133,7 @@ class QrScannerPageState extends State<QrScannerPage> {
                     return;
                 }
               } else {
-                // Handle other QR data if needed
+                // Handle invalid QR code
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('Código QR inválido o no reconocido')),
                 );

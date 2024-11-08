@@ -289,6 +289,33 @@ class HomePage extends StatelessWidget {
                             context.router.push(const ConfirmacionMozoRoute());
                           },
                         ),
+                        _buildMenuCard(
+                          context,
+                          title: 'Encuesta',
+                          icon: Icons.gps_fixed,
+                          color: Color(0xFF5D4037),
+                          onTap: () {
+                            context.router.push(const SurveyRouteRoute());
+                          },
+                        ),
+                        _buildMenuCard(
+                          context,
+                          title: 'Descuentos',
+                          icon: Icons.gps_fixed,
+                          color: Color(0xFF5D4037),
+                          onTap: () {
+                            context.router.push(const GamesRoute());
+                          },
+                        ),
+                        _buildMenuCard(
+                          context,
+                          title: 'Ver Encuestas',
+                          icon: Icons.gps_fixed,
+                          color: Color(0xFF5D4037),
+                          onTap: () {
+                            context.router.push(const QrScannerRoute());
+                          },
+                        ),
                         if (_isUserSupervisor(currentProfile))
                           _buildMenuCard(
                             context,

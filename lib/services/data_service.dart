@@ -8,6 +8,7 @@ import 'package:mondongo/models/pedido.dart';
 import 'package:mondongo/models/producto.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:mondongo/models/profile.dart';
+import 'package:mondongo/models/encuesta.dart';
 
 enum TABLES {
   profiles,
@@ -15,7 +16,8 @@ enum TABLES {
   pedidos,
   productos,
   consultas,
-  detallePedido;
+  detallePedido,
+  encuestas;
 
   String get name {
     switch (this) {
@@ -31,6 +33,8 @@ enum TABLES {
         return 'consultas';
       case TABLES.detallePedido:
         return 'detallePedido';
+      case TABLES.encuestas:
+        return 'encuestas';
     }
   }
 }
@@ -337,5 +341,37 @@ class DataService {
         .map((data) => data
             .map<DetallePedido>((json) => DetallePedido.fromJson(json))
             .toList());
+  }
+
+  /// Agrega una nueva encuesta a la base de datos.
+  Future<void> addEncuesta(Encuesta encuesta) async {
+    final json = encuesta.toJson();
+    json.remove('id'); // Supabase generará el ID automáticamente
+    await _supabaseClient.from('encuestas').insert(json);
+  }
+
+  /// Obtiene todas las encuestas asociadas a una mesa específica.
+  Future<List<Encuesta>> fetchEncuestasByMesa(int mesaNumero) async {
+    final data = await _supabaseClient
+        .from('encuestas')
+        .select()
+        .eq('mesa_numero', mesaNumero)
+        .order('creado_en', ascending: true);
+
+    return (data as List)
+        .map<Encuesta>((encuesta) => Encuesta.fromJson(encuesta))
+        .toList();
+  }
+
+  /// Obtiene todas las encuestas.
+  Future<List<Encuesta>> fetchAllEncuestas() async {
+    final data = await _supabaseClient
+        .from('encuestas')
+        .select()
+        .order('creado_en', ascending: true);
+
+    return (data as List)
+        .map<Encuesta>((encuesta) => Encuesta.fromJson(encuesta))
+        .toList();
   }
 }
