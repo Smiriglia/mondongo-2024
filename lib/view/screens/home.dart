@@ -289,47 +289,33 @@ class HomePage extends StatelessWidget {
                               context.router.push(const RegisterMesaRoute());
                             },
                           ),
-                        _buildMenuCard(
-                          context,
-                          title: 'GPS para Delivery',
-                          icon: Icons.gps_fixed,
-                          color: Color(0xFF5D4037),
-                          onTap: () {
-                            context.router.push(const ConfirmacionMozoRoute());
-                          },
-                        ),
-                        _buildMenuCard(
-                          context,
-                          title: 'Encuesta',
-                          icon: Icons.gps_fixed,
-                          color: Color(0xFF5D4037),
-                          onTap: () {
-                            context.router.push(const SurveyRouteRoute());
-                          },
-                        ),
-                        _buildMenuCard(
-                          context,
-                          title: 'Descuentos',
-                          icon: Icons.gps_fixed,
-                          color: Color(0xFF5D4037),
-                          onTap: () {
-                            context.router.push(const GamesRoute());
-                          },
-                        ),
-                        _buildMenuCard(
-                          context,
-                          title: 'Ver Encuestas',
-                          icon: Icons.gps_fixed,
-                          color: Color(0xFF5D4037),
-                          onTap: () {
-                            context.router.push(const QrScannerRoute());
-                          },
-                        ),
+                        if (_isUserSupervisor(currentProfile) ||
+                            _isUserMozo(currentProfile))
+                          _buildMenuCard(
+                            context,
+                            title: 'Confirmar Pedido',
+                            icon: Icons.table_bar_rounded,
+                            color: Color(0xFF5D4037),
+                            onTap: () {
+                              context.router
+                                  .push(const ConfirmacionMozoRoute());
+                            },
+                          ),
+                        if (_isUserCLiente(currentProfile))
+                          _buildMenuCard(
+                            context,
+                            title: 'Ver Encuestas',
+                            icon: Icons.edit_document,
+                            color: Color(0xFF5D4037),
+                            onTap: () {
+                              context.router.push(const QrScannerRoute());
+                            },
+                          ),
                         if (_isUserSupervisor(currentProfile))
                           _buildMenuCard(
                             context,
                             title: 'Crear Productos',
-                            icon: Icons.gps_fixed,
+                            icon: Icons.food_bank,
                             color: Color(0xFF5D4037),
                             onTap: () {
                               context.router.push(const CreateProductRoute());
@@ -341,7 +327,7 @@ class HomePage extends StatelessWidget {
                           _buildMenuCard(
                             context,
                             title: 'Ver Consultas de Clientes',
-                            icon: Icons.gps_fixed,
+                            icon: Icons.document_scanner,
                             color: Color(0xFF5D4037),
                             onTap: () {
                               context.router.push(const WaiterQueriesRoute());

@@ -37,6 +37,10 @@ abstract class Profile {
         return Empleado.fromJson(json);
       case 'mozo':
         return Empleado.fromJson(json);
+      case 'cocinero':
+        return Empleado.fromJson(json);
+      case 'bartender':
+        return Empleado.fromJson(json);
       case 'supervisor':
         return DuenoSupervisor.fromJson(json);
       case 'dueño':

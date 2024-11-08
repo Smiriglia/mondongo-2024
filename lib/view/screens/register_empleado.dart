@@ -343,7 +343,8 @@ class _RegisterEmpleadoPageState extends State<RegisterEmpleadoPage> {
                           child: Text('Cocinero'), value: 'cocinero'),
                       DropdownMenuItem(
                           child: Text('Bartender'), value: 'bartender'),
-                      DropdownMenuItem(child: Text('Mesero'), value: 'mesero'),
+                      DropdownMenuItem(child: Text('Mozo'), value: 'mozo'),
+                      DropdownMenuItem(child: Text('Maitre'), value: 'maitre'),
                       DropdownMenuItem(child: Text('Otro'), value: 'otro'),
                     ],
                     onChanged: (val) {

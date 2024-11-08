@@ -156,6 +156,21 @@ class _LoginPageState extends State<LoginPage> {
                         _buildAnonymousLoginButton(),
                       ],
                     ),
+                    SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        _buildQuickLoginButton(
+                            'mozo@gmail.com', '112233', 'mozo'),
+                        _buildQuickLoginButton(
+                            'maitre@gmail.com', '112233', 'maitre'),
+                        _buildQuickLoginButton(
+                            'cocinero@gmail.com', '112233', 'cocinero'),
+                        _buildQuickLoginButton(
+                            'bartender@gmail.com', '112233', 'bartender'),
+                      ],
+                    ),
                     if (_errorMessage.isNotEmpty)
                       Padding(
                         padding: const EdgeInsets.only(top: 10),
