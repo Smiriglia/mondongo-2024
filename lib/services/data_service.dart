@@ -1,5 +1,6 @@
 import 'package:mondongo/models/consulta.dart';
 import 'package:mondongo/models/detalle_pedido.dart';
+import 'package:mondongo/models/detalle_pedido_producto.dart';
 import 'package:mondongo/models/empleado.dart';
 import 'package:mondongo/models/dueno_supervisor.dart';
 import 'package:mondongo/models/cliente.dart';
@@ -337,5 +338,61 @@ class DataService {
         .map((data) => data
             .map<DetallePedido>((json) => DetallePedido.fromJson(json))
             .toList());
+  }
+
+  Future<List<DetallePedidoProducto>> listenToDetallePedidosPorEstadoYSector(
+      List<String> estados, String sector) async {
+    var a = await _supabaseClient
+        .rpc('get_detalle_pedidos_by_estado_sector', params: {
+      'estados': estados,
+      'sector_param': sector,
+    });
+
+    return a.map((data) {
+      if (data == null) {
+        return <DetallePedidoProducto>[];
+      }
+
+      // Nos aseguramos de que los datos sean una lista
+      final dynamicList = data as List<dynamic>;
+
+      return dynamicList
+          .map((json) =>
+              DetallePedidoProducto.fromJson(json as Map<String, dynamic>))
+          .toList();
+    });
+  }
+
+  Future<List<DetallePedidoProducto>> getDetallePedidosPorEstadoYSector(
+      List<String> estados, String sector) async {
+    final response = await _supabaseClient.rpc(
+      'get_detalle_pedidos_by_estado_sector',
+      params: {
+        'estados': estados,
+        'sector_param': sector,
+      },
+    );
+
+    if (response == null) {
+      return [];
+    }
+
+    return (response as List<dynamic>)
+        .map((json) =>
+            DetallePedidoProducto.fromJson(json as Map<String, dynamic>))
+        .toList();
+  }
+
+  Stream<void> listenToDetallePedidoChanges(List<String> estados) {
+    return _supabaseClient
+        .from('detallePedido')
+        .stream(primaryKey: ['id']);
+  }
+
+  Future<void> actualizarEstadoDetallePedido(
+      String detalleId, String estado) async {
+    await _supabaseClient
+        .from('detallePedido')
+        .update({'estado': estado}).eq('id', detalleId);
   }
 }

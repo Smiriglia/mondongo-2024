@@ -8,10 +8,10 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:auto_route/auto_route.dart' as _i20;
-import 'package:flutter/material.dart' as _i21;
-import 'package:mondongo/models/mesa.dart' as _i23;
-import 'package:mondongo/models/pedido.dart' as _i22;
+import 'package:auto_route/auto_route.dart' as _i21;
+import 'package:flutter/material.dart' as _i22;
+import 'package:mondongo/models/mesa.dart' as _i24;
+import 'package:mondongo/models/pedido.dart' as _i23;
 import 'package:mondongo/view/screens/aprobacionClientes.dart' as _i1;
 import 'package:mondongo/view/screens/confirmacionMozo.dart' as _i2;
 import 'package:mondongo/view/screens/create_product_page.dart' as _i3;
@@ -23,19 +23,20 @@ import 'package:mondongo/view/screens/mesa_page.dart' as _i8;
 import 'package:mondongo/view/screens/PedidosListPage.dart' as _i9;
 import 'package:mondongo/view/screens/products_list_page.dart' as _i10;
 import 'package:mondongo/view/screens/qr_scan_page.dart' as _i11;
-import 'package:mondongo/view/screens/register.dart' as _i16;
-import 'package:mondongo/view/screens/register_cliente.dart' as _i12;
-import 'package:mondongo/view/screens/register_dueno_supervisor.dart' as _i13;
-import 'package:mondongo/view/screens/register_empleado.dart' as _i14;
-import 'package:mondongo/view/screens/register_mesa.dart' as _i15;
-import 'package:mondongo/view/screens/splash.dart' as _i17;
-import 'package:mondongo/view/screens/waiter_queries_page.dart' as _i18;
-import 'package:mondongo/view/screens/waiting_to_be_assigned_page.dart' as _i19;
+import 'package:mondongo/view/screens/realizar_pedidos.dart' as _i12;
+import 'package:mondongo/view/screens/register.dart' as _i17;
+import 'package:mondongo/view/screens/register_cliente.dart' as _i13;
+import 'package:mondongo/view/screens/register_dueno_supervisor.dart' as _i14;
+import 'package:mondongo/view/screens/register_empleado.dart' as _i15;
+import 'package:mondongo/view/screens/register_mesa.dart' as _i16;
+import 'package:mondongo/view/screens/splash.dart' as _i18;
+import 'package:mondongo/view/screens/waiter_queries_page.dart' as _i19;
+import 'package:mondongo/view/screens/waiting_to_be_assigned_page.dart' as _i20;
 
 /// generated route for
 /// [_i1.AprobacionClientesPage]
-class AprobacionClientesRoute extends _i20.PageRouteInfo<void> {
-  const AprobacionClientesRoute({List<_i20.PageRouteInfo>? children})
+class AprobacionClientesRoute extends _i21.PageRouteInfo<void> {
+  const AprobacionClientesRoute({List<_i21.PageRouteInfo>? children})
       : super(
           AprobacionClientesRoute.name,
           initialChildren: children,
@@ -43,7 +44,7 @@ class AprobacionClientesRoute extends _i20.PageRouteInfo<void> {
 
   static const String name = 'AprobacionClientesRoute';
 
-  static _i20.PageInfo page = _i20.PageInfo(
+  static _i21.PageInfo page = _i21.PageInfo(
     name,
     builder: (data) {
       return const _i1.AprobacionClientesPage();
@@ -53,8 +54,8 @@ class AprobacionClientesRoute extends _i20.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i2.ConfirmacionMozoPage]
-class ConfirmacionMozoRoute extends _i20.PageRouteInfo<void> {
-  const ConfirmacionMozoRoute({List<_i20.PageRouteInfo>? children})
+class ConfirmacionMozoRoute extends _i21.PageRouteInfo<void> {
+  const ConfirmacionMozoRoute({List<_i21.PageRouteInfo>? children})
       : super(
           ConfirmacionMozoRoute.name,
           initialChildren: children,
@@ -62,7 +63,7 @@ class ConfirmacionMozoRoute extends _i20.PageRouteInfo<void> {
 
   static const String name = 'ConfirmacionMozoRoute';
 
-  static _i20.PageInfo page = _i20.PageInfo(
+  static _i21.PageInfo page = _i21.PageInfo(
     name,
     builder: (data) {
       return const _i2.ConfirmacionMozoPage();
@@ -72,8 +73,8 @@ class ConfirmacionMozoRoute extends _i20.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i3.CreateProductPage]
-class CreateProductRoute extends _i20.PageRouteInfo<void> {
-  const CreateProductRoute({List<_i20.PageRouteInfo>? children})
+class CreateProductRoute extends _i21.PageRouteInfo<void> {
+  const CreateProductRoute({List<_i21.PageRouteInfo>? children})
       : super(
           CreateProductRoute.name,
           initialChildren: children,
@@ -81,7 +82,7 @@ class CreateProductRoute extends _i20.PageRouteInfo<void> {
 
   static const String name = 'CreateProductRoute';
 
-  static _i20.PageInfo page = _i20.PageInfo(
+  static _i21.PageInfo page = _i21.PageInfo(
     name,
     builder: (data) {
       return const _i3.CreateProductPage();
@@ -91,8 +92,8 @@ class CreateProductRoute extends _i20.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i4.CustomerQueryPage]
-class CustomerQueryRoute extends _i20.PageRouteInfo<void> {
-  const CustomerQueryRoute({List<_i20.PageRouteInfo>? children})
+class CustomerQueryRoute extends _i21.PageRouteInfo<void> {
+  const CustomerQueryRoute({List<_i21.PageRouteInfo>? children})
       : super(
           CustomerQueryRoute.name,
           initialChildren: children,
@@ -100,7 +101,7 @@ class CustomerQueryRoute extends _i20.PageRouteInfo<void> {
 
   static const String name = 'CustomerQueryRoute';
 
-  static _i20.PageInfo page = _i20.PageInfo(
+  static _i21.PageInfo page = _i21.PageInfo(
     name,
     builder: (data) {
       return const _i4.CustomerQueryPage();
@@ -110,11 +111,11 @@ class CustomerQueryRoute extends _i20.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i5.EstatoPedidoPage]
-class EstatoPedidoRoute extends _i20.PageRouteInfo<EstatoPedidoRouteArgs> {
+class EstatoPedidoRoute extends _i21.PageRouteInfo<EstatoPedidoRouteArgs> {
   EstatoPedidoRoute({
-    _i21.Key? key,
-    required _i22.Pedido pedido,
-    List<_i20.PageRouteInfo>? children,
+    _i22.Key? key,
+    required _i23.Pedido pedido,
+    List<_i21.PageRouteInfo>? children,
   }) : super(
           EstatoPedidoRoute.name,
           args: EstatoPedidoRouteArgs(
@@ -126,7 +127,7 @@ class EstatoPedidoRoute extends _i20.PageRouteInfo<EstatoPedidoRouteArgs> {
 
   static const String name = 'EstatoPedidoRoute';
 
-  static _i20.PageInfo page = _i20.PageInfo(
+  static _i21.PageInfo page = _i21.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<EstatoPedidoRouteArgs>();
@@ -144,9 +145,9 @@ class EstatoPedidoRouteArgs {
     required this.pedido,
   });
 
-  final _i21.Key? key;
+  final _i22.Key? key;
 
-  final _i22.Pedido pedido;
+  final _i23.Pedido pedido;
 
   @override
   String toString() {
@@ -156,8 +157,8 @@ class EstatoPedidoRouteArgs {
 
 /// generated route for
 /// [_i6.HomePage]
-class HomeRoute extends _i20.PageRouteInfo<void> {
-  const HomeRoute({List<_i20.PageRouteInfo>? children})
+class HomeRoute extends _i21.PageRouteInfo<void> {
+  const HomeRoute({List<_i21.PageRouteInfo>? children})
       : super(
           HomeRoute.name,
           initialChildren: children,
@@ -165,7 +166,7 @@ class HomeRoute extends _i20.PageRouteInfo<void> {
 
   static const String name = 'HomeRoute';
 
-  static _i20.PageInfo page = _i20.PageInfo(
+  static _i21.PageInfo page = _i21.PageInfo(
     name,
     builder: (data) {
       return const _i6.HomePage();
@@ -175,11 +176,11 @@ class HomeRoute extends _i20.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i7.LoginPage]
-class LoginRoute extends _i20.PageRouteInfo<LoginRouteArgs> {
+class LoginRoute extends _i21.PageRouteInfo<LoginRouteArgs> {
   LoginRoute({
-    _i21.Key? key,
+    _i22.Key? key,
     required dynamic Function(bool) onResult,
-    List<_i20.PageRouteInfo>? children,
+    List<_i21.PageRouteInfo>? children,
   }) : super(
           LoginRoute.name,
           args: LoginRouteArgs(
@@ -191,7 +192,7 @@ class LoginRoute extends _i20.PageRouteInfo<LoginRouteArgs> {
 
   static const String name = 'LoginRoute';
 
-  static _i20.PageInfo page = _i20.PageInfo(
+  static _i21.PageInfo page = _i21.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<LoginRouteArgs>();
@@ -209,7 +210,7 @@ class LoginRouteArgs {
     required this.onResult,
   });
 
-  final _i21.Key? key;
+  final _i22.Key? key;
 
   final dynamic Function(bool) onResult;
 
@@ -221,11 +222,11 @@ class LoginRouteArgs {
 
 /// generated route for
 /// [_i8.MesaPage]
-class MesaRoute extends _i20.PageRouteInfo<MesaRouteArgs> {
+class MesaRoute extends _i21.PageRouteInfo<MesaRouteArgs> {
   MesaRoute({
-    _i21.Key? key,
-    required _i23.Mesa mesa,
-    List<_i20.PageRouteInfo>? children,
+    _i22.Key? key,
+    required _i24.Mesa mesa,
+    List<_i21.PageRouteInfo>? children,
   }) : super(
           MesaRoute.name,
           args: MesaRouteArgs(
@@ -237,7 +238,7 @@ class MesaRoute extends _i20.PageRouteInfo<MesaRouteArgs> {
 
   static const String name = 'MesaRoute';
 
-  static _i20.PageInfo page = _i20.PageInfo(
+  static _i21.PageInfo page = _i21.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<MesaRouteArgs>();
@@ -255,9 +256,9 @@ class MesaRouteArgs {
     required this.mesa,
   });
 
-  final _i21.Key? key;
+  final _i22.Key? key;
 
-  final _i23.Mesa mesa;
+  final _i24.Mesa mesa;
 
   @override
   String toString() {
@@ -267,8 +268,8 @@ class MesaRouteArgs {
 
 /// generated route for
 /// [_i9.PedidosListPage]
-class PedidosListRoute extends _i20.PageRouteInfo<void> {
-  const PedidosListRoute({List<_i20.PageRouteInfo>? children})
+class PedidosListRoute extends _i21.PageRouteInfo<void> {
+  const PedidosListRoute({List<_i21.PageRouteInfo>? children})
       : super(
           PedidosListRoute.name,
           initialChildren: children,
@@ -276,7 +277,7 @@ class PedidosListRoute extends _i20.PageRouteInfo<void> {
 
   static const String name = 'PedidosListRoute';
 
-  static _i20.PageInfo page = _i20.PageInfo(
+  static _i21.PageInfo page = _i21.PageInfo(
     name,
     builder: (data) {
       return _i9.PedidosListPage();
@@ -286,11 +287,11 @@ class PedidosListRoute extends _i20.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i10.ProductsListPage]
-class ProductsListRoute extends _i20.PageRouteInfo<ProductsListRouteArgs> {
+class ProductsListRoute extends _i21.PageRouteInfo<ProductsListRouteArgs> {
   ProductsListRoute({
-    _i21.Key? key,
-    required _i22.Pedido pedido,
-    List<_i20.PageRouteInfo>? children,
+    _i22.Key? key,
+    required _i23.Pedido pedido,
+    List<_i21.PageRouteInfo>? children,
   }) : super(
           ProductsListRoute.name,
           args: ProductsListRouteArgs(
@@ -302,7 +303,7 @@ class ProductsListRoute extends _i20.PageRouteInfo<ProductsListRouteArgs> {
 
   static const String name = 'ProductsListRoute';
 
-  static _i20.PageInfo page = _i20.PageInfo(
+  static _i21.PageInfo page = _i21.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<ProductsListRouteArgs>();
@@ -320,9 +321,9 @@ class ProductsListRouteArgs {
     required this.pedido,
   });
 
-  final _i21.Key? key;
+  final _i22.Key? key;
 
-  final _i22.Pedido pedido;
+  final _i23.Pedido pedido;
 
   @override
   String toString() {
@@ -332,8 +333,8 @@ class ProductsListRouteArgs {
 
 /// generated route for
 /// [_i11.QrScannerPage]
-class QrScannerRoute extends _i20.PageRouteInfo<void> {
-  const QrScannerRoute({List<_i20.PageRouteInfo>? children})
+class QrScannerRoute extends _i21.PageRouteInfo<void> {
+  const QrScannerRoute({List<_i21.PageRouteInfo>? children})
       : super(
           QrScannerRoute.name,
           initialChildren: children,
@@ -341,7 +342,7 @@ class QrScannerRoute extends _i20.PageRouteInfo<void> {
 
   static const String name = 'QrScannerRoute';
 
-  static _i20.PageInfo page = _i20.PageInfo(
+  static _i21.PageInfo page = _i21.PageInfo(
     name,
     builder: (data) {
       return const _i11.QrScannerPage();
@@ -350,9 +351,28 @@ class QrScannerRoute extends _i20.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i12.RegisterClientePage]
-class RegisterClienteRoute extends _i20.PageRouteInfo<void> {
-  const RegisterClienteRoute({List<_i20.PageRouteInfo>? children})
+/// [_i12.RealizarPedidosPage]
+class RealizarPedidosRoute extends _i21.PageRouteInfo<void> {
+  const RealizarPedidosRoute({List<_i21.PageRouteInfo>? children})
+      : super(
+          RealizarPedidosRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'RealizarPedidosRoute';
+
+  static _i21.PageInfo page = _i21.PageInfo(
+    name,
+    builder: (data) {
+      return const _i12.RealizarPedidosPage();
+    },
+  );
+}
+
+/// generated route for
+/// [_i13.RegisterClientePage]
+class RegisterClienteRoute extends _i21.PageRouteInfo<void> {
+  const RegisterClienteRoute({List<_i21.PageRouteInfo>? children})
       : super(
           RegisterClienteRoute.name,
           initialChildren: children,
@@ -360,18 +380,18 @@ class RegisterClienteRoute extends _i20.PageRouteInfo<void> {
 
   static const String name = 'RegisterClienteRoute';
 
-  static _i20.PageInfo page = _i20.PageInfo(
+  static _i21.PageInfo page = _i21.PageInfo(
     name,
     builder: (data) {
-      return const _i12.RegisterClientePage();
+      return const _i13.RegisterClientePage();
     },
   );
 }
 
 /// generated route for
-/// [_i13.RegisterDuenoSupervisorPage]
-class RegisterDuenoSupervisorRoute extends _i20.PageRouteInfo<void> {
-  const RegisterDuenoSupervisorRoute({List<_i20.PageRouteInfo>? children})
+/// [_i14.RegisterDuenoSupervisorPage]
+class RegisterDuenoSupervisorRoute extends _i21.PageRouteInfo<void> {
+  const RegisterDuenoSupervisorRoute({List<_i21.PageRouteInfo>? children})
       : super(
           RegisterDuenoSupervisorRoute.name,
           initialChildren: children,
@@ -379,18 +399,18 @@ class RegisterDuenoSupervisorRoute extends _i20.PageRouteInfo<void> {
 
   static const String name = 'RegisterDuenoSupervisorRoute';
 
-  static _i20.PageInfo page = _i20.PageInfo(
+  static _i21.PageInfo page = _i21.PageInfo(
     name,
     builder: (data) {
-      return _i13.RegisterDuenoSupervisorPage();
+      return _i14.RegisterDuenoSupervisorPage();
     },
   );
 }
 
 /// generated route for
-/// [_i14.RegisterEmpleadoPage]
-class RegisterEmpleadoRoute extends _i20.PageRouteInfo<void> {
-  const RegisterEmpleadoRoute({List<_i20.PageRouteInfo>? children})
+/// [_i15.RegisterEmpleadoPage]
+class RegisterEmpleadoRoute extends _i21.PageRouteInfo<void> {
+  const RegisterEmpleadoRoute({List<_i21.PageRouteInfo>? children})
       : super(
           RegisterEmpleadoRoute.name,
           initialChildren: children,
@@ -398,18 +418,18 @@ class RegisterEmpleadoRoute extends _i20.PageRouteInfo<void> {
 
   static const String name = 'RegisterEmpleadoRoute';
 
-  static _i20.PageInfo page = _i20.PageInfo(
+  static _i21.PageInfo page = _i21.PageInfo(
     name,
     builder: (data) {
-      return _i14.RegisterEmpleadoPage();
+      return _i15.RegisterEmpleadoPage();
     },
   );
 }
 
 /// generated route for
-/// [_i15.RegisterMesaPage]
-class RegisterMesaRoute extends _i20.PageRouteInfo<void> {
-  const RegisterMesaRoute({List<_i20.PageRouteInfo>? children})
+/// [_i16.RegisterMesaPage]
+class RegisterMesaRoute extends _i21.PageRouteInfo<void> {
+  const RegisterMesaRoute({List<_i21.PageRouteInfo>? children})
       : super(
           RegisterMesaRoute.name,
           initialChildren: children,
@@ -417,21 +437,21 @@ class RegisterMesaRoute extends _i20.PageRouteInfo<void> {
 
   static const String name = 'RegisterMesaRoute';
 
-  static _i20.PageInfo page = _i20.PageInfo(
+  static _i21.PageInfo page = _i21.PageInfo(
     name,
     builder: (data) {
-      return _i15.RegisterMesaPage();
+      return _i16.RegisterMesaPage();
     },
   );
 }
 
 /// generated route for
-/// [_i16.RegisterPage]
-class RegisterRoute extends _i20.PageRouteInfo<RegisterRouteArgs> {
+/// [_i17.RegisterPage]
+class RegisterRoute extends _i21.PageRouteInfo<RegisterRouteArgs> {
   RegisterRoute({
-    _i21.Key? key,
+    _i22.Key? key,
     required dynamic Function(bool) onResult,
-    List<_i20.PageRouteInfo>? children,
+    List<_i21.PageRouteInfo>? children,
   }) : super(
           RegisterRoute.name,
           args: RegisterRouteArgs(
@@ -443,11 +463,11 @@ class RegisterRoute extends _i20.PageRouteInfo<RegisterRouteArgs> {
 
   static const String name = 'RegisterRoute';
 
-  static _i20.PageInfo page = _i20.PageInfo(
+  static _i21.PageInfo page = _i21.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<RegisterRouteArgs>();
-      return _i16.RegisterPage(
+      return _i17.RegisterPage(
         key: args.key,
         onResult: args.onResult,
       );
@@ -461,7 +481,7 @@ class RegisterRouteArgs {
     required this.onResult,
   });
 
-  final _i21.Key? key;
+  final _i22.Key? key;
 
   final dynamic Function(bool) onResult;
 
@@ -472,9 +492,9 @@ class RegisterRouteArgs {
 }
 
 /// generated route for
-/// [_i17.SplashPage]
-class SplashRoute extends _i20.PageRouteInfo<void> {
-  const SplashRoute({List<_i20.PageRouteInfo>? children})
+/// [_i18.SplashPage]
+class SplashRoute extends _i21.PageRouteInfo<void> {
+  const SplashRoute({List<_i21.PageRouteInfo>? children})
       : super(
           SplashRoute.name,
           initialChildren: children,
@@ -482,18 +502,18 @@ class SplashRoute extends _i20.PageRouteInfo<void> {
 
   static const String name = 'SplashRoute';
 
-  static _i20.PageInfo page = _i20.PageInfo(
+  static _i21.PageInfo page = _i21.PageInfo(
     name,
     builder: (data) {
-      return const _i17.SplashPage();
+      return const _i18.SplashPage();
     },
   );
 }
 
 /// generated route for
-/// [_i18.WaiterQueriesPage]
-class WaiterQueriesRoute extends _i20.PageRouteInfo<void> {
-  const WaiterQueriesRoute({List<_i20.PageRouteInfo>? children})
+/// [_i19.WaiterQueriesPage]
+class WaiterQueriesRoute extends _i21.PageRouteInfo<void> {
+  const WaiterQueriesRoute({List<_i21.PageRouteInfo>? children})
       : super(
           WaiterQueriesRoute.name,
           initialChildren: children,
@@ -501,18 +521,18 @@ class WaiterQueriesRoute extends _i20.PageRouteInfo<void> {
 
   static const String name = 'WaiterQueriesRoute';
 
-  static _i20.PageInfo page = _i20.PageInfo(
+  static _i21.PageInfo page = _i21.PageInfo(
     name,
     builder: (data) {
-      return const _i18.WaiterQueriesPage();
+      return const _i19.WaiterQueriesPage();
     },
   );
 }
 
 /// generated route for
-/// [_i19.WaitingToBeAssignedPage]
-class WaitingToBeAssignedRoute extends _i20.PageRouteInfo<void> {
-  const WaitingToBeAssignedRoute({List<_i20.PageRouteInfo>? children})
+/// [_i20.WaitingToBeAssignedPage]
+class WaitingToBeAssignedRoute extends _i21.PageRouteInfo<void> {
+  const WaitingToBeAssignedRoute({List<_i21.PageRouteInfo>? children})
       : super(
           WaitingToBeAssignedRoute.name,
           initialChildren: children,
@@ -520,10 +540,10 @@ class WaitingToBeAssignedRoute extends _i20.PageRouteInfo<void> {
 
   static const String name = 'WaitingToBeAssignedRoute';
 
-  static _i20.PageInfo page = _i20.PageInfo(
+  static _i21.PageInfo page = _i21.PageInfo(
     name,
     builder: (data) {
-      return const _i19.WaitingToBeAssignedPage();
+      return const _i20.WaitingToBeAssignedPage();
     },
   );
 }

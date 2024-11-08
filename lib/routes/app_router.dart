@@ -25,5 +25,6 @@ class AppRouter extends RootStackRouter {
         AutoRoute(page: ProductsListRoute.page, guards: [AuthGuard()]),
         AutoRoute(page: ConfirmacionMozoRoute.page, guards: [AuthGuard()]),
         AutoRoute(page: EstatoPedidoRoute.page, guards: [AuthGuard()]),
+        AutoRoute(page: RealizarPedidosRoute.page, guards: [AuthGuard()]),
       ];
 }

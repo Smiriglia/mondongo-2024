@@ -12,6 +12,7 @@ class Producto {
   final List<String> fotosUrls;
   final String? qrCodeUrl;
   final DateTime createdAt;
+  String sector;
 
   Producto({
     required this.id,
@@ -22,6 +23,7 @@ class Producto {
     required this.fotosUrls,
     this.qrCodeUrl,
     required this.createdAt,
+    required this.sector,
   });
 
   factory Producto.fromJson(Map<String, dynamic> json) =>
