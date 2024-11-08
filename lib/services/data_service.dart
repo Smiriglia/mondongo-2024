@@ -529,4 +529,17 @@ class DataService {
         .map<DetallePedido>((detalle) => DetallePedido.fromJson(detalle))
         .toList();
   }
+
+  Future<void> markPedidoAsPaid(String pedidoId) async {
+    await _supabaseClient
+        .from(TABLES.pedidos.name)
+        .update({'estado': 'pagado'}).eq('id', pedidoId);
+  }
+
+  Future<void> cerrarPedido(String pedidoId) async {
+    // Actualizar el estado del pedido a 'cerrada'
+    await _supabaseClient
+        .from(TABLES.pedidos.name)
+        .update({'estado': 'cerrada', 'mesaNumero': null}).eq('id', pedidoId);
+  }
 }

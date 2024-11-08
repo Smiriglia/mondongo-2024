@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:mondongo/models/pedido.dart';
 import 'package:mondongo/models/pedido_detalle_pedido_producto.dart';
@@ -19,11 +18,12 @@ class _ConfirmacionMozoPageState extends State<ConfirmacionMozoPage> {
   final DataService _dataService = getIt<DataService>();
   List<PedidoDetallePedidoProducto> _pedidos = [];
   bool _isLoading = false;
+  bool _isProcessing = false;
   StreamSubscription? _pedidoSubscription;
   StreamSubscription? _detallePedidoSubscription;
 
   final Color primaryColor = const Color(0xFF4B2C20); // Marrón
-  final Color backgroundColor = const Color(0xFFF5F5F5); // Gris claro
+  final Color backgroundColor = Color(0xFF5D4037); // Gris claro
   final Color textColor = Colors.black87;
 
   @override
@@ -40,11 +40,20 @@ class _ConfirmacionMozoPageState extends State<ConfirmacionMozoPage> {
 
     try {
       final pedidos = await _dataService.getPedidosWithDetallesByEstado(
-        ['orden', 'enPreparacion'],
+        [
+          'orden',
+          'enPreparacion',
+          'servido',
+          'pagado'
+        ], // Incluye el estado "pagado"
       );
       setState(() {
         _pedidos = pedidos;
       });
+      // Imprime el estado de los pedidos para verificar
+      for (var pedido in _pedidos) {
+        print("Pedido ${pedido.pedido.id} estado: ${pedido.pedido.estado}");
+      }
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -66,8 +75,37 @@ class _ConfirmacionMozoPageState extends State<ConfirmacionMozoPage> {
   void _setupRealtimeListeners() {
     _pedidoSubscription =
         _dataService.listenToPedidoChanges().listen((_) => _fetchPedidos());
-    _detallePedidoSubscription =
-        _dataService.listenToDetallePedidoChanges().listen((_) => _fetchPedidos());
+    _detallePedidoSubscription = _dataService
+        .listenToDetallePedidoChanges()
+        .listen((_) => _fetchPedidos());
+  }
+
+  Future<void> _cerrarPedido(Pedido pedido) async {
+    setState(() {
+      _isProcessing = true;
+    });
+
+    try {
+      await _dataService.cerrarPedido(pedido.id);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Pedido cerrado y mesa liberada.')),
+      );
+
+      // Recargar pedidos después de cerrar uno
+      _fetchPedidos();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error al cerrar el pedido: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      setState(() {
+        _isProcessing = false;
+      });
+    }
   }
 
   Future<void> _confirmarPedido(Pedido pedido) async {
@@ -101,7 +139,8 @@ class _ConfirmacionMozoPageState extends State<ConfirmacionMozoPage> {
   Future<void> _servirPedido(Pedido pedido) async {
     try {
       await _dataService.actualizarEstadoPedido(pedido.id, 'servido');
-      await _dataService.actualizarEstadoDetallePedidosPedidoId(pedido.id, 'servido');
+      await _dataService.actualizarEstadoDetallePedidosPedidoId(
+          pedido.id, 'servido');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -152,8 +191,8 @@ class _ConfirmacionMozoPageState extends State<ConfirmacionMozoPage> {
           : _pedidos.isEmpty
               ? Center(
                   child: Text(
-                    'No hay pedidos para confirmar o servir',
-                    style: TextStyle(color: textColor, fontSize: 16),
+                    'No hay pedidos para\n   confirmar o servir',
+                    style: TextStyle(color: Colors.white, fontSize: 22),
                   ),
                 )
               : ListView.builder(
@@ -187,7 +226,8 @@ class _ConfirmacionMozoPageState extends State<ConfirmacionMozoPage> {
                           ),
                         ),
                         children: [
-                          ...pedidoDetalle.detallesPedidoProducto.map((detalle) {
+                          ...pedidoDetalle.detallesPedidoProducto
+                              .map((detalle) {
                             return ListTile(
                               leading: detalle.producto.fotosUrls.isNotEmpty
                                   ? Image.network(
@@ -213,26 +253,41 @@ class _ConfirmacionMozoPageState extends State<ConfirmacionMozoPage> {
                           }).toList(),
                           Padding(
                             padding: const EdgeInsets.all(16.0),
-                            child: ElevatedButton.icon(
-                              onPressed: pedido.estado == 'orden'
-                                  ? () => _confirmarPedido(pedido)
-                                  : _todosLosDetallesListos(pedidoDetalle)
-                                      ? () => _servirPedido(pedido)
-                                      : null,
-                              icon: Icon(
-                                pedido.estado == 'orden'
-                                    ? Icons.check
-                                    : Icons.done_all,
-                              ),
-                              label: Text(pedido.estado == 'orden'
-                                  ? 'Confirmar'
-                                  : 'Servir'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: pedido.estado == 'orden'
-                                    ? Colors.orange
-                                    : Colors.green,
-                                disabledBackgroundColor: Colors.grey,
-                              ),
+                            child: Column(
+                              children: [
+                                ElevatedButton.icon(
+                                  onPressed: pedido.estado == 'orden'
+                                      ? () => _confirmarPedido(pedido)
+                                      : _todosLosDetallesListos(pedidoDetalle)
+                                          ? () => _servirPedido(pedido)
+                                          : null,
+                                  icon: Icon(
+                                    pedido.estado == 'orden'
+                                        ? Icons.check
+                                        : Icons.done_all,
+                                  ),
+                                  label: Text(pedido.estado == 'orden'
+                                      ? 'Confirmar'
+                                      : 'Servir'),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: pedido.estado == 'orden'
+                                        ? Colors.orange
+                                        : Colors.green,
+                                    disabledBackgroundColor: Colors.grey,
+                                  ),
+                                ),
+                                if (pedido.estado ==
+                                    'pagado') // Botón para cerrar pedido
+                                  ElevatedButton(
+                                    onPressed: _isProcessing
+                                        ? null
+                                        : () => _cerrarPedido(pedido),
+                                    child: Text('Cerrar Pedido'),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  ),
+                              ],
                             ),
                           ),
                         ],

@@ -104,6 +104,14 @@ class QrScannerPageState extends State<QrScannerPage> {
                   return;
                 }
 
+                if (pedido.estado == 'cerrada') {
+                  // Navigate to survey screen
+                  router.removeLast();
+                  router
+                      .push(SurveyResultsRoute(mesaNumero: scannedMesaNumero));
+                  return;
+                }
+
                 // Handle other states
                 if (pedido.mesaNumero == null) {
                   // Client doesn't have an assigned table

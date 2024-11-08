@@ -273,7 +273,7 @@ class ProductsListPageState extends State<ProductsListPage> {
                               Text(
                                 'Total: \$${_calculateTotal().toStringAsFixed(2)}',
                                 style: TextStyle(
-                                  fontSize: 20,
+                                  fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
                                 ),
@@ -281,7 +281,7 @@ class ProductsListPageState extends State<ProductsListPage> {
                               Text(
                                 'Tiempo estimado: ${_calculateEstimatedTime()} min',
                                 style: TextStyle(
-                                  fontSize: 16,
+                                  fontSize: 12,
                                   color: Colors.white70,
                                 ),
                               ),

@@ -150,7 +150,7 @@ class _PedidosListPageState extends State<PedidosListPage> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Color(0xFF4B2C20),
               ),
-              child: Text('Asignar'),
+              child: Text('Asignar', style: TextStyle(color: Colors.white)),
               onPressed: () async {
                 if (selectedMesaNumero == null) {
                   ScaffoldMessenger.of(context).showSnackBar(

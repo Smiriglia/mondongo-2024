@@ -73,20 +73,33 @@ class _EstatoPedidoPageState extends State<EstatoPedidoPage> {
               false, // Evita que se cierre al tocar fuera del diálogo
           builder: (BuildContext context) {
             return AlertDialog(
-              title: const Text('Confirmar Recepción'),
-              content: const Text('¿Has recibido tu pedido correctamente?'),
+              backgroundColor: const Color.fromARGB(255, 71, 53, 48),
+              title: const Text(
+                'Confirmar Recepción',
+                style: TextStyle(color: Colors.white),
+              ),
+              content: const Text(
+                '¿Has recibido tu pedido correctamente?',
+                style: TextStyle(color: Colors.white),
+              ),
               actions: [
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop(false); // Usuario cancela
                   },
-                  child: const Text('Cancelar'),
+                  child: const Text(
+                    'Cancelar',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop(true); // Usuario confirma
                   },
-                  child: const Text('Confirmar'),
+                  child: const Text(
+                    'Confirmar',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ],
             );
@@ -96,7 +109,7 @@ class _EstatoPedidoPageState extends State<EstatoPedidoPage> {
 
     if (confirmacion) {
       try {
-        // Actualizar el estado del pedido a 'enPreparacion'
+        // Actualizar el estado del pedido a 'recibido'
         await _dataService.actualizarEstadoPedido(
           widget.pedido.id,
           'recibido',
@@ -109,15 +122,24 @@ class _EstatoPedidoPageState extends State<EstatoPedidoPage> {
               false, // Evita que se cierre al tocar fuera del diálogo
           builder: (BuildContext context) {
             return AlertDialog(
-              title: const Text('Descuentos Disponibles'),
+              backgroundColor: const Color(0xFF5D4037),
+              title: const Text(
+                'Descuentos Disponibles',
+                style: TextStyle(color: Colors.white),
+              ),
               content: const Text(
-                  '¡Felicidades! Ahora puedes acceder a descuentos exclusivos en tu próxima compra.'),
+                '¡Felicidades! Ahora puedes acceder a descuentos exclusivos en tu próxima compra.',
+                style: TextStyle(color: Colors.white),
+              ),
               actions: [
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop(); // Cerrar el diálogo
                   },
-                  child: const Text('OK'),
+                  child: const Text(
+                    'OK',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ],
             );
@@ -156,19 +178,44 @@ class _EstatoPedidoPageState extends State<EstatoPedidoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFF5D4037),
       appBar: AppBar(
-        title: const Text('Estado del Pedido'),
+        title: const Text(
+          'Estado del Pedido',
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: const Color(0xFF4B2C20),
+        centerTitle: true,
       ),
       body: StreamBuilder<List<DetallePedido>>(
         stream: _detallePedidoStream,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+              child: CircularProgressIndicator(
+                color: Color(0xFF4B2C20),
+              ),
+            );
           } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return Center(
+              child: Text(
+                'Error: ${snapshot.error}',
+                style: const TextStyle(
+                  color: Colors.red,
+                  fontSize: 16,
+                ),
+              ),
+            );
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No hay detalles del pedido.'));
+            return const Center(
+              child: Text(
+                'No hay detalles del pedido.',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Color(0xFF4B2C20),
+                ),
+              ),
+            );
           } else {
             final detalles = snapshot.data!;
             final totalTiempo = _calculateTotalEstimatedTime(detalles);
@@ -195,46 +242,53 @@ class _EstatoPedidoPageState extends State<EstatoPedidoPage> {
                         return Card(
                           margin: const EdgeInsets.symmetric(vertical: 8.0),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.0),
+                            borderRadius: BorderRadius.circular(16.0),
                           ),
-                          elevation: 3,
+                          elevation: 4,
+                          color: const Color.fromARGB(255, 71, 53, 48),
                           child: Padding(
-                            padding: const EdgeInsets.all(12.0),
+                            padding: const EdgeInsets.all(16.0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   producto.nombre,
                                   style: const TextStyle(
-                                    fontSize: 18,
+                                    fontSize: 20,
                                     fontWeight: FontWeight.bold,
-                                    color: Color(0xFF4B2C20),
+                                    color: Colors.white,
                                   ),
                                 ),
-                                const SizedBox(height: 8),
+                                const SizedBox(height: 12),
                                 Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       'Cantidad: ${detalle.cantidad}',
-                                      style: const TextStyle(fontSize: 16),
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.white,
+                                      ),
                                     ),
                                     Text(
                                       'Estado: ${detalle.estado}',
                                       style: TextStyle(
                                         fontSize: 16,
                                         color: detalle.estado == 'pendiente'
-                                            ? Colors.red
-                                            : Colors.green,
+                                            ? Colors.redAccent
+                                            : Colors.greenAccent,
                                       ),
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 8),
+                                const SizedBox(height: 12),
                                 Text(
                                   'Tiempo estimado: ${producto.tiempoElaboracion * detalle.cantidad} min',
-                                  style: const TextStyle(fontSize: 16),
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ],
                             ),
@@ -248,10 +302,18 @@ class _EstatoPedidoPageState extends State<EstatoPedidoPage> {
 
                   // Total tiempo estimado
                   Container(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 16, horizontal: 24),
                     decoration: BoxDecoration(
                       color: const Color(0xFF4B2C20),
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          blurRadius: 6,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -289,34 +351,40 @@ class _EstatoPedidoPageState extends State<EstatoPedidoPage> {
 
     return Card(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.0),
+        borderRadius: BorderRadius.circular(16.0),
       ),
-      elevation: 3,
+      elevation: 4,
+      color: const Color.fromARGB(255, 71, 53, 48),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'Mesa: ${pedido.mesaNumero ?? 'No asignada'}',
               style: const TextStyle(
-                fontSize: 18,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF4B2C20),
+                color: Colors.white,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
             Text(
               'Estado: ${pedido.estado}',
               style: TextStyle(
-                fontSize: 16,
-                color: pedido.estado == 'pendiente' ? Colors.red : Colors.green,
+                fontSize: 18,
+                color: pedido.estado == 'pendiente'
+                    ? Colors.redAccent
+                    : Colors.greenAccent,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
             Text(
               'Fecha: ${_formatFecha(pedido.fecha)}',
-              style: const TextStyle(fontSize: 16),
+              style: const TextStyle(
+                fontSize: 18,
+                color: Colors.white,
+              ),
             ),
           ],
         ),

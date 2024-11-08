@@ -195,7 +195,7 @@ class GamesScreenState extends State<GamesScreen>
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
-            fontSize: 24.0,
+            fontSize: 20.0,
           ),
         ),
         iconTheme: IconThemeData(color: Colors.white),
@@ -210,7 +210,7 @@ class GamesScreenState extends State<GamesScreen>
                 Text(
                   '¡Total a Pagar con Descuento!',
                   style: TextStyle(
-                    fontSize: 28.0,
+                    fontSize: 20.0,
                     fontWeight: FontWeight.bold,
                     color: Colors.greenAccent,
                   ),
@@ -218,21 +218,21 @@ class GamesScreenState extends State<GamesScreen>
               Text(
                 'Precio Total: \$${totalPedido.toStringAsFixed(2)}',
                 style: TextStyle(
-                  fontSize: 20.0,
+                  fontSize: 18.0,
                   color: Colors.white,
                 ),
               ),
               Text(
                 'Descuento Seleccionado: $discount%',
                 style: TextStyle(
-                  fontSize: 18.0,
+                  fontSize: 16.0,
                   color: Colors.white70,
                 ),
               ),
               Text(
                 'Precio Final: \$${finalPrice.toStringAsFixed(2)}',
                 style: TextStyle(
-                  fontSize: 24.0,
+                  fontSize: 18.0,
                   fontWeight: FontWeight.bold,
                   color: Colors.greenAccent,
                 ),
@@ -318,7 +318,7 @@ class GamesScreenState extends State<GamesScreen>
                   child: Text(
                     'Ir a la Encuesta',
                     style: TextStyle(
-                      fontSize: 18.0,
+                      fontSize: 12.0,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),

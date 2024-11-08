@@ -20,12 +20,6 @@ class _AprobacionClientesPageState extends State<AprobacionClientesPage> {
   List<Cliente> _clientesPendientes = [];
   bool _isLoading = false;
 
-  // Colores personalizados
-  final Color primaryColor = Color(0xFF4B2C20); // Marrón
-  final Color accentColor = Color(0xFFD2B48C); // Canela
-  final Color backgroundColor = Color(0xFFF5F5F5); // Gris claro
-  final Color textColor = Colors.black87;
-
   @override
   void initState() {
     super.initState();
@@ -72,10 +66,11 @@ class _AprobacionClientesPageState extends State<AprobacionClientesPage> {
             'Cliente ${cliente.nombre} aprobado',
             style: TextStyle(color: Colors.white),
           ),
-          backgroundColor: primaryColor,
+          backgroundColor: Color(0xFF4B2C20),
         ),
       );
-      _emailService.sendEmail(cliente.email, 'Aprobacion Cuenta', 'Tu cuenta ha sido aprobada');
+      _emailService.sendEmail(
+          cliente.email, 'Aprobación de Cuenta', 'Tu cuenta ha sido aprobada.');
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -103,10 +98,11 @@ class _AprobacionClientesPageState extends State<AprobacionClientesPage> {
             'Cliente ${cliente.nombre} rechazado',
             style: TextStyle(color: Colors.white),
           ),
-          backgroundColor: primaryColor,
+          backgroundColor: Color(0xFF4B2C20),
         ),
       );
-      _emailService.sendEmail(cliente.email, 'Aprobacion Cuenta', 'Tu cuenta ha sido rechazada');
+      _emailService.sendEmail(cliente.email, 'Aprobación de Cuenta',
+          'Tu cuenta ha sido rechazada.');
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -124,35 +120,51 @@ class _AprobacionClientesPageState extends State<AprobacionClientesPage> {
   Widget _buildClienteItem(Cliente cliente) {
     return Card(
       margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      elevation: 4,
+      shadowColor: Color(0xFF5D4037).withOpacity(0.5),
       child: ListTile(
         leading: CircleAvatar(
+          radius: 30,
           backgroundImage:
               cliente.fotoUrl != null ? NetworkImage(cliente.fotoUrl!) : null,
-          backgroundColor: accentColor,
+          backgroundColor: Color(0xFF5D4037),
           child: cliente.fotoUrl == null
               ? Icon(
                   Icons.person,
                   color: Colors.white,
+                  size: 30,
                 )
               : null,
         ),
         title: Text(
           '${cliente.nombre} ${cliente.apellido}',
-          style: TextStyle(color: textColor),
+          style: TextStyle(
+            color: Color(0xFF4B2C20),
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
         ),
         subtitle: Text(
           'DNI: ${cliente.dni}',
-          style: TextStyle(color: textColor),
+          style: TextStyle(
+            color: Colors.black87,
+            fontSize: 14,
+          ),
         ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
+        trailing: Wrap(
+          spacing: 12, // espacio entre los botones
           children: [
             IconButton(
-              icon: Icon(Icons.check_circle, color: Colors.green),
+              icon: Icon(Icons.check_circle, color: Colors.green, size: 28),
+              tooltip: 'Aprobar',
               onPressed: () => _approveCliente(cliente),
             ),
             IconButton(
-              icon: Icon(Icons.cancel, color: Colors.red),
+              icon: Icon(Icons.cancel, color: Colors.red, size: 28),
+              tooltip: 'Rechazar',
               onPressed: () => _rejectCliente(cliente),
             ),
           ],
@@ -164,26 +176,42 @@ class _AprobacionClientesPageState extends State<AprobacionClientesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: Color(0xFF5D4037),
       appBar: AppBar(
         title: Text(
           'Aprobación de Clientes',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: primaryColor,
+        backgroundColor: Color(0xFF4B2C20),
+        elevation: 4,
       ),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF4B2C20)),
+              ),
+            )
           : _clientesPendientes.isEmpty
               ? Center(
-                  child: Text(
-                    'No hay clientes pendientes de aprobación',
-                    style: TextStyle(color: textColor, fontSize: 16),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'No hay clientes',
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                      ),
+                      SizedBox(height: 20), // Espaciado
+                      Text(
+                        'pendientes de aprobación.',
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                      ),
+                    ],
                   ),
                 )
               : RefreshIndicator(
                   onRefresh: _fetchPendingClientes,
                   child: ListView.builder(
+                    physics: const AlwaysScrollableScrollPhysics(),
                     itemCount: _clientesPendientes.length,
                     itemBuilder: (context, index) {
                       Cliente cliente = _clientesPendientes[index];

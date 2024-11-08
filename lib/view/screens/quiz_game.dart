@@ -199,7 +199,7 @@ class QuizGameState extends State<QuizGameRoute>
                           ? '¡Correcto!'
                           : 'Incorrecto. La respuesta correcta es "${(currentQ['answers'] as List<String>)[questions[currentQuestion]['correct'] as int]}".',
                       style: TextStyle(
-                        fontSize: 18.0,
+                        fontSize: 14.0,
                         color: selectedOption ==
                                 questions[currentQuestion]['correct']
                             ? Colors.green

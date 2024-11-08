@@ -142,34 +142,27 @@ class _LoginPageState extends State<LoginPage> {
                       'Iniciar sesión rápido:',
                       style: TextStyle(color: Colors.white),
                     ),
-                    SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        _buildQuickLoginButton(
-                            'cliente@gmail.com', '112233', 'cliente'),
-                        _buildQuickLoginButton(
-                            'empleado@gmail.com', '112233', 'empleado'),
-                        _buildQuickLoginButton(
-                            'supervisor@gmail.com', '112233', 'supervisor'),
-                        _buildAnonymousLoginButton(),
-                      ],
-                    ),
-                    SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        _buildQuickLoginButton(
-                            'mozo@gmail.com', '112233', 'mozo'),
-                        _buildQuickLoginButton(
-                            'maitre@gmail.com', '112233', 'maitre'),
-                        _buildQuickLoginButton(
-                            'cocinero@gmail.com', '112233', 'cocinero'),
-                        _buildQuickLoginButton(
-                            'bartender@gmail.com', '112233', 'bartender'),
-                      ],
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          _buildQuickLoginButton(
+                              'cliente@gmail.com', '112233', 'cliente'),
+                          _buildQuickLoginButton(
+                              'empleado@gmail.com', '112233', 'empleado'),
+                          _buildQuickLoginButton(
+                              'supervisor@gmail.com', '112233', 'supervisor'),
+                          _buildAnonymousLoginButton(),
+                          _buildQuickLoginButton(
+                              'mozo@gmail.com', '112233', 'mozo'),
+                          _buildQuickLoginButton(
+                              'maitre@gmail.com', '112233', 'maitre'),
+                          _buildQuickLoginButton(
+                              'cocinero@gmail.com', '112233', 'cocinero'),
+                          _buildQuickLoginButton(
+                              'bartender@gmail.com', '112233', 'bartender'),
+                        ],
+                      ),
                     ),
                     if (_errorMessage.isNotEmpty)
                       Padding(

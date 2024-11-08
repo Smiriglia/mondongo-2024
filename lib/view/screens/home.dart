@@ -53,8 +53,11 @@ class HomePage extends StatelessWidget {
             SizedBox(width: 8),
             Text(
               'Restaurante Mondongo',
-              style:
-                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 17,
+              ),
             ),
           ],
         ),
@@ -174,7 +177,7 @@ class HomePage extends StatelessWidget {
                                   SizedBox(height: 8),
                                   Text(
                                     currentProfile != null
-                                        ? '${currentProfile.nombre} ${currentProfile.apellido}'
+                                        ? '${currentProfile.nombre}'
                                         : 'Usuario',
                                     style: TextStyle(
                                       color: Colors.white,
@@ -212,7 +215,7 @@ class HomePage extends StatelessWidget {
                                     : 'No email',
                                 style: TextStyle(
                                   color: Colors.white.withOpacity(0.9),
-                                  fontSize: 14,
+                                  fontSize: 12,
                                 ),
                               ),
                             ],

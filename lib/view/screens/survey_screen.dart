@@ -332,6 +332,7 @@ class SurveyScreenState extends State<SurveyScreenRoute>
                       style: TextStyle(
                         fontSize: 18.0, // Tamaño de fuente aumentado
                         fontWeight: FontWeight.bold,
+                        color: Colors.white,
                       ),
                     ),
                   ),
