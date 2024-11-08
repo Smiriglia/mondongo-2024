@@ -6,6 +6,7 @@ import 'package:mondongo/models/dueno_supervisor.dart';
 import 'package:mondongo/models/cliente.dart';
 import 'package:mondongo/models/mesa.dart';
 import 'package:mondongo/models/pedido.dart';
+import 'package:mondongo/models/pedido_detalle_pedido_producto.dart';
 import 'package:mondongo/models/producto.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:mondongo/models/profile.dart';
@@ -419,14 +420,35 @@ class DataService {
         .toList();
   }
 
-  Stream<void> listenToDetallePedidoChanges(List<String> estados) {
-    return _supabaseClient.from('detallePedido').stream(primaryKey: ['id']);
+  Stream<void> listenToDetallePedidoChanges() {
+    return _supabaseClient.from(TABLES.detallePedido.name).stream(primaryKey: ['id']);
   }
 
   Future<void> actualizarEstadoDetallePedido(
       String detalleId, String estado) async {
     await _supabaseClient
-        .from('detallePedido')
+        .from(TABLES.detallePedido.name)
         .update({'estado': estado}).eq('id', detalleId);
+  }
+
+  Future<List<PedidoDetallePedidoProducto>> getPedidosWithDetallesByEstado(
+      List<String> estados) async {
+    final response = await _supabaseClient.rpc(
+      'get_pedidos_with_detalles_by_estado',
+      params: {'estados': estados},
+    );
+
+    if (response == null) {
+      return [];
+    }
+
+    return (response as List<dynamic>)
+        .map((json) =>
+            PedidoDetallePedidoProducto.fromJson(json as Map<String, dynamic>))
+        .toList();
+  }
+
+  Stream<void> listenToPedidoChanges() {
+    return _supabaseClient.from(TABLES.pedidos.name).stream(primaryKey: ['id']);
   }
 }

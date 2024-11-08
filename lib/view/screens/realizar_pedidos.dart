@@ -46,7 +46,7 @@ class _RealizarPedidosPageState extends State<RealizarPedidosPage> {
 
   void _listenToRealtimeChanges() {
     _realtimeSubscription = _dataService
-        .listenToDetallePedidoChanges(['ordenado', 'en preparacion'])
+        .listenToDetallePedidoChanges()
         .listen((_) {
       // Cuando detectamos un cambio, volvemos a cargar los datos
       _fetchData();
