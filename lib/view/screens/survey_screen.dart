@@ -1,17 +1,21 @@
-// lib/view/screens/survey_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mondongo/models/encuesta.dart';
 import 'package:mondongo/models/pedido.dart';
+import 'package:mondongo/routes/app_router.gr.dart';
 import 'package:mondongo/services/auth_services.dart';
 import 'package:mondongo/services/data_service.dart';
 
 @RoutePage()
 class SurveyScreenRoute extends StatefulWidget {
-  const SurveyScreenRoute({super.key}); // Constructor actualizado con super.key
+  final Pedido pedido;
+  final double discount; // Descuento ganado en la pantalla de juegos
+  const SurveyScreenRoute(
+      {super.key,
+      required this.pedido,
+      required this.discount}); // Constructor actualizado con super.key
 
   @override
   SurveyScreenState createState() =>
@@ -305,7 +309,14 @@ class SurveyScreenState extends State<SurveyScreenRoute>
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: isSurveyCompleted ? _requestBill : null,
+                    onPressed: isSurveyCompleted
+                        ? () {
+                            _requestBill();
+                            context.router.push(PaymentRoute(
+                                pedido: widget.pedido,
+                                discount: widget.discount));
+                          }
+                        : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xFF4B2C20),
                       padding: EdgeInsets.symmetric(

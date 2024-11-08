@@ -180,7 +180,8 @@ class GamesScreenState extends State<GamesScreen>
   }
 
   void _proceedToSurvey() {
-    context.router.push(SurveyRouteRoute());
+    context.router
+        .push(SurveyRouteRoute(pedido: widget.pedido, discount: discount));
   }
 
   @override

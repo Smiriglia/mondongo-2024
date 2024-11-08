@@ -504,4 +504,29 @@ class DataService {
 
     return total;
   }
+
+  Future<Producto> fetchProductById(String productoId) async {
+    final response = await _supabaseClient
+        .from(TABLES.productos.name)
+        .select()
+        .eq('id', productoId)
+        .maybeSingle();
+
+    if (response != null) {
+      return Producto.fromJson(response);
+    } else {
+      throw Exception('Product not found');
+    }
+  }
+
+  Future<List<DetallePedido>> fetchOrderDetails(String pedidoId) async {
+    final data = await _supabaseClient
+        .from(TABLES.detallePedido.name)
+        .select()
+        .eq('pedidoId', pedidoId);
+
+    return data
+        .map<DetallePedido>((detalle) => DetallePedido.fromJson(detalle))
+        .toList();
+  }
 }

@@ -100,7 +100,7 @@ class QrScannerPageState extends State<QrScannerPage> {
                 if (pedido.estado == 'pagando') {
                   // Navigate to survey screen
                   router.removeLast();
-                  router.push(SurveyRouteRoute());
+                  router.push(SurveyRouteRoute(pedido: pedido, discount: 0.0));
                   return;
                 }
 
