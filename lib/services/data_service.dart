@@ -345,6 +345,19 @@ class DataService {
             .toList());
   }
 
+  Stream<Pedido> listenToPedidoById(String pedidoId) {
+    return _supabaseClient
+        .from(TABLES.pedidos.name)
+        .stream(primaryKey: ['id'])
+        .eq('id', pedidoId)
+        .map((data) {
+          if (data.isEmpty) {
+            throw Exception('Pedido no encontrado');
+          }
+          return Pedido.fromJson(data.first);
+        });
+  }
+
   /// Agrega una nueva encuesta a la base de datos.
   Future<void> addEncuesta(Encuesta encuesta) async {
     final json = encuesta.toJson();
@@ -377,29 +390,6 @@ class DataService {
         .toList();
   }
 
-  Future<List<DetallePedidoProducto>> listenToDetallePedidosPorEstadoYSector(
-      List<String> estados, String sector) async {
-    var a = await _supabaseClient
-        .rpc('get_detalle_pedidos_by_estado_sector', params: {
-      'estados': estados,
-      'sector_param': sector,
-    });
-
-    return a.map((data) {
-      if (data == null) {
-        return <DetallePedidoProducto>[];
-      }
-
-      // Nos aseguramos de que los datos sean una lista
-      final dynamicList = data as List<dynamic>;
-
-      return dynamicList
-          .map((json) =>
-              DetallePedidoProducto.fromJson(json as Map<String, dynamic>))
-          .toList();
-    });
-  }
-
   Future<List<DetallePedidoProducto>> getDetallePedidosPorEstadoYSector(
       List<String> estados, String sector) async {
     final response = await _supabaseClient.rpc(
@@ -421,7 +411,9 @@ class DataService {
   }
 
   Stream<void> listenToDetallePedidoChanges() {
-    return _supabaseClient.from(TABLES.detallePedido.name).stream(primaryKey: ['id']);
+    return _supabaseClient
+        .from(TABLES.detallePedido.name)
+        .stream(primaryKey: ['id']);
   }
 
   Future<void> actualizarEstadoDetallePedido(

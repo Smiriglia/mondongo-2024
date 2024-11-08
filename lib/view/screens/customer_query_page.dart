@@ -48,8 +48,7 @@ class CustomerQueryPageState extends State<CustomerQueryPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Consulta enviada al mozo.')),
       );
-
-      Navigator.pop(context);
+      AutoRouter.of(context).removeLast();
     }
   }
 

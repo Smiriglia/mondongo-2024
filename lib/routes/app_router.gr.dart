@@ -688,7 +688,7 @@ class SurveyRouteRoute extends _i27.PageRouteInfo<void> {
   static _i27.PageInfo page = _i27.PageInfo(
     name,
     builder: (data) {
-      return _i23.SurveyScreenRoute();
+      return const _i23.SurveyScreenRoute();
     },
   );
 }
@@ -760,10 +760,18 @@ class WaiterQueriesRoute extends _i27.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i26.WaitingToBeAssignedPage]
-class WaitingToBeAssignedRoute extends _i27.PageRouteInfo<void> {
-  const WaitingToBeAssignedRoute({List<_i27.PageRouteInfo>? children})
-      : super(
+class WaitingToBeAssignedRoute
+    extends _i27.PageRouteInfo<WaitingToBeAssignedRouteArgs> {
+  WaitingToBeAssignedRoute({
+    _i28.Key? key,
+    required _i29.Pedido pedido,
+    List<_i27.PageRouteInfo>? children,
+  }) : super(
           WaitingToBeAssignedRoute.name,
+          args: WaitingToBeAssignedRouteArgs(
+            key: key,
+            pedido: pedido,
+          ),
           initialChildren: children,
         );
 
@@ -772,7 +780,27 @@ class WaitingToBeAssignedRoute extends _i27.PageRouteInfo<void> {
   static _i27.PageInfo page = _i27.PageInfo(
     name,
     builder: (data) {
-      return const _i26.WaitingToBeAssignedPage();
+      final args = data.argsAs<WaitingToBeAssignedRouteArgs>();
+      return _i26.WaitingToBeAssignedPage(
+        key: args.key,
+        pedido: args.pedido,
+      );
     },
   );
+}
+
+class WaitingToBeAssignedRouteArgs {
+  const WaitingToBeAssignedRouteArgs({
+    this.key,
+    required this.pedido,
+  });
+
+  final _i28.Key? key;
+
+  final _i29.Pedido pedido;
+
+  @override
+  String toString() {
+    return 'WaitingToBeAssignedRouteArgs{key: $key, pedido: $pedido}';
+  }
 }

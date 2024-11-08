@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:mondongo/models/detalle_pedido.dart';
 import 'package:mondongo/models/pedido.dart';
 import 'package:mondongo/models/producto.dart';
+import 'package:mondongo/routes/app_router.gr.dart';
 import 'package:mondongo/services/data_service.dart';
 import 'package:get_it/get_it.dart';
 
@@ -19,16 +20,20 @@ class EstatoPedidoPage extends StatefulWidget {
 class _EstatoPedidoPageState extends State<EstatoPedidoPage> {
   final DataService _dataService = GetIt.instance.get<DataService>();
   late Stream<List<DetallePedido>> _detallePedidoStream;
+  late Stream<Pedido> _pedidoStream;
   late Future<List<Producto>> _productosFuture;
   Map<String, Producto> _productosMap = {};
+  Pedido? _pedidoActual;
 
   @override
   void initState() {
     super.initState();
     _detallePedidoStream =
         _dataService.listenToDetallePedidos(widget.pedido.id);
+    _pedidoStream = _dataService.listenToPedidoById(widget.pedido.id);
     _productosFuture = _dataService.fetchProductos();
     _loadProductos();
+    _listenToPedidoChanges();
   }
 
   Future<void> _loadProductos() async {
@@ -36,6 +41,53 @@ class _EstatoPedidoPageState extends State<EstatoPedidoPage> {
     setState(() {
       _productosMap = {for (var producto in productos) producto.id: producto};
     });
+  }
+
+  void _listenToPedidoChanges() {
+    _pedidoStream.listen((pedido) {
+      setState(() {
+        _pedidoActual = pedido;
+      });
+
+      if (pedido.estado == 'servido') {
+        _showServidoDialog();
+      }
+    }, onError: (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Error al obtener el pedido: $error',
+            style: const TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
+    });
+  }
+
+  void _showServidoDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible:
+          false, // Evita que se cierre al tocar fuera del diálogo
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Pedido Servido'),
+          content: const Text(
+              'Tu pedido ha sido servido. Escanea el QR para confirmar la recepción.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                final router = AutoRouter.of(context);
+                router.removeLast();
+                router.push(QrScannerRoute());
+              },
+              child: const Text('Ir al Scanner'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   int _calculateTotalEstimatedTime(List<DetallePedido> detalles) {
@@ -52,18 +104,18 @@ class _EstatoPedidoPageState extends State<EstatoPedidoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Estado del Pedido'),
-        backgroundColor: Color(0xFF4B2C20),
+        title: const Text('Estado del Pedido'),
+        backgroundColor: const Color(0xFF4B2C20),
       ),
       body: StreamBuilder<List<DetallePedido>>(
         stream: _detallePedidoStream,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('No hay detalles del pedido.'));
+            return const Center(child: Text('No hay detalles del pedido.'));
           } else {
             final detalles = snapshot.data!;
             final totalTiempo = _calculateTotalEstimatedTime(detalles);
@@ -75,7 +127,7 @@ class _EstatoPedidoPageState extends State<EstatoPedidoPage> {
                   // Información general del pedido
                   _buildPedidoInfo(),
 
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
                   // Lista de detalles del pedido
                   Expanded(
@@ -85,10 +137,10 @@ class _EstatoPedidoPageState extends State<EstatoPedidoPage> {
                         final detalle = detalles[index];
                         final producto = _productosMap[detalle.productoId];
 
-                        if (producto == null) return SizedBox.shrink();
+                        if (producto == null) return const SizedBox.shrink();
 
                         return Card(
-                          margin: EdgeInsets.symmetric(vertical: 8.0),
+                          margin: const EdgeInsets.symmetric(vertical: 8.0),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12.0),
                           ),
@@ -100,20 +152,20 @@ class _EstatoPedidoPageState extends State<EstatoPedidoPage> {
                               children: [
                                 Text(
                                   producto.nombre,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                     color: Color(0xFF4B2C20),
                                   ),
                                 ),
-                                SizedBox(height: 8),
+                                const SizedBox(height: 8),
                                 Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       'Cantidad: ${detalle.cantidad}',
-                                      style: TextStyle(fontSize: 16),
+                                      style: const TextStyle(fontSize: 16),
                                     ),
                                     Text(
                                       'Estado: ${detalle.estado}',
@@ -126,10 +178,10 @@ class _EstatoPedidoPageState extends State<EstatoPedidoPage> {
                                     ),
                                   ],
                                 ),
-                                SizedBox(height: 8),
+                                const SizedBox(height: 8),
                                 Text(
                                   'Tiempo estimado: ${producto.tiempoElaboracion * detalle.cantidad} min',
-                                  style: TextStyle(fontSize: 16),
+                                  style: const TextStyle(fontSize: 16),
                                 ),
                               ],
                             ),
@@ -139,19 +191,19 @@ class _EstatoPedidoPageState extends State<EstatoPedidoPage> {
                     ),
                   ),
 
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
                   // Total tiempo estimado
                   Container(
-                    padding: EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Color(0xFF4B2C20),
+                      color: const Color(0xFF4B2C20),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
+                        const Text(
                           'Tiempo total estimado:',
                           style: TextStyle(
                             fontSize: 18,
@@ -161,7 +213,7 @@ class _EstatoPedidoPageState extends State<EstatoPedidoPage> {
                         ),
                         Text(
                           '$totalTiempo min',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
@@ -180,6 +232,8 @@ class _EstatoPedidoPageState extends State<EstatoPedidoPage> {
   }
 
   Widget _buildPedidoInfo() {
+    final pedido = _pedidoActual ?? widget.pedido;
+
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.0),
@@ -191,27 +245,25 @@ class _EstatoPedidoPageState extends State<EstatoPedidoPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Mesa: ${widget.pedido.mesaNumero ?? 'No asignada'}',
-              style: TextStyle(
+              'Mesa: ${pedido.mesaNumero ?? 'No asignada'}',
+              style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: Color(0xFF4B2C20),
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
-              'Estado: ${widget.pedido.estado}',
+              'Estado: ${pedido.estado}',
               style: TextStyle(
                 fontSize: 16,
-                color: widget.pedido.estado == 'pendiente'
-                    ? Colors.red
-                    : Colors.green,
+                color: pedido.estado == 'pendiente' ? Colors.red : Colors.green,
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
-              'Fecha: ${_formatFecha(widget.pedido.fecha)}',
-              style: TextStyle(fontSize: 16),
+              'Fecha: ${_formatFecha(pedido.fecha)}',
+              style: const TextStyle(fontSize: 16),
             ),
           ],
         ),

@@ -135,6 +135,15 @@ class ProductsListPageState extends State<ProductsListPage> {
       appBar: AppBar(
         title: Text('Lista de Productos'),
         backgroundColor: Color(0xFF4B2C20),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.chat, color: Colors.white),
+            onPressed: () {
+              AutoRouter.of(context).push(CustomerQueryRoute());
+            },
+            tooltip: 'Consulta al Mozo',
+          ),
+        ],
       ),
       body: Stack(
         children: [

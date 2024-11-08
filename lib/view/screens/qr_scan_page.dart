@@ -58,7 +58,9 @@ class QrScannerPageState extends State<QrScannerPage> {
                 // User wants to join the waitlist
                 await dataService.addToWaitList(userId);
                 router.removeLast();
-                router.push(WaitingToBeAssignedRoute());
+                Pedido? pedido = await dataService.fetchPedidoByClienteId(userId);
+                if (pedido == null) throw Exception('pedido no encontrado');
+                router.push(WaitingToBeAssignedRoute(pedido: pedido));
               } else if (qrData.contains('Mesa-')) {
                 // User scanned a table QR code
                 int scannedMesaNumero = int.parse(qrData.split('-').last);
@@ -129,7 +131,7 @@ class QrScannerPageState extends State<QrScannerPage> {
                       ),
                     );
                     router.removeLast();
-                    router.push(WaitingToBeAssignedRoute());
+                    router.push(WaitingToBeAssignedRoute(pedido: pedido));
                     return;
                 }
               } else {
