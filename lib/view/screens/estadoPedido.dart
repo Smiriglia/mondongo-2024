@@ -50,7 +50,7 @@ class _EstatoPedidoPageState extends State<EstatoPedidoPage> {
       });
 
       if (pedido.estado == 'servido') {
-        _showServidoDialog();
+        _showServidoAndAdditionalDialogs();
       }
     }, onError: (error) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -65,29 +65,80 @@ class _EstatoPedidoPageState extends State<EstatoPedidoPage> {
     });
   }
 
-  void _showServidoDialog() {
-    showDialog(
-      context: context,
-      barrierDismissible:
-          false, // Evita que se cierre al tocar fuera del diálogo
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Pedido Servido'),
-          content: const Text(
-              'Tu pedido ha sido servido. Escanea el QR para confirmar la recepción.'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                final router = AutoRouter.of(context);
-                router.removeLast();
-                router.push(QrScannerRoute());
-              },
-              child: const Text('Ir al Scanner'),
-            ),
-          ],
+  Future<void> _showServidoAndAdditionalDialogs() async {
+    // Primero, mostrar el diálogo de confirmación de recepción
+    bool confirmacion = await showDialog<bool>(
+          context: context,
+          barrierDismissible:
+              false, // Evita que se cierre al tocar fuera del diálogo
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Confirmar Recepción'),
+              content: const Text('¿Has recibido tu pedido correctamente?'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(false); // Usuario cancela
+                  },
+                  child: const Text('Cancelar'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(true); // Usuario confirma
+                  },
+                  child: const Text('Confirmar'),
+                ),
+              ],
+            );
+          },
+        ) ??
+        false;
+
+    if (confirmacion) {
+      try {
+        // Actualizar el estado del pedido a 'enPreparacion'
+        await _dataService.actualizarEstadoPedido(
+            widget.pedido.id, 'enPreparacion');
+
+        // Mostrar el diálogo de descuentos
+        await showDialog<void>(
+          context: context,
+          barrierDismissible:
+              false, // Evita que se cierre al tocar fuera del diálogo
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Descuentos Disponibles'),
+              content: const Text(
+                  '¡Felicidades! Ahora puedes acceder a descuentos exclusivos en tu próxima compra.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Cerrar el diálogo
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
         );
-      },
-    );
+
+        // Navegar al escáner de QR
+        final router = AutoRouter.of(context);
+        router.removeLast();
+        router.push(const QrScannerRoute());
+      } catch (error) {
+        // Manejar errores al actualizar el estado del pedido
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Error al actualizar el pedido: $error',
+              style: const TextStyle(color: Colors.white),
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   int _calculateTotalEstimatedTime(List<DetallePedido> detalles) {

@@ -443,4 +443,39 @@ class DataService {
   Stream<void> listenToPedidoChanges() {
     return _supabaseClient.from(TABLES.pedidos.name).stream(primaryKey: ['id']);
   }
+
+  // Obtener todas las consultas de un cliente
+  Future<List<Consulta>> fetchConsultasByClienteId(String clienteId) async {
+    final data = await _supabaseClient
+        .from(TABLES.consultas.name)
+        .select()
+        .eq('cliente_id', clienteId)
+        .order('fecha_hora', ascending: false);
+
+    return data.map<Consulta>((c) => Consulta.fromJson(c)).toList();
+  }
+
+  // Obtener una consulta específica por ID
+  Future<Consulta?> fetchConsultaById(String consultaId) async {
+    final data = await _supabaseClient
+        .from(TABLES.consultas.name)
+        .select()
+        .eq('id', consultaId)
+        .maybeSingle();
+
+    if (data != null) {
+      return Consulta.fromJson(data);
+    }
+    return null;
+  }
+
+  // Actualizar la respuesta de una consulta
+  Future<void> updateConsultaRespuesta(
+      String consultaId, String respuesta) async {
+    await _supabaseClient.from(TABLES.consultas.name).update({
+      'respuesta': respuesta,
+      'estado': 'respondido',
+      'fecha_respuesta': DateTime.now().toIso8601String(),
+    }).eq('id', consultaId);
+  }
 }
