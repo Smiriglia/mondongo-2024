@@ -7,6 +7,7 @@ import 'package:mondongo/models/producto.dart';
 import 'package:mondongo/services/data_service.dart';
 import 'package:mondongo/services/qr_service.dart';
 import 'package:mondongo/services/storage_service.dart';
+
 @RoutePage()
 class CreateProductPage extends StatefulWidget {
   const CreateProductPage({Key? key}) : super(key: key);
@@ -25,6 +26,7 @@ class _CreateProductPageState extends State<CreateProductPage> {
   String? _descripcion;
   int _tiempoElaboracion = 0;
   double _precio = 0.0;
+  String _sector = 'cocina'; // Valor predeterminado
   List<File> _images = [];
   bool _isLoading = false;
 
@@ -100,6 +102,7 @@ class _CreateProductPageState extends State<CreateProductPage> {
           fotosUrls: imageUrls,
           qrCodeUrl: qrCodeUrl,
           createdAt: DateTime.now(),
+          sector: _sector,
         );
 
         await _dataService.addProducto(newProduct);
@@ -195,17 +198,47 @@ class _CreateProductPageState extends State<CreateProductPage> {
                       onSaved: (value) => _precio = double.parse(value!),
                     ),
                     SizedBox(height: 16),
+
+                    // Select de Sector
+                    DropdownButtonFormField<String>(
+                      value: _sector,
+                      items: [
+                        DropdownMenuItem(
+                          child: Text('Cocina'),
+                          value: 'cocina',
+                        ),
+                        DropdownMenuItem(
+                          child: Text('Bar'),
+                          value: 'bar',
+                        ),
+                      ],
+                      onChanged: (value) {
+                        setState(() {
+                          _sector = value!;
+                        });
+                      },
+                      decoration:
+                          _inputDecoration('Sector', Icons.kitchen),
+                    ),
+
+                    SizedBox(height: 16),
+
                     // Mostrar imágenes seleccionadas
                     _images.isNotEmpty
                         ? Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: _images
                                 .map((image) => Padding(
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 4),
                                       child: ClipRRect(
                                         borderRadius: BorderRadius.circular(8),
-                                        child: Image.file(image, height: 100, width: 100, fit: BoxFit.contain, ),
+                                        child: Image.file(
+                                          image,
+                                          height: 100,
+                                          width: 100,
+                                          fit: BoxFit.contain,
+                                        ),
                                       ),
                                     ))
                                 .toList(),

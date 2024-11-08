@@ -31,5 +31,6 @@ class AppRouter extends RootStackRouter {
         AutoRoute(page: TappingGameRoute.page, guards: [AuthGuard()]),
         AutoRoute(page: SurveyRouteRoute.page, guards: [AuthGuard()]),
         AutoRoute(page: SurveyResultsRoute.page, guards: [AuthGuard()]),
+        AutoRoute(page: RealizarPedidosRoute.page, guards: [AuthGuard()]),
       ];
 }

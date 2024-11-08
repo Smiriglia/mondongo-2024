@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:mondongo/models/empleado.dart';
 import 'package:mondongo/models/profile.dart';
 import 'package:mondongo/routes/app_router.gr.dart';
 import 'package:mondongo/services/auth_services.dart';
@@ -24,6 +25,14 @@ class HomePage extends StatelessWidget {
 
   bool _isUserMozo(Profile? profile) {
     return profile?.rol == 'mozo';
+  }
+
+  bool _isUserCocinero(Profile? profile) {
+    return profile is Empleado && profile.tipoEmpleado == 'cocinero';
+  }
+
+  bool _isUserBartender(Profile? profile) {
+    return profile is Empleado && profile.tipoEmpleado == 'bartender';
   }
 
   @override
@@ -347,6 +356,17 @@ class HomePage extends StatelessWidget {
                             color: Color(0xFF5D4037),
                             onTap: () {
                               context.router.push(PedidosListRoute());
+                            },
+                          ),
+                        if (_isUserCocinero(currentProfile) ||
+                            _isUserBartender(currentProfile))
+                          _buildMenuCard(
+                            context,
+                            title: 'Realizar Pedidos',
+                            icon: Icons.table_chart,
+                            color: Color(0xFF5D4037),
+                            onTap: () {
+                              context.router.push(RealizarPedidosRoute());
                             },
                           ),
                       ],
