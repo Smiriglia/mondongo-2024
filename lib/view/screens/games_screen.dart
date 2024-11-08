@@ -24,15 +24,15 @@ class GamesScreenState extends State<GamesScreen>
   double finalPrice = 0.0;
   String selectedGame = '';
   double difficulty = 1.0;
+  bool winOnFirstAttempt =
+      false; // Nueva variable para verificar el primer intento exitoso
 
-  // Lista de juegos disponibles
   final List<String> games = [
     'Adivina el Número',
     'Quiz de Preguntas',
     'Juego de Taps Rápidos',
   ];
 
-  // Controlador de animación para la lista de juegos
   late AnimationController _controller;
   late Animation<double> _animation;
 
@@ -47,11 +47,10 @@ class GamesScreenState extends State<GamesScreen>
     );
     _animation = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
     _controller.forward();
-    _fetchTotalPedido(); // Llama al método para obtener el total al iniciar
+    _fetchTotalPedido();
   }
 
   Future<void> _fetchTotalPedido() async {
-    // Llama a DataService para obtener el total del pedido
     totalPedido = await _dataService.calcularTotalPedido(widget.pedido.id);
     setState(() {
       finalPrice = totalPedido - (totalPedido * (discount / 100));
@@ -64,6 +63,23 @@ class GamesScreenState extends State<GamesScreen>
       difficulty = 1.0 + ((value - 10) / 10) * 0.5;
       finalPrice = totalPedido - (totalPedido * (discount / 100));
     });
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Color(0xFF4B2C20),
+        title: Text('Error', style: TextStyle(color: Colors.white)),
+        content: Text(message, style: TextStyle(color: Colors.white70)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('OK', style: TextStyle(color: Colors.white70)),
+          ),
+        ],
+      ),
+    );
   }
 
   void _startGame(String game) async {
@@ -93,32 +109,14 @@ class GamesScreenState extends State<GamesScreen>
     if (!mounted) return;
 
     if (gameResult != null && gameResult) {
-      _applyDiscount();
+      setState(() {
+        winOnFirstAttempt = true;
+        _applyDiscount();
+      });
     }
   }
 
-  void _showErrorDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: Color(0xFF4B2C20),
-        title: Text('Error',
-            style: TextStyle(color: Colors.white, fontSize: 20.0)),
-        content: Text(message,
-            style: TextStyle(color: Colors.white70, fontSize: 16.0)),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('OK',
-                style: TextStyle(color: Colors.white70, fontSize: 16.0)),
-          ),
-        ],
-      ),
-    );
-  }
-
   void _applyDiscount() async {
-    // Actualizar el pedido en la base de datos con el descuento aplicado
     await _dataService.updatePedido(widget.pedido);
 
     showDialog(
@@ -141,6 +139,42 @@ class GamesScreenState extends State<GamesScreen>
                 style: TextStyle(color: Colors.white70, fontSize: 16.0)),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildDiscountButton(double value) {
+    bool isSelected = discount == value;
+    return GestureDetector(
+      onTap: () => _selectDiscount(value),
+      child: AnimatedContainer(
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.orangeAccent : Color(0xFF4B2C20),
+          borderRadius: BorderRadius.circular(12.0),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: Colors.orangeAccent.withOpacity(0.6),
+                    spreadRadius: 2.0,
+                    blurRadius: 8.0,
+                    offset: Offset(0, 4),
+                  ),
+                ]
+              : [],
+        ),
+        child: Center(
+          child: Text(
+            '$value%',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 18.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -171,7 +205,15 @@ class GamesScreenState extends State<GamesScreen>
           padding: const EdgeInsets.all(24.0),
           child: Column(
             children: [
-              // Mostrar el precio total y el descuento
+              if (winOnFirstAttempt)
+                Text(
+                  '¡Total a Pagar con Descuento!',
+                  style: TextStyle(
+                    fontSize: 28.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.greenAccent,
+                  ),
+                ),
               Text(
                 'Precio Total: \$${totalPedido.toStringAsFixed(2)}',
                 style: TextStyle(
@@ -189,12 +231,12 @@ class GamesScreenState extends State<GamesScreen>
               Text(
                 'Precio Final: \$${finalPrice.toStringAsFixed(2)}',
                 style: TextStyle(
-                  fontSize: 20.0,
+                  fontSize: 24.0,
+                  fontWeight: FontWeight.bold,
                   color: Colors.greenAccent,
                 ),
               ),
               SizedBox(height: 16.0),
-              // Botones para seleccionar descuento con animación de escala
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -204,7 +246,6 @@ class GamesScreenState extends State<GamesScreen>
                 ],
               ),
               SizedBox(height: 24.0),
-              // Lista de juegos disponibles con animación de desvanecimiento
               Expanded(
                 child: ListView.builder(
                   itemCount: games.length,
@@ -261,44 +302,28 @@ class GamesScreenState extends State<GamesScreen>
                   },
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  // Método para construir botones de descuento con animación de escala
-  Widget _buildDiscountButton(double value) {
-    bool isSelected = discount == value;
-    return GestureDetector(
-      onTap: () => _selectDiscount(value),
-      child: AnimatedContainer(
-        duration: Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-        padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
-        decoration: BoxDecoration(
-          color: isSelected ? Colors.orangeAccent : Color(0xFF4B2C20),
-          borderRadius: BorderRadius.circular(12.0),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: Colors.orangeAccent.withOpacity(0.6),
-                    spreadRadius: 2.0,
-                    blurRadius: 8.0,
-                    offset: Offset(0, 4),
+              if (winOnFirstAttempt)
+                ElevatedButton(
+                  onPressed: _proceedToSurvey,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orange,
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                    elevation: 5.0,
                   ),
-                ]
-              : [],
-        ),
-        child: Center(
-          child: Text(
-            '$value%',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18.0,
-              fontWeight: FontWeight.bold,
-            ),
+                  child: Text(
+                    'Ir a la Encuesta',
+                    style: TextStyle(
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+            ],
           ),
         ),
       ),

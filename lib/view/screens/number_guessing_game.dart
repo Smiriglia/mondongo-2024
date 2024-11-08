@@ -24,21 +24,17 @@ class _NumberGuessingGameState extends State<NumberGuessingGameRoute> {
   @override
   void initState() {
     super.initState();
-    // Definir rango y intentos según la dificultad
     if (widget.difficulty <= 1.0) {
-      // Fácil
       maxNumber = 50;
       maxAttempts = 5;
     } else if (widget.difficulty <= 1.25) {
-      // Mediano
       maxNumber = 75;
       maxAttempts = 3;
     } else {
-      // Difícil
       maxNumber = 100;
       maxAttempts = 1;
     }
-    targetNumber = Random().nextInt(maxNumber + 1); // Incluye 0 y maxNumber
+    targetNumber = Random().nextInt(maxNumber + 1);
   }
 
   void _submitGuess() {
@@ -58,11 +54,14 @@ class _NumberGuessingGameState extends State<NumberGuessingGameRoute> {
         feedback = 'Demasiado alto.';
       } else {
         feedback = '¡Correcto! Lo lograste en $attempts intento(s).';
+        Navigator.pop(context, true); // Gano
+        return;
       }
 
       if (attempts >= maxAttempts && guess != targetNumber) {
         feedback +=
-            '\nHas alcanzado el número máximo de intentos. El número era $targetNumber.';
+            '\\nHas alcanzado el número máximo de intentos. El número era $targetNumber.';
+        Navigator.pop(context, false); // Perdio
       }
     });
   }
@@ -73,7 +72,9 @@ class _NumberGuessingGameState extends State<NumberGuessingGameRoute> {
         attempts >= maxAttempts || feedback.startsWith('¡Correcto!');
 
     return Scaffold(
+      backgroundColor: Color(0xFF5D4037),
       appBar: AppBar(
+        backgroundColor: Color(0xFF4B2C20),
         title: Text('Adivina el Número'),
       ),
       body: Padding(
@@ -82,7 +83,7 @@ class _NumberGuessingGameState extends State<NumberGuessingGameRoute> {
           children: [
             Text(
               'Adivina un número entre 0 y $maxNumber.',
-              style: TextStyle(fontSize: 18),
+              style: TextStyle(fontSize: 20, color: Colors.white),
             ),
             SizedBox(height: 20),
             TextField(
@@ -90,26 +91,52 @@ class _NumberGuessingGameState extends State<NumberGuessingGameRoute> {
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
                 labelText: 'Tu Adivinanza',
+                labelStyle: TextStyle(color: Colors.white),
                 border: OutlineInputBorder(),
               ),
               enabled: !gameOver,
+              style: TextStyle(color: Colors.white),
             ),
             SizedBox(height: 10),
             ElevatedButton(
               onPressed: (!gameOver) ? _submitGuess : null,
-              child: Text('Adivinar'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFF4B2C20),
+                padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+                elevation: 5.0,
+              ),
+              child: Text(
+                'Adivinar',
+                style: TextStyle(color: Colors.white, fontSize: 18.0),
+              ),
             ),
             SizedBox(height: 20),
             Text(
               feedback,
-              style: TextStyle(fontSize: 16, color: Colors.red),
+              style: TextStyle(fontSize: 18, color: Colors.red),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 20),
             if (gameOver)
               ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text('Volver'),
+                onPressed: () =>
+                    Navigator.pop(context, false), // Salir sin ganar
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFF4B2C20),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  elevation: 5.0,
+                ),
+                child: Text(
+                  'Volver',
+                  style: TextStyle(color: Colors.white, fontSize: 18.0),
+                ),
               ),
           ],
         ),

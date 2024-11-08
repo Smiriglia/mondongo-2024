@@ -1,4 +1,3 @@
-// tapping_game.dart
 import 'dart:math';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
@@ -18,16 +17,14 @@ class TappingGameRoute extends StatefulWidget {
 class _TappingGameState extends State<TappingGameRoute> {
   int score = 0;
   Timer? timer;
-  int timeLeft = 10; // Tiempo base en segundos
+  int timeLeft = 10;
   List<Offset> targets = [];
   final double targetSize = 50.0;
 
   @override
   void initState() {
     super.initState();
-    // Ajustar el tiempo y la frecuencia de aparición de objetivos según la dificultad
-    timeLeft = (10 - (widget.difficulty - 1) * 3)
-        .toInt(); // 10% -> 10, 15% -> 7, 20% -> 4
+    timeLeft = (10 - (widget.difficulty - 1) * 3).toInt();
     _startGame();
   }
 
@@ -39,7 +36,6 @@ class _TappingGameState extends State<TappingGameRoute> {
       } else {
         setState(() {
           timeLeft -= 1;
-          // Agregar un nuevo objetivo aleatorio
           final random = Random();
           final x = random.nextDouble() *
               (MediaQuery.of(context).size.width - targetSize);
@@ -53,22 +49,8 @@ class _TappingGameState extends State<TappingGameRoute> {
   }
 
   void _endGame() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Juego Terminado'),
-        content: Text('Tu puntuación: $score'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context); // Cerrar el diálogo
-              Navigator.pop(context); // Volver a la pantalla de juegos
-            },
-            child: Text('OK'),
-          ),
-        ],
-      ),
-    );
+    bool won = score >= 5;
+    Navigator.pop(context, won);
   }
 
   void _tapTarget(int index) {
@@ -87,44 +69,47 @@ class _TappingGameState extends State<TappingGameRoute> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Juego de Taps Rápidos'),
-        ),
-        body: Stack(
-          children: [
-            // Mostrar la puntuación y el tiempo restante
-            Positioned(
-              top: 20,
-              left: 20,
-              child: Column(
-                children: [
-                  Text('Puntuación: $score', style: TextStyle(fontSize: 20)),
-                  SizedBox(height: 10),
-                  Text('Tiempo: $timeLeft s', style: TextStyle(fontSize: 20)),
-                ],
-              ),
+      backgroundColor: Color(0xFF5D4037),
+      appBar: AppBar(
+        backgroundColor: Color(0xFF4B2C20),
+        title: Text('Juego de Taps Rápidos'),
+      ),
+      body: Stack(
+        children: [
+          Positioned(
+            top: 20,
+            left: 20,
+            child: Column(
+              children: [
+                Text('Puntuación: $score',
+                    style: TextStyle(fontSize: 20, color: Colors.white)),
+                SizedBox(height: 10),
+                Text('Tiempo: $timeLeft s',
+                    style: TextStyle(fontSize: 20, color: Colors.white)),
+              ],
             ),
-            // Dibujar los objetivos
-            ...targets.asMap().entries.map((entry) {
-              int idx = entry.key;
-              Offset pos = entry.value;
-              return Positioned(
-                left: pos.dx,
-                top: pos.dy,
-                child: GestureDetector(
-                  onTap: () => _tapTarget(idx),
-                  child: Container(
-                    width: targetSize,
-                    height: targetSize,
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      shape: BoxShape.circle,
-                    ),
+          ),
+          ...targets.asMap().entries.map((entry) {
+            int idx = entry.key;
+            Offset pos = entry.value;
+            return Positioned(
+              left: pos.dx,
+              top: pos.dy,
+              child: GestureDetector(
+                onTap: () => _tapTarget(idx),
+                child: Container(
+                  width: targetSize,
+                  height: targetSize,
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    shape: BoxShape.circle,
                   ),
                 ),
-              );
-            }).toList(),
-          ],
-        ));
+              ),
+            );
+          }).toList(),
+        ],
+      ),
+    );
   }
 }
