@@ -163,10 +163,17 @@ class EstatoPedidoRouteArgs {
 
 /// generated route for
 /// [_i6.GamesScreen]
-class GamesRoute extends _i27.PageRouteInfo<void> {
-  const GamesRoute({List<_i27.PageRouteInfo>? children})
-      : super(
+class GamesRoute extends _i27.PageRouteInfo<GamesRouteArgs> {
+  GamesRoute({
+    _i28.Key? key,
+    required _i29.Pedido pedido,
+    List<_i27.PageRouteInfo>? children,
+  }) : super(
           GamesRoute.name,
+          args: GamesRouteArgs(
+            key: key,
+            pedido: pedido,
+          ),
           initialChildren: children,
         );
 
@@ -175,9 +182,29 @@ class GamesRoute extends _i27.PageRouteInfo<void> {
   static _i27.PageInfo page = _i27.PageInfo(
     name,
     builder: (data) {
-      return const _i6.GamesScreen();
+      final args = data.argsAs<GamesRouteArgs>();
+      return _i6.GamesScreen(
+        key: args.key,
+        pedido: args.pedido,
+      );
     },
   );
+}
+
+class GamesRouteArgs {
+  const GamesRouteArgs({
+    this.key,
+    required this.pedido,
+  });
+
+  final _i28.Key? key;
+
+  final _i29.Pedido pedido;
+
+  @override
+  String toString() {
+    return 'GamesRouteArgs{key: $key, pedido: $pedido}';
+  }
 }
 
 /// generated route for

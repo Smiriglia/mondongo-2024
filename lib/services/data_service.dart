@@ -478,4 +478,30 @@ class DataService {
       'fecha_respuesta': DateTime.now().toIso8601String(),
     }).eq('id', consultaId);
   }
+
+  Future<double> calcularTotalPedido(String pedidoId) async {
+    // 1. Obtener los detalles del pedido con el precio de los productos
+    final response = await _supabaseClient
+        .from('detallePedido')
+        .select('cantidad, productos(precio)')
+        .eq('pedidoId', pedidoId);
+
+    if (response == null || response.isEmpty) {
+      throw Exception('Error fetching order details: No data found');
+    }
+
+    double total = 0.0;
+
+    // 2. Calcular el total del pedido usando los datos obtenidos en la consulta
+    for (var detalle in response) {
+      int cantidad = detalle['cantidad'] ?? 0;
+      double precioProducto =
+          (detalle['productos']['precio'] as num).toDouble();
+
+      // Calcular el subtotal para este producto y agregarlo al total
+      total += cantidad * precioProducto;
+    }
+
+    return total;
+  }
 }

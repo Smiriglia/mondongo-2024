@@ -1,19 +1,27 @@
+// games_screen.dart
+
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
-import '../../routes/app_router.gr.dart';
+import 'package:get_it/get_it.dart';
+import 'package:mondongo/routes/app_router.gr.dart';
+import 'package:mondongo/services/data_service.dart';
+import 'package:mondongo/models/pedido.dart';
 
 @RoutePage()
 class GamesScreen extends StatefulWidget {
-  const GamesScreen({super.key}); // Constructor actualizado con super.key
+  final Pedido pedido;
+
+  const GamesScreen({super.key, required this.pedido});
 
   @override
-  GamesScreenState createState() =>
-      GamesScreenState(); // Clase de estado pública
+  GamesScreenState createState() => GamesScreenState();
 }
 
 class GamesScreenState extends State<GamesScreen>
     with SingleTickerProviderStateMixin {
   double discount = 0.0;
+  double totalPedido = 0.0;
+  double finalPrice = 0.0;
   String selectedGame = '';
   double difficulty = 1.0;
 
@@ -28,6 +36,8 @@ class GamesScreenState extends State<GamesScreen>
   late AnimationController _controller;
   late Animation<double> _animation;
 
+  final DataService _dataService = GetIt.instance.get<DataService>();
+
   @override
   void initState() {
     super.initState();
@@ -37,60 +47,106 @@ class GamesScreenState extends State<GamesScreen>
     );
     _animation = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
     _controller.forward();
+    _fetchTotalPedido(); // Llama al método para obtener el total al iniciar
   }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
+  Future<void> _fetchTotalPedido() async {
+    // Llama a DataService para obtener el total del pedido
+    totalPedido = await _dataService.calcularTotalPedido(widget.pedido.id);
+    setState(() {
+      finalPrice = totalPedido - (totalPedido * (discount / 100));
+    });
   }
 
   void _selectDiscount(double value) {
     setState(() {
       discount = value;
-      difficulty =
-          1.0 + ((value - 10) / 10) * 0.5; // Ajusta según tus necesidades
+      difficulty = 1.0 + ((value - 10) / 10) * 0.5;
+      finalPrice = totalPedido - (totalPedido * (discount / 100));
     });
   }
 
-  void _startGame(String game) {
-    // Navegar al juego seleccionado pasando la dificultad
+  void _startGame(String game) async {
+    bool? gameResult;
+
     switch (game) {
       case 'Adivina el Número':
-        context.router.push(NumberGuessingGameRoute(difficulty: difficulty));
+        gameResult = await context.router.push(
+          NumberGuessingGameRoute(difficulty: difficulty),
+        );
         break;
       case 'Quiz de Preguntas':
-        context.router.push(QuizGameRoute(difficulty: difficulty));
+        gameResult = await context.router.push(
+          QuizGameRoute(difficulty: difficulty),
+        );
         break;
       case 'Juego de Taps Rápidos':
-        context.router.push(TappingGameRoute(difficulty: difficulty));
+        gameResult = await context.router.push(
+          TappingGameRoute(difficulty: difficulty),
+        );
         break;
       default:
-        // Manejar casos inesperados
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            backgroundColor: Color(0xFF4B2C20),
-            title: Text(
-              'Error',
-              style: TextStyle(color: Colors.white, fontSize: 20.0),
-            ),
-            content: Text(
-              'Juego no encontrado.',
-              style: TextStyle(color: Colors.white70, fontSize: 16.0),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text(
-                  'OK',
-                  style: TextStyle(color: Colors.white70, fontSize: 16.0),
-                ),
-              ),
-            ],
-          ),
-        );
+        _showErrorDialog('Juego no encontrado.');
+        return;
     }
+
+    if (!mounted) return;
+
+    if (gameResult != null && gameResult) {
+      _applyDiscount();
+    }
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Color(0xFF4B2C20),
+        title: Text('Error',
+            style: TextStyle(color: Colors.white, fontSize: 20.0)),
+        content: Text(message,
+            style: TextStyle(color: Colors.white70, fontSize: 16.0)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('OK',
+                style: TextStyle(color: Colors.white70, fontSize: 16.0)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _applyDiscount() async {
+    // Actualizar el pedido en la base de datos con el descuento aplicado
+    await _dataService.updatePedido(widget.pedido);
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Color(0xFF4B2C20),
+        title: Text('¡Felicidades!',
+            style: TextStyle(color: Colors.white, fontSize: 20.0)),
+        content: Text(
+          'Has ganado un descuento del $discount%. Total con descuento: \$${finalPrice.toStringAsFixed(2)}',
+          style: TextStyle(color: Colors.white70, fontSize: 16.0),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _proceedToSurvey();
+            },
+            child: Text('Continuar',
+                style: TextStyle(color: Colors.white70, fontSize: 16.0)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _proceedToSurvey() {
+    context.router.push(SurveyRouteRoute());
   }
 
   @override
@@ -104,7 +160,7 @@ class GamesScreenState extends State<GamesScreen>
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
-            fontSize: 24.0, // Tamaño de fuente actualizado
+            fontSize: 24.0,
           ),
         ),
         iconTheme: IconThemeData(color: Colors.white),
@@ -112,19 +168,32 @@ class GamesScreenState extends State<GamesScreen>
       body: FadeTransition(
         opacity: _animation,
         child: Padding(
-          padding: const EdgeInsets.all(24.0), // Padding actualizado
+          padding: const EdgeInsets.all(24.0),
           child: Column(
             children: [
-              // Título para la selección de descuento
+              // Mostrar el precio total y el descuento
               Text(
-                'Selecciona un Descuento:',
+                'Precio Total: \$${totalPedido.toStringAsFixed(2)}',
                 style: TextStyle(
-                  fontSize: 24.0, // Tamaño de fuente actualizado
-                  fontWeight: FontWeight.bold,
+                  fontSize: 20.0,
                   color: Colors.white,
                 ),
               ),
-              SizedBox(height: 16.0), // Espaciado actualizado
+              Text(
+                'Descuento Seleccionado: $discount%',
+                style: TextStyle(
+                  fontSize: 18.0,
+                  color: Colors.white70,
+                ),
+              ),
+              Text(
+                'Precio Final: \$${finalPrice.toStringAsFixed(2)}',
+                style: TextStyle(
+                  fontSize: 20.0,
+                  color: Colors.greenAccent,
+                ),
+              ),
+              SizedBox(height: 16.0),
               // Botones para seleccionar descuento con animación de escala
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -134,23 +203,7 @@ class GamesScreenState extends State<GamesScreen>
                   _buildDiscountButton(20),
                 ],
               ),
-              SizedBox(height: 24.0), // Espaciado actualizado
-              // Información sobre el descuento seleccionado y la dificultad
-              AnimatedOpacity(
-                opacity: discount > 0 ? 1.0 : 0.0,
-                duration: Duration(milliseconds: 500),
-                child: Text(
-                  discount > 0
-                      ? 'Descuento Seleccionado: $discount%\nDificultad del Juego: ${difficulty.toStringAsFixed(1)}x'
-                      : 'Selecciona un descuento para ver la dificultad',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 18.0, // Tamaño de fuente actualizado
-                  ),
-                ),
-              ),
-              SizedBox(height: 24.0), // Espaciado actualizado
+              SizedBox(height: 24.0),
               // Lista de juegos disponibles con animación de desvanecimiento
               Expanded(
                 child: ListView.builder(
@@ -161,25 +214,23 @@ class GamesScreenState extends State<GamesScreen>
                       child: Card(
                         color: Color(0xFF5A3B28),
                         margin: EdgeInsets.symmetric(
-                            vertical: 12.0,
-                            horizontal: 0.0), // Margin actualizado
+                            vertical: 12.0, horizontal: 0.0),
                         shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.circular(16.0), // Bordes redondeados
+                          borderRadius: BorderRadius.circular(16.0),
                         ),
-                        elevation: 8.0, // Elevación actualizada
+                        elevation: 8.0,
                         child: ListTile(
                           leading: Icon(
                             Icons.videogame_asset,
                             color: Colors.white,
-                            size: 32.0, // Tamaño de icono actualizado
+                            size: 32.0,
                           ),
                           title: Text(
                             games[index],
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
-                              fontSize: 18.0, // Tamaño de fuente actualizado
+                              fontSize: 18.0,
                             ),
                           ),
                           trailing: ElevatedButton(
@@ -190,18 +241,16 @@ class GamesScreenState extends State<GamesScreen>
                               backgroundColor: Color(0xFF4B2C20),
                               foregroundColor: Colors.white,
                               padding: EdgeInsets.symmetric(
-                                  horizontal: 20.0,
-                                  vertical: 16.0), // Padding actualizado
+                                  horizontal: 20.0, vertical: 16.0),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                    12.0), // Bordes redondeados
+                                borderRadius: BorderRadius.circular(12.0),
                               ),
-                              elevation: 5.0, // Elevación actualizada
+                              elevation: 5.0,
                             ),
                             child: Text(
                               'Jugar',
                               style: TextStyle(
-                                fontSize: 16.0, // Tamaño de fuente actualizado
+                                fontSize: 16.0,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -227,11 +276,10 @@ class GamesScreenState extends State<GamesScreen>
       child: AnimatedContainer(
         duration: Duration(milliseconds: 300),
         curve: Curves.easeInOut,
-        padding: EdgeInsets.symmetric(
-            horizontal: 20.0, vertical: 16.0), // Padding actualizado
+        padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
         decoration: BoxDecoration(
           color: isSelected ? Colors.orangeAccent : Color(0xFF4B2C20),
-          borderRadius: BorderRadius.circular(12.0), // Bordes redondeados
+          borderRadius: BorderRadius.circular(12.0),
           boxShadow: isSelected
               ? [
                   BoxShadow(
@@ -248,7 +296,7 @@ class GamesScreenState extends State<GamesScreen>
             '$value%',
             style: TextStyle(
               color: Colors.white,
-              fontSize: 18.0, // Tamaño de fuente actualizado
+              fontSize: 18.0,
               fontWeight: FontWeight.bold,
             ),
           ),

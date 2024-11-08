@@ -98,7 +98,9 @@ class _EstatoPedidoPageState extends State<EstatoPedidoPage> {
       try {
         // Actualizar el estado del pedido a 'enPreparacion'
         await _dataService.actualizarEstadoPedido(
-            widget.pedido.id, 'enPreparacion');
+          widget.pedido.id,
+          'recibido',
+        );
 
         // Mostrar el diálogo de descuentos
         await showDialog<void>(

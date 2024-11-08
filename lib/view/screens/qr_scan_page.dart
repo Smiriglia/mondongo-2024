@@ -10,6 +10,7 @@ import 'package:mondongo/routes/app_router.gr.dart';
 import 'package:mondongo/services/auth_services.dart';
 import 'package:mondongo/services/data_service.dart';
 import 'package:mondongo/view/screens/confirmacionMozo.dart';
+import 'package:mondongo/view/screens/games_screen.dart';
 import 'package:mondongo/view/screens/survey_results_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -58,7 +59,8 @@ class QrScannerPageState extends State<QrScannerPage> {
                 // User wants to join the waitlist
                 await dataService.addToWaitList(userId);
                 router.removeLast();
-                Pedido? pedido = await dataService.fetchPedidoByClienteId(userId);
+                Pedido? pedido =
+                    await dataService.fetchPedidoByClienteId(userId);
                 if (pedido == null) throw Exception('pedido no encontrado');
                 router.push(WaitingToBeAssignedRoute(pedido: pedido));
               } else if (qrData.contains('Mesa-')) {
@@ -84,6 +86,21 @@ class QrScannerPageState extends State<QrScannerPage> {
                   router.removeLast();
                   router
                       .push(SurveyResultsRoute(mesaNumero: scannedMesaNumero));
+                  return;
+                }
+
+// Dentro de QrScannerPageState
+                if (pedido.estado == 'recibido') {
+                  if (!mounted) return;
+                  router.removeLast();
+                  router.push(GamesRoute(pedido: pedido)); // Pasar el pedido
+                  return;
+                }
+
+                if (pedido.estado == 'pagando') {
+                  // Navigate to survey screen
+                  router.removeLast();
+                  router.push(SurveyRouteRoute());
                   return;
                 }
 

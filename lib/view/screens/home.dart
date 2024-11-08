@@ -355,24 +355,6 @@ class HomePage extends StatelessWidget {
                               context.router.push(RealizarPedidosRoute());
                             },
                           ),
-                        _buildMenuCard(
-                          context,
-                          title: 'Juegos',
-                          icon: Icons.table_chart,
-                          color: Color(0xFF5D4037),
-                          onTap: () {
-                            context.router.push(GamesRoute());
-                          },
-                        ),
-                        _buildMenuCard(
-                          context,
-                          title: 'Encuestas',
-                          icon: Icons.table_chart,
-                          color: Color(0xFF5D4037),
-                          onTap: () {
-                            context.router.push(SurveyRouteRoute());
-                          },
-                        ),
                       ],
                     ),
                   ),
