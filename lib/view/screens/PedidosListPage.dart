@@ -24,36 +24,71 @@ class _PedidosListPageState extends State<PedidosListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFF5D4037),
       appBar: AppBar(
-        title: Text('Asignar Mesas a Pedidos'),
+        backgroundColor: Color(0xFF4B2C20),
+        title: Text(
+          'Asignar Mesas a Pedidos',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        iconTheme: IconThemeData(color: Colors.white),
       ),
       body: FutureBuilder<List<Pedido>>(
         future: _futurePedidos,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return Center(
+                child: CircularProgressIndicator(color: Colors.white));
           }
 
           if (snapshot.hasError) {
-            return Center(child: Text('Error al cargar los pedidos'));
+            return Center(
+              child: Text(
+                'Error al cargar los pedidos',
+                style: TextStyle(color: Colors.white),
+              ),
+            );
           }
 
           final pedidos = snapshot.data ?? [];
 
           if (pedidos.isEmpty) {
-            return Center(child: Text('No hay pedidos pendientes'));
+            return Center(
+              child: Text(
+                'No hay pedidos pendientes',
+                style: TextStyle(color: Colors.white),
+              ),
+            );
           }
 
           return ListView.builder(
             itemCount: pedidos.length,
             itemBuilder: (context, index) {
               final pedido = pedidos[index];
-              return ListTile(
-                title: Text('Pedido de Cliente ID: ${pedido.clienteId}'),
-                subtitle: Text('Estado: ${pedido.estado}'),
-                trailing: IconButton(
-                  icon: Icon(Icons.assignment_ind),
-                  onPressed: () => _assignMesaDialog(pedido),
+              return Card(
+                color: Color(0xFF5A3B28),
+                margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: ListTile(
+                  leading: Icon(Icons.restaurant_menu, color: Colors.white),
+                  title: Text(
+                    'Pedido de Cliente ID: ${pedido.clienteId}',
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Text(
+                    'Estado: ${pedido.estado}',
+                    style: TextStyle(color: Colors.white70),
+                  ),
+                  trailing: IconButton(
+                    icon: Icon(Icons.assignment_ind, color: Colors.white),
+                    onPressed: () => _assignMesaDialog(pedido),
+                  ),
                 ),
               );
             },
@@ -71,12 +106,20 @@ class _PedidosListPageState extends State<PedidosListPage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Asignar Mesa'),
+          backgroundColor: Color.fromARGB(255, 146, 87, 63),
+          title: Text(
+            'Asignar Mesa',
+            style: TextStyle(color: Colors.white),
+          ),
           content: DropdownButtonFormField<int>(
+            dropdownColor: Color(0xFF4B2C20),
             items: mesas.map((Mesa mesa) {
               return DropdownMenuItem<int>(
                 value: mesa.numero,
-                child: Text('Mesa ${mesa.numero} - ${mesa.tipo}'),
+                child: Text(
+                  'Mesa ${mesa.numero} - ${mesa.tipo}',
+                  style: TextStyle(color: Colors.white),
+                ),
               );
             }).toList(),
             onChanged: (value) {
@@ -84,19 +127,37 @@ class _PedidosListPageState extends State<PedidosListPage> {
             },
             decoration: InputDecoration(
               labelText: 'Selecciona una mesa',
+              labelStyle: TextStyle(color: Colors.white70),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.white70),
+              ),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.white),
+              ),
             ),
+            style: TextStyle(color: Colors.white),
+            iconEnabledColor: Colors.white,
           ),
           actions: [
             TextButton(
-              child: Text('Cancelar'),
+              child: Text(
+                'Cancelar',
+                style: TextStyle(color: Colors.white70),
+              ),
               onPressed: () => Navigator.of(context).pop(),
             ),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFF4B2C20),
+              ),
               child: Text('Asignar'),
               onPressed: () async {
                 if (selectedMesaNumero == null) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Debes seleccionar una mesa')),
+                    SnackBar(
+                      content: Text('Debes seleccionar una mesa'),
+                      backgroundColor: Color(0xFF4B2C20),
+                    ),
                   );
                   return;
                 }
@@ -107,9 +168,18 @@ class _PedidosListPageState extends State<PedidosListPage> {
                   setState(() {
                     _futurePedidos = dataService.fetchPendingPedidos();
                   });
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Mesa asignada exitosamente'),
+                      backgroundColor: Color(0xFF4B2C20),
+                    ),
+                  );
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(e.toString())),
+                    SnackBar(
+                      content: Text('Error: ${e.toString()}'),
+                      backgroundColor: Colors.red,
+                    ),
                   );
                 }
               },
