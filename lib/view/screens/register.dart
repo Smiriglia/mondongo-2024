@@ -1,17 +1,20 @@
-import 'package:auto_route/auto_route.dart';
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:get_it/get_it.dart';
-import 'package:mondongo/main.dart';
 import 'package:mondongo/models/cliente.dart';
-import 'package:mondongo/routes/app_router.gr.dart';
 import 'package:mondongo/services/auth_services.dart';
 import 'package:mondongo/services/data_service.dart';
-import '../../theme/theme.dart';
+import 'package:mondongo/services/push_notification_service.dart';
+import 'package:mondongo/services/storage_service.dart';
+import 'package:auto_route/auto_route.dart';
+import 'package:mondongo/view/widgets/qr_reader_page.dart';
 
 @RoutePage()
 class RegisterPage extends StatefulWidget {
   final Function(bool) onResult;
-  const RegisterPage({super.key, required this.onResult});
+  const RegisterPage({Key? key, required this.onResult}) : super(key: key);
 
   @override
   _RegisterPageState createState() => _RegisterPageState();
@@ -19,23 +22,150 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   final AuthService _authService = GetIt.instance<AuthService>();
+  final _dataService = GetIt.instance<DataService>();
+  final StorageService _storageService = GetIt.instance<StorageService>();
   final _formKey = GlobalKey<FormState>();
+
+  final TextEditingController _nombreController = TextEditingController();
+  final TextEditingController _apellidoController = TextEditingController();
+  final TextEditingController _dniController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
 
-  String _nombre = '';
-  String _apellido = '';
-  String _dni = '';
-  String _email = '';
-  String _errorMessage = '';
-
+  bool _obscureText = true;
   bool _isLoading = false;
+  String _errorMessage = '';
+  File? _foto;
 
-  DataService _dataService = getIt.get<DataService>();
+  final Color primaryColor = Colors.brown[800]!;
+  final Color accentColor = Colors.brown[600]!;
+  final Color backgroundColor = Colors.brown[100]!;
+  final Color textColor = Colors.white;
+
+  final ImagePicker _picker = ImagePicker();
+
+  // Métodos para imagen y QR
+  Future<void> _pickFoto() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.camera);
+    if (pickedFile != null && mounted) {
+      setState(() {
+        _foto = File(pickedFile.path);
+      });
+    }
+  }
+
+  void _processQRData(String data) {
+    final dniData = data.split('@');
+    setState(() {
+      _apellidoController.text = dniData.length > 1 ? dniData[1] : '';
+      _nombreController.text = dniData.length > 2 ? dniData[2] : '';
+      _dniController.text = dniData.length > 4 ? dniData[4] : '';
+    });
+  }
+
+  Future<void> _submit() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true;
+        _errorMessage = '';
+      });
+      try {
+        bool dniExist = await _dataService.dniExist(_dniController.text.trim());
+        if (dniExist) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Error: El DNI ya está registrado.')),
+          );
+          setState(() => _isLoading = false);
+          return;
+        }
+        final user = await _authService.signUpWithEmail(
+          _emailController.text.trim(),
+          _passwordController.text,
+        );
+        if (user == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Error en el registro')),
+          );
+          setState(() => _isLoading = false);
+          return;
+        }
+
+        String? fotoUrl;
+        if (_foto != null) {
+          fotoUrl = await _storageService.uploadProfileImage(_foto!);
+          if (fotoUrl == null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Error al subir la foto')),
+            );
+            setState(() => _isLoading = false);
+            return;
+          }
+        }
+
+        Cliente newCliente = Cliente(
+          id: user.id,
+          nombre: _nombreController.text.trim(),
+          apellido: _apellidoController.text.trim(),
+          dni: _dniController.text.trim(),
+          fotoUrl: fotoUrl,
+          createdAt: DateTime.now(),
+          estado: 'pendiente',
+          email: _emailController.text.trim(),
+        );
+
+        await _dataService.addCliente(newCliente);
+        widget.onResult(true);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Cliente registrado exitosamente',
+              style: TextStyle(color: Colors.white),
+            ),
+            backgroundColor: primaryColor,
+          ),
+        );
+        final pushNotificationService =
+            GetIt.instance<PushNotificationService>();
+        pushNotificationService.sendNotification(
+          topic: 'dueno_supervisor',
+          title: 'Mondongo',
+          body: 'Nuevo Cliente registrado',
+        );
+      } catch (e) {
+        setState(() {
+          _isLoading = false;
+          _errorMessage = 'Error: ${e.toString()}';
+        });
+      }
+    }
+  }
+
+  InputDecoration _buildInputDecoration(String labelText, {IconData? icon}) {
+    return InputDecoration(
+      prefixIcon: icon != null ? Icon(icon, color: textColor) : null,
+      labelText: labelText,
+      labelStyle: TextStyle(color: textColor),
+      filled: true,
+      fillColor: accentColor.withOpacity(0.5),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12.0),
+        borderSide: BorderSide.none,
+      ),
+    );
+  }
+
+  TextStyle _buildTextStyle() {
+    return TextStyle(color: textColor);
+  }
 
   @override
   void dispose() {
+    _nombreController.dispose();
+    _apellidoController.dispose();
+    _dniController.dispose();
+    _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
@@ -44,12 +174,12 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.brown[100],
+      backgroundColor: backgroundColor,
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 32.0),
           child: Card(
-            color: Colors.brown[800],
+            color: primaryColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16.0),
             ),
@@ -61,157 +191,110 @@ class _RegisterPageState extends State<RegisterPage> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.restaurant, size: 80, color: Colors.white),
+                    Icon(Icons.person_add, size: 80, color: textColor),
                     SizedBox(height: 20),
                     Text(
-                      'Crear una Cuenta',
+                      'Registrar Cliente',
                       style: TextStyle(
-                        fontSize: 24,
+                        fontSize: 22,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: textColor,
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    GestureDetector(
+                      onTap: _pickFoto,
+                      child: CircleAvatar(
+                        radius: 60,
+                        backgroundColor: accentColor,
+                        backgroundImage:
+                            _foto != null ? FileImage(_foto!) : null,
+                        child: _foto == null
+                            ? Icon(Icons.camera_alt, size: 50, color: textColor)
+                            : null,
                       ),
                     ),
                     SizedBox(height: 20),
                     TextFormField(
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.person, color: Colors.white),
-                        hintText: 'Nombre Completo',
-                        hintStyle: TextStyle(color: Colors.white),
-                        filled: true,
-                        fillColor: Colors.brown[600]!.withOpacity(0.5),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
-                      style: TextStyle(color: Colors.white),
+                      controller: _nombreController,
+                      decoration: _buildInputDecoration('Nombre'),
+                      style: _buildTextStyle(),
                       validator: (val) => val == null || val.isEmpty
-                          ? 'Ingresa tu nombre completo'
+                          ? 'Ingresa el nombre'
                           : null,
-                      onSaved: (val) => _nombre = val!.trim(),
                     ),
                     SizedBox(height: 15),
                     TextFormField(
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.person, color: Colors.white),
-                        hintText: 'Apellido Completo',
-                        hintStyle: TextStyle(color: Colors.white),
-                        filled: true,
-                        fillColor: Colors.brown[600]!.withOpacity(0.5),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
-                      style: TextStyle(color: Colors.white),
+                      controller: _apellidoController,
+                      decoration: _buildInputDecoration('Apellido'),
+                      style: _buildTextStyle(),
                       validator: (val) => val == null || val.isEmpty
-                          ? 'Ingresa tu apellido completo'
+                          ? 'Ingresa el apellido'
                           : null,
-                      onSaved: (val) => _apellido = val!.trim(),
                     ),
                     SizedBox(height: 15),
                     TextFormField(
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.person, color: Colors.white),
-                        hintText: 'DNI',
-                        hintStyle: TextStyle(color: Colors.white),
-                        filled: true,
-                        fillColor: Colors.brown[600]!.withOpacity(0.5),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
-                      style: TextStyle(color: Colors.white),
-                      validator: (val) =>
-                          val == null || val.isEmpty ? 'Ingresa tu DNI' : null,
-                      onSaved: (val) => _dni = val!.trim(),
+                      controller: _dniController,
+                      decoration: _buildInputDecoration('DNI',
+                          icon: Icons.qr_code_scanner),
+                      style: _buildTextStyle(),
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(8),
+                      ],
+                      validator: (val) {
+                        if (val == null || val.isEmpty) return 'Ingresa el DNI';
+                        if (val.length != 8)
+                          return 'El DNI debe tener exactamente 8 dígitos';
+                        return null;
+                      },
                     ),
                     SizedBox(height: 15),
                     TextFormField(
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.email, color: Colors.white),
-                        hintText: 'Correo Electrónico',
-                        hintStyle: TextStyle(color: Colors.white),
-                        filled: true,
-                        fillColor: Colors.brown[600]!.withOpacity(0.5),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
-                      keyboardType: TextInputType.emailAddress,
-                      style: TextStyle(color: Colors.white),
+                      controller: _emailController,
+                      decoration: _buildInputDecoration('Correo Electrónico',
+                          icon: Icons.email),
+                      style: _buildTextStyle(),
                       validator: (val) => val == null || !val.contains('@')
                           ? 'Ingresa un email válido'
                           : null,
-                      onSaved: (val) => _email = val!.trim(),
+                      keyboardType: TextInputType.emailAddress,
                     ),
                     SizedBox(height: 15),
                     TextFormField(
                       controller: _passwordController,
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.lock, color: Colors.white),
-                        hintText: 'Contraseña',
-                        hintStyle: TextStyle(color: Colors.white),
-                        filled: true,
-                        fillColor: Colors.brown[600]!.withOpacity(0.5),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                          borderSide: BorderSide.none,
-                        ),
+                      decoration: _buildInputDecoration(
+                        'Contraseña',
+                        icon: _obscureText
+                            ? Icons.visibility
+                            : Icons.visibility_off,
                       ),
-                      obscureText: true,
-                      style: TextStyle(color: Colors.white),
-                      validator: (val) => val == null || val.length < 6
-                          ? 'La contraseña debe tener al menos 6 caracteres'
+                      obscureText: _obscureText,
+                      style: _buildTextStyle(),
+                      validator: (val) => val == null || val.isEmpty
+                          ? 'Ingresa la contraseña'
                           : null,
-                    ),
-                    SizedBox(height: 15),
-                    TextFormField(
-                      controller: _confirmPasswordController,
-                      decoration: InputDecoration(
-                        prefixIcon:
-                            Icon(Icons.lock_outline, color: Colors.white),
-                        hintText: 'Confirmar Contraseña',
-                        hintStyle: TextStyle(color: Colors.white),
-                        filled: true,
-                        fillColor: Colors.brown[600]!.withOpacity(0.5),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
-                      obscureText: true,
-                      style: TextStyle(color: Colors.white),
-                      validator: (val) {
-                        if (val == null || val.isEmpty) {
-                          return 'Confirma tu contraseña';
-                        } else if (val != _passwordController.text) {
-                          return 'Las contraseñas no coinciden';
-                        }
-                        return null;
-                      },
                     ),
                     SizedBox(height: 20),
                     _isLoading
-                        ? CircularProgressIndicator(color: Colors.white)
+                        ? CircularProgressIndicator(color: textColor)
                         : SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
-                              onPressed: _register,
+                              onPressed: _submit,
                               style: ElevatedButton.styleFrom(
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 15),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12.0),
                                 ),
-                                backgroundColor: Colors.brown[600],
+                                backgroundColor: accentColor,
                               ),
                               child: Text(
-                                'Registrarse',
+                                'Registrar Cliente',
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: textColor,
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -219,15 +302,6 @@ class _RegisterPageState extends State<RegisterPage> {
                             ),
                           ),
                     SizedBox(height: 10),
-                    TextButton(
-                      onPressed: () {
-                        AutoRouter.of(context).removeLast();
-                      },
-                      child: Text(
-                        '¿Ya tiene una cuenta? Ingresa por aquí',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
                     if (_errorMessage.isNotEmpty)
                       Padding(
                         padding: const EdgeInsets.only(top: 10),
@@ -244,50 +318,5 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
       ),
     );
-  }
-
-  Future<void> _register() async {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-
-      setState(() {
-        _isLoading = true;
-        _errorMessage = '';
-      });
-
-      try {
-        bool dniExist = await _dataService.dniExist(_dni);
-        if (dniExist) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Error: El DNI ya está registrado.')),
-          );
-          return;
-        }
-        final user = await _authService.signUpWithEmail(
-            _email, _passwordController.text);
-        if (user != null) {
-          Cliente newCliente = Cliente(
-              estado: 'pendiente',
-              id: user.id,
-              nombre: _nombre,
-              apellido: _apellido,
-              dni: _dni,
-              createdAt: DateTime.now(),
-              email: _email);
-          await _dataService.addCliente(newCliente);
-          widget.onResult(true);
-        } else {
-          setState(() {
-            _isLoading = false;
-            _errorMessage = 'Error en el registro';
-          });
-        }
-      } catch (e) {
-        setState(() {
-          _isLoading = false;
-          _errorMessage = 'Error: ${e.toString()}';
-        });
-      }
-    }
   }
 }

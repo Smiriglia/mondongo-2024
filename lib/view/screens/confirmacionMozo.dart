@@ -5,6 +5,8 @@ import 'package:mondongo/models/pedido_detalle_pedido_producto.dart';
 import 'package:mondongo/services/data_service.dart';
 import 'package:mondongo/main.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:mondongo/services/push_notification_service.dart';
+import 'package:get_it/get_it.dart';
 
 @RoutePage()
 class ConfirmacionMozoPage extends StatefulWidget {
@@ -17,6 +19,8 @@ class ConfirmacionMozoPage extends StatefulWidget {
 class _ConfirmacionMozoPageState extends State<ConfirmacionMozoPage> {
   final DataService _dataService = getIt<DataService>();
   List<PedidoDetallePedidoProducto> _pedidos = [];
+  final PushNotificationService _pushNotificationService =
+      GetIt.instance.get<PushNotificationService>();
   bool _isLoading = false;
   bool _isProcessing = false;
   StreamSubscription? _pedidoSubscription;
@@ -123,6 +127,14 @@ class _ConfirmacionMozoPageState extends State<ConfirmacionMozoPage> {
           backgroundColor: Colors.green,
         ),
       );
+      _pushNotificationService.sendNotification(
+          topic: 'cocinero',
+          title: 'Mondongo Pedidos',
+          body: 'Hay nuevos platos que preparar');
+      _pushNotificationService.sendNotification(
+          topic: 'bartender',
+          title: 'Mondongo Pedidos',
+          body: 'Hay nuevos tragos que preparar');
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

@@ -20,7 +20,8 @@ class ProductsListPage extends StatefulWidget {
 
 class ProductsListPageState extends State<ProductsListPage> {
   final DataService _dataService = GetIt.instance.get<DataService>();
-  final PushNotificationService _pushNotificationService = GetIt.instance.get<PushNotificationService>();
+  final PushNotificationService _pushNotificationService =
+      GetIt.instance.get<PushNotificationService>();
   late Future<List<Producto>> _productosFuture;
   final Map<Producto, int> _cart =
       {}; // Para almacenar los productos y sus cantidades
@@ -114,8 +115,6 @@ class ProductsListPageState extends State<ProductsListPage> {
           );
         },
       );
-      _pushNotificationService.sendNotification(topic: 'cocinero', title: 'Mondongo Pedidos', body: 'Hay nuevos platos que preparar');
-      _pushNotificationService.sendNotification(topic: 'bartender', title: 'Mondongo Pedidos', body: 'Hay nuevos tragos que preparar');
 
       // Si prefieres navegar directamente sin un botón adicional, puedes usar:
       // router.push(const QrScannerRoute());
