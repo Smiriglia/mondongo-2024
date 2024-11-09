@@ -6,6 +6,7 @@ import 'package:mondongo/models/consulta.dart';
 import 'package:mondongo/services/auth_services.dart';
 import 'package:mondongo/services/data_service.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:mondongo/services/push_notification_service.dart';
 
 @RoutePage()
 class CustomerQueryPage extends StatefulWidget {
@@ -19,6 +20,7 @@ class CustomerQueryPageState extends State<CustomerQueryPage> {
   final _formKey = GlobalKey<FormState>();
   final DataService _dataService = GetIt.instance.get<DataService>();
   final AuthService _authService = GetIt.instance.get<AuthService>();
+  final PushNotificationService _pushNotificationService = GetIt.instance.get<PushNotificationService>();
 
   String _consultaText = '';
   late Future<List<Consulta>> _consultasFuture;
@@ -74,6 +76,8 @@ class CustomerQueryPageState extends State<CustomerQueryPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Consulta enviada al mozo.')),
         );
+
+        _pushNotificationService.sendNotification(topic: 'mozo', title: 'Mondongo Consulta', body: 'Mesa $mesaNumero: $_consultaText');
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

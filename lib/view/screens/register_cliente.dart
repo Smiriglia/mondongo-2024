@@ -6,6 +6,7 @@ import 'package:mondongo/main.dart';
 import 'package:mondongo/models/cliente.dart';
 import 'package:mondongo/services/auth_services.dart';
 import 'package:mondongo/services/data_service.dart';
+import 'package:mondongo/services/push_notification_service.dart';
 import 'package:mondongo/services/storage_service.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:mondongo/view/widgets/qr_reader_page.dart';
@@ -142,6 +143,8 @@ class RegisterClientePageState extends State<RegisterClientePage> {
             backgroundColor: primaryColor,
           ),
         );
+        final pushNotificationService = getIt.get<PushNotificationService>();
+        pushNotificationService.sendNotification(topic: 'dueño_supervisor', title: 'Mondongo', body: 'Nuevo Cliente registrado');
         Navigator.pop(context);
       } catch (e) {
         if (!mounted) return;

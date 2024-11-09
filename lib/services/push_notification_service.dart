@@ -13,7 +13,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class PushNotificationService {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   late AuthService _authService;
-  
+
   // Add your backend URL from environment variables
   final String _backendUrl = 'https://push-production.up.railway.app';
 
@@ -22,7 +22,8 @@ class PushNotificationService {
     try {
       _authService = getIt.get<AuthService>();
       // Request notification permissions
-      NotificationSettings settings = await _firebaseMessaging.requestPermission(
+      NotificationSettings settings =
+          await _firebaseMessaging.requestPermission(
         alert: true,
         badge: true,
         sound: true,
@@ -30,7 +31,7 @@ class PushNotificationService {
 
       if (settings.authorizationStatus == AuthorizationStatus.authorized) {
         debugPrint('Notification permissions authorized');
-        
+
         // Get FCM token
         final token = await _firebaseMessaging.getToken();
         if (token != null) {
@@ -45,7 +46,8 @@ class PushNotificationService {
         await subscribeToTopics();
 
         // Register background message handler
-        FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+        FirebaseMessaging.onBackgroundMessage(
+            _firebaseMessagingBackgroundHandler);
 
         // Set up foreground and background message handlers
         FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
@@ -73,13 +75,11 @@ class PushNotificationService {
       if (user != null) {
         // You might want to store the token in your backend or Supabase
         // This is just an example of how you might do it
-        await Supabase.instance.client
-            .from('device_tokens')
-            .upsert({
-              'user_id': user.id,
-              'token': token,
-              'created_at': DateTime.now().toIso8601String(),
-            });
+        await Supabase.instance.client.from('device_tokens').upsert({
+          'user_id': user.id,
+          'token': token,
+          'created_at': DateTime.now().toIso8601String(),
+        });
       }
     } catch (e) {
       debugPrint('Error registering device token: $e');
@@ -144,19 +144,19 @@ class PushNotificationService {
     try {
       final Profile? profile = _authService.profile;
       final User? user = _authService.getUser();
-      
+
       await _firebaseMessaging.unsubscribeFromTopic('all');
-      
+
       if (profile is DuenoSupervisor) {
         await _firebaseMessaging.unsubscribeFromTopic('dueno_supervisor');
       } else if (profile is Empleado) {
         await _firebaseMessaging.unsubscribeFromTopic(profile.tipoEmpleado);
       }
-      
+
       if (user != null) {
         await _firebaseMessaging.unsubscribeFromTopic(user.id);
       }
-      
+
       debugPrint('Successfully unsubscribed from all topics');
     } catch (e) {
       debugPrint('Error unsubscribing from topics: $e');
@@ -178,6 +178,43 @@ class PushNotificationService {
     if (message.data.containsKey('route')) {
       // Navigate to the specified route
       // Example: navigationService.navigateTo(message.data['route']);
+    }
+  }
+
+  Future<bool> sendNotification({
+    required String topic,
+    required String title,
+    required String body,
+    Map<String, dynamic>? data,
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$_backendUrl/api/notify'),
+        headers: {
+          'Content-Type': 'application/json',
+          // Aquí puedes añadir headers de autorización si son necesarios
+          // 'Authorization': 'Bearer ${_authService.getToken()}'
+        },
+        body: jsonEncode({
+          'topic': topic,
+          'title': title,
+          'body': body,
+          'data': data ?? {},
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        debugPrint(
+            'Notification sent successfully: ${responseData['messageId']}');
+        return true;
+      } else {
+        debugPrint('Failed to send notification: ${response.body}');
+        return false;
+      }
+    } catch (e) {
+      debugPrint('Error sending notification: $e');
+      return false;
     }
   }
 }

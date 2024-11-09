@@ -7,6 +7,7 @@ import 'package:mondongo/models/empleado.dart';
 import 'package:mondongo/services/auth_services.dart';
 import 'package:mondongo/services/data_service.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mondongo/services/push_notification_service.dart';
 
 @RoutePage()
 class RealizarPedidosPage extends StatefulWidget {
@@ -19,6 +20,7 @@ class RealizarPedidosPage extends StatefulWidget {
 class _RealizarPedidosPageState extends State<RealizarPedidosPage> {
   final _authService = GetIt.instance.get<AuthService>();
   final _dataService = GetIt.instance.get<DataService>();
+  final _pushNotificationService = GetIt.instance.get<PushNotificationService>();
 
   late String _userSector;
   late Future<List<DetallePedidoProducto>> _detallePedidoFuture;
@@ -201,6 +203,7 @@ class _RealizarPedidosPageState extends State<RealizarPedidosPage> {
                                   ? 'en preparacion'
                                   : 'listo';
                           _updateEstado(detalle.detallePedido.id, nextState);
+                          _pushNotificationService.sendNotification(topic: 'mozo', title: 'Mondongo Pedidos', body: '${detalle.producto.nombre} Ahora esta: $nextState');
                         },
                         child: Text(
                           detalle.detallePedido.estado == 'ordenado'

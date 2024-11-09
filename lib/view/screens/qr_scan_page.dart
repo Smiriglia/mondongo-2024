@@ -9,6 +9,7 @@ import 'package:mondongo/models/pedido.dart';
 import 'package:mondongo/routes/app_router.gr.dart';
 import 'package:mondongo/services/auth_services.dart';
 import 'package:mondongo/services/data_service.dart';
+import 'package:mondongo/services/push_notification_service.dart';
 import 'package:mondongo/view/screens/confirmacionMozo.dart';
 import 'package:mondongo/view/screens/games_screen.dart';
 import 'package:mondongo/view/screens/survey_results_screen.dart';
@@ -25,6 +26,7 @@ class QrScannerPage extends StatefulWidget {
 class QrScannerPageState extends State<QrScannerPage> {
   final DataService dataService = GetIt.instance.get<DataService>();
   final AuthService _authService = GetIt.instance.get<AuthService>();
+  final PushNotificationService _pushNotificationService = GetIt.instance.get<PushNotificationService>();
   bool isProcessing = false;
   MobileScannerController controller = MobileScannerController();
 
@@ -61,6 +63,7 @@ class QrScannerPageState extends State<QrScannerPage> {
                 router.removeLast();
                 Pedido? pedido =
                     await dataService.fetchPedidoByClienteId(userId);
+                _pushNotificationService.sendNotification(topic: 'maitre', title: 'Mondongo', body: 'Cliente en lista de espera');
                 if (pedido == null) throw Exception('pedido no encontrado');
                 router.push(WaitingToBeAssignedRoute(pedido: pedido));
               } else if (qrData.contains('Mesa-')) {

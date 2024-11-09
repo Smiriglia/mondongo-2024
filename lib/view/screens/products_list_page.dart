@@ -6,6 +6,7 @@ import 'package:mondongo/models/producto.dart';
 import 'package:mondongo/routes/app_router.gr.dart';
 import 'package:mondongo/services/data_service.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:mondongo/services/push_notification_service.dart';
 import 'package:mondongo/view/screens/home.dart';
 
 @RoutePage()
@@ -19,6 +20,7 @@ class ProductsListPage extends StatefulWidget {
 
 class ProductsListPageState extends State<ProductsListPage> {
   final DataService _dataService = GetIt.instance.get<DataService>();
+  final PushNotificationService _pushNotificationService = GetIt.instance.get<PushNotificationService>();
   late Future<List<Producto>> _productosFuture;
   final Map<Producto, int> _cart =
       {}; // Para almacenar los productos y sus cantidades
@@ -112,6 +114,8 @@ class ProductsListPageState extends State<ProductsListPage> {
           );
         },
       );
+      _pushNotificationService.sendNotification(topic: 'cocinero', title: 'Mondongo Pedidos', body: 'Hay nuevos platos que preparar');
+      _pushNotificationService.sendNotification(topic: 'bartender', title: 'Mondongo Pedidos', body: 'Hay nuevos tragos que preparar');
 
       // Si prefieres navegar directamente sin un botón adicional, puedes usar:
       // router.push(const QrScannerRoute());
