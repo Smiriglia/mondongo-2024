@@ -21,10 +21,6 @@ Este proyecto tiene como objetivo la creación de una aplicación móvil para la
 - Encuestas personalizadas para clientes y empleados.
 - Gráficos estadísticos: torta, barra y línea.
 
-### 🛵 Delivery con GPS
-- Seguimiento en tiempo real de pedidos.
-- Visualización de rutas y comunicación con el cliente.
-
 ---
 
 ## 🗓️ Cronograma de Desarrollo
