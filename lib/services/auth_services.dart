@@ -63,8 +63,6 @@ class AuthService {
     return _supabaseClient.auth.currentUser;
   }
 
-  Profile? getProfile() {}
-
   Future<void> deleteUser(String userId) async {
     try {
       await _supabaseClient.auth.admin.deleteUser(userId);

@@ -5,6 +5,7 @@ import 'package:mondongo/models/profile.dart';
 import 'package:mondongo/routes/app_router.gr.dart';
 import 'package:mondongo/services/auth_services.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mondongo/services/push_notification_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 @RoutePage()
@@ -20,11 +21,11 @@ class HomePage extends StatelessWidget {
   }
 
   bool _isUserMaitre(Profile? profile) {
-    return profile?.rol == 'maitre';
+    return profile is Empleado && profile.tipoEmpleado == 'maitre';
   }
 
   bool _isUserMozo(Profile? profile) {
-    return profile?.rol == 'mozo';
+    return profile is Empleado && profile.tipoEmpleado == 'mozo';
   }
 
   bool _isUserCocinero(Profile? profile) {
@@ -38,9 +39,10 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authService = GetIt.instance.get<AuthService>();
+    final pushNotificationService = GetIt.instance.get<PushNotificationService>();
     final User currentUser = authService.getUser()!;
     final Profile? currentProfile = authService.profile;
-
+    pushNotificationService.initNotifications();
     return Scaffold(
       appBar: AppBar(
         title: Row(

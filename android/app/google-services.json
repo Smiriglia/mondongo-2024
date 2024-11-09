@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "378810790089",
+    "project_id": "pps-login-18305",
+    "storage_bucket": "pps-login-18305.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:378810790089:android:eed3edb6bfe91f5646dd18",
+        "android_client_info": {
+          "package_name": "com.example.mondongo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6E92o6p_MDPn4gNQhXHv7A_RVtNazm0w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
