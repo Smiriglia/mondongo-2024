@@ -1,124 +1,117 @@
-Semana 1 - Día 1 a 3: Configuración y Estructura Básica
-Fausto Smiriglia:
+# 📱 Proyecto de Gestión de Restaurante
 
-Configurar el proyecto Flutter:
+Este proyecto tiene como objetivo la creación de una aplicación móvil para la gestión completa de un restaurante, incluyendo funcionalidades como reservas, pedidos, encuestas, y más. Fue desarrollado en equipo por **Fausto Smiriglia** y **Massimo Bosco** utilizando **Flutter**, **Supabase** y **Firebase**.
 
-Inicio: Día 1
-Finalización: Día 1
-Crear el proyecto en Flutter, establecer el entorno de desarrollo, asegurarse de que el código funcione bien en iOS y Android y subir el repo inicial.
-Sistema de autenticación (inicio de sesión con redes sociales y autenticación básica):
+---
 
-Inicio: Día 2
-Finalización: Día 3
-Implementar inicio de sesión con Facebook y Google, y configuración de autenticación para dueños, supervisores, empleados y clientes.
-Massimo Bosco:
+## 🚀 Funcionalidades Principales
 
-Diseñar la base de datos:
+### 🔑 Autenticación
+- Gestión de roles: **Dueños**, **Supervisores**, **Empleados** y **Clientes**.
 
-Inicio: Día 1
-Finalización: Día 2
-Crear el modelo de datos basado en los requisitos, incluyendo usuarios, mesas, productos, pedidos, encuestas, etc.
-Configurar Firebase/Backend para la base de datos y almacenamiento de imágenes:
+### 📋 Gestión de Usuarios
+- Registro de usuarios con lectura de **DNI** mediante **QR**.
+- Asignación de roles y subida de fotos.
 
-Inicio: Día 2
-Finalización: Día 3
-Configurar Firebase Firestore (o SQL) y almacenamiento para fotos.
-Semana 1 - Día 4 a 7: Desarrollo de Funciones Críticas
-Fausto Smiriglia:
+### 🍽️ Administración de Mesas y Pedidos
+- Alta de mesas con códigos **QR**.
+- Creación y seguimiento de pedidos en tiempo real.
 
-Alta de usuarios (Dueños, Supervisores, Empleados, Clientes):
+### 📊 Encuestas y Estadísticas
+- Encuestas personalizadas para clientes y empleados.
+- Gráficos estadísticos: torta, barra y línea.
 
-Inicio: Día 4
-Finalización: Día 5
-Implementar la funcionalidad de registro con todos los campos, fotos y lectura de código QR del DNI.
-Lista de espera para mesas (Clientes anónimos y registrados):
+---
 
-Inicio: Día 6
-Finalización: Día 7
-Permitir a los clientes registrarse en la lista de espera mediante código QR y actualizar la lista para el maître.
-Massimo Bosco:
+## 🗓️ Cronograma de Desarrollo
 
-Alta de mesas y productos (fotos, descripción, tiempo de elaboración, QR):
+### **Semana 1: Configuración y Desarrollo Inicial**
 
-Inicio: Día 4
-Finalización: Día 5
-Implementar la funcionalidad para registrar mesas y productos, asociando imágenes y códigos QR.
-Sistema de pedidos (Crear, confirmar, actualizar):
+#### **Día 1 a 3: Configuración y Estructura Básica**
 
-Inicio: Día 6
-Finalización: Día 7
-Implementar la creación de pedidos por el cliente y la confirmación por parte del mozo, cocinero o bartender.
-Semana 2 - Día 8 a 10: Funciones Avanzadas y Notificaciones
-Fausto Smiriglia:
+**Fausto Smiriglia:**
+- Configuración inicial del proyecto en Flutter.
+- Subida del repositorio inicial.
 
-Encuestas de clientes y empleados:
+**Massimo Bosco:**
+- Diseño de la base de datos.
+- Configuración de Supabase para almacenamiento.  
 
-Inicio: Día 8
-Finalización: Día 9
-Implementar la funcionalidad para llenar encuestas con fotos y varios tipos de controles (input, radio, etc.).
-Gráficos de resultados de encuestas:
+#### **Día 4 a 7: Funciones Críticas**
 
-Inicio: Día 10
-Finalización: Día 10
-Crear gráficos de tipo torta, barra y línea para mostrar estadísticas basadas en las encuestas.
-Massimo Bosco:
+**Fausto Smiriglia:**
+- Registro de usuarios con lectura de **DNI** y foto.  
+- Lista de espera para mesas con **QR**.
 
-Notificaciones push para eventos importantes (Ingreso, pedidos, reservas):
+**Massimo Bosco:**
+- Alta de mesas y productos con fotos.  
+- Sistema de pedidos desde la app.
 
-Inicio: Día 8
-Finalización: Día 9
-Implementar notificaciones push para eventos críticos, como reservas nuevas, pedidos, y confirmaciones de mesas.
-Sistema de chat con el mozo y Delivery:
+---
 
-Inicio: Día 10
-Finalización: Día 10
-Crear una función de chat para la comunicación entre clientes y el mozo o el personal de delivery.
-Semana 2 - Día 11 a 13: Reservas, Juegos y Delivery
-Fausto Smiriglia:
+### **Semana 2: Desarrollo Avanzado y Optimización**
 
-Sistema de reservas de mesas (confirmar y liberar mesas):
+#### **Día 8 a 10: Encuestas, Notificaciones y Chat**
 
-Inicio: Día 11
-Finalización: Día 12
-Implementar el sistema de reservas, asegurando la correcta asignación y liberación de mesas.
-Sistema de juegos para descuentos:
+**Fausto Smiriglia:**
+- Notificaciones push para eventos críticos.  
 
-Inicio: Día 13
-Finalización: Día 13
-Implementar juegos para que los clientes accedan a descuentos (10%, 15%, 20%).
-Massimo Bosco:
 
-Sistema de delivery con GPS:
+**Massimo Bosco:**
+- Implementación de encuestas y gráficos interactivos.  
+- Sistema de chat cliente-mozo.  
 
-Inicio: Día 11
-Finalización: Día 12
-Implementar la funcionalidad de delivery, incluyendo opciones de ubicación, visualización de rutas, y comunicación con el cliente.
-Plataforma de pagos simulada:
+#### **Día 11 a 13: Reservas, Juegos y Delivery**
 
-Inicio: Día 13
-Finalización: Día 13
-Implementar una plataforma de pagos simulada para procesar cuentas y propinas.
-Semana 2 - Día 14: Testing y Revisión Final
-Fausto Smiriglia y Massimo Bosco en conjunto:
+**Fausto Smiriglia:**
+- Sistema de reservas de mesas.  
+- Implementación de juegos con descuentos interactivos.  
 
-Testeo integral de la aplicación (Alta de usuarios, pedidos, reservas, delivery):
+**Massimo Bosco:**
+- Simulación de pagos.  
 
-Inicio: Día 14
-Finalización: Día 14
-Probar todas las funcionalidades críticas, verificar notificaciones push y realizar pruebas exhaustivas.
-Corrección de errores y ajuste de detalles visuales:
+---
 
-Inicio: Día 14
-Finalización: Día 14
-Ajustar visuales, corregir errores y optimizar la experiencia de usuario.
-Resumen del Cronograma
-Semana 1:
-Día 1-3: Configuración del proyecto, autenticación y base de datos.
-Día 4-5: Alta de usuarios, productos y mesas.
-Día 6-7: Sistema de pedidos y lista de espera.
-Semana 2:
-Día 8-9: Encuestas y notificaciones push.
-Día 10: Chat y gráficos de encuestas.
-Día 11-12: Reservas y delivery.
-Día 13: Juegos y pagos simulados.
-Día 14: Testing y revisión final.
+### **Día 14: Testing y Revisión Final**
+
+**Ambos:**
+- Testeo integral de todas las funcionalidades.  
+- Corrección de errores y ajustes visuales finales.  
+
+---
+
+## 🛠️ Herramientas Utilizadas
+
+- **Flutter**: Framework para desarrollo móvil.
+- **Firebase**: Backend y notificaciones push.
+- **GitHub**: Control de versiones.
+- **Dart**: Lenguaje de programación.
+- **Supabase**: Base de datos y Auth.
+
+---
+
+## 🤝 Contribuciones
+
+### **Fausto Smiriglia**
+- Configuración inicial.
+- Sistema de autenticación.
+- Encuestas y juegos.
+
+### **Massimo Bosco**
+- Diseño de base de datos.
+- Gestión de pedidos y delivery.
+- Notificaciones y chat.
+
+---
+
+## 📷 Capturas de Pantalla
+
+![App Screenshot 1](https://github.com/Smiriglia/mondongo-2024/blob/bad5491d00ce9846c1ebe5a2966bbc234feccb01/Capturas%20aplicacion%20(1).jpeg)
+![App Screenshot 2](https://github.com/Smiriglia/mondongo-2024/blob/bad5491d00ce9846c1ebe5a2966bbc234feccb01/Capturas%20aplicacion%20(10).jpeg)
+
+---
+
+## 💼 Contacto
+
+- **Fausto Smiriglia**: [GitHub](https://github.com/Smiriglia)  
+- **Massimo Bosco**: [GitHub](https://github.com/magikboy)
