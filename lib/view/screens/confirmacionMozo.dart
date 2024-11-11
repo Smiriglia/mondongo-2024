@@ -204,7 +204,7 @@ class _ConfirmacionMozoPageState extends State<ConfirmacionMozoPage> {
               ? Center(
                   child: Text(
                     'No hay pedidos para\n   confirmar o servir',
-                    style: TextStyle(color: Colors.white, fontSize: 22),
+                    style: TextStyle(color: Colors.white, fontSize: 34),
                   ),
                 )
               : ListView.builder(

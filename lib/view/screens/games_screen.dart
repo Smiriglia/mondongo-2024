@@ -75,7 +75,7 @@ class GamesScreenState extends State<GamesScreen>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('OK', style: TextStyle(color: Colors.white70)),
+            child: Text('Confirmar', style: TextStyle(color: Colors.white70)),
           ),
         ],
       ),

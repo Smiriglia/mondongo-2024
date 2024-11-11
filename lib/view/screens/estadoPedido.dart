@@ -137,7 +137,7 @@ class _EstatoPedidoPageState extends State<EstatoPedidoPage> {
                     Navigator.of(context).pop(); // Cerrar el diálogo
                   },
                   child: const Text(
-                    'OK',
+                    'Confirmado',
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
@@ -211,7 +211,7 @@ class _EstatoPedidoPageState extends State<EstatoPedidoPage> {
               child: Text(
                 'No hay detalles del pedido.',
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 34,
                   color: Color(0xFF4B2C20),
                 ),
               ),
@@ -321,7 +321,7 @@ class _EstatoPedidoPageState extends State<EstatoPedidoPage> {
                         const Text(
                           'Tiempo total estimado:',
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 14,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
@@ -329,7 +329,7 @@ class _EstatoPedidoPageState extends State<EstatoPedidoPage> {
                         Text(
                           '$totalTiempo min',
                           style: const TextStyle(
-                            fontSize: 18,
+                            fontSize: 14,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),

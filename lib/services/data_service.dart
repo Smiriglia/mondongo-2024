@@ -542,4 +542,20 @@ class DataService {
         .from(TABLES.pedidos.name)
         .update({'estado': 'cerrada', 'mesaNumero': null}).eq('id', pedidoId);
   }
+
+  Future<List<Map<String, dynamic>>> fetchPedidosConNombreCliente() async {
+    final response = await _supabaseClient
+        .from(TABLES.pedidos.name)
+        .select('id, clienteId, profiles(nombre)')
+        .select('id, clienteId, profiles!inner(nombre)')
+        .order('fecha', ascending: false);
+
+    return response
+        .map((item) => {
+              'id': item['id'],
+              'clienteId': item['clienteId'],
+              'nombreCliente': item['profiles']['nombre'],
+            })
+        .toList();
+  }
 }

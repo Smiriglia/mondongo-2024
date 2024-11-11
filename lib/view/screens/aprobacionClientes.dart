@@ -198,12 +198,12 @@ class _AprobacionClientesPageState extends State<AprobacionClientesPage> {
                     children: [
                       Text(
                         'No hay clientes',
-                        style: TextStyle(color: Colors.white, fontSize: 16),
+                        style: TextStyle(color: Colors.white, fontSize: 22),
                       ),
                       SizedBox(height: 20), // Espaciado
                       Text(
                         'pendientes de aprobación.',
-                        style: TextStyle(color: Colors.white, fontSize: 16),
+                        style: TextStyle(color: Colors.white, fontSize: 22),
                       ),
                     ],
                   ),

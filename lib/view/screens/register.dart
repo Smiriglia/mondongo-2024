@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/services.dart'; // Import necesario para inputFormatters
 import 'package:image_picker/image_picker.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mondongo/models/cliente.dart';
@@ -10,6 +10,7 @@ import 'package:mondongo/services/push_notification_service.dart';
 import 'package:mondongo/services/storage_service.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:mondongo/view/widgets/qr_reader_page.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 @RoutePage()
 class RegisterPage extends StatefulWidget {
@@ -22,7 +23,7 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   final AuthService _authService = GetIt.instance<AuthService>();
-  final _dataService = GetIt.instance<DataService>();
+  final DataService _dataService = GetIt.instance<DataService>();
   final StorageService _storageService = GetIt.instance<StorageService>();
   final _formKey = GlobalKey<FormState>();
 
@@ -46,7 +47,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   final ImagePicker _picker = ImagePicker();
 
-  // Métodos para imagen y QR
+  /// Selecciona una foto desde la cámara
   Future<void> _pickFoto() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.camera);
     if (pickedFile != null && mounted) {
@@ -56,6 +57,7 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
+  /// Procesa los datos del QR y actualiza los campos
   void _processQRData(String data) {
     final dniData = data.split('@');
     setState(() {
@@ -65,30 +67,38 @@ class _RegisterPageState extends State<RegisterPage> {
     });
   }
 
+  /// Envía el formulario y crea el cliente
   Future<void> _submit() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
         _errorMessage = '';
       });
+      _formKey.currentState!.save();
+
       try {
         bool dniExist = await _dataService.dniExist(_dniController.text.trim());
         if (dniExist) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Error: El DNI ya está registrado.')),
           );
-          setState(() => _isLoading = false);
+          setState(() {
+            _isLoading = false;
+          });
           return;
         }
-        final user = await _authService.signUpWithEmail(
+
+        User? newUser = await _authService.signUpWithEmail(
           _emailController.text.trim(),
-          _passwordController.text,
+          _passwordController.text.trim(),
         );
-        if (user == null) {
+        if (newUser == null) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Error en el registro')),
+            const SnackBar(content: Text('Error: Ese email ya está en uso.')),
           );
-          setState(() => _isLoading = false);
+          setState(() {
+            _isLoading = false;
+          });
           return;
         }
 
@@ -96,16 +106,19 @@ class _RegisterPageState extends State<RegisterPage> {
         if (_foto != null) {
           fotoUrl = await _storageService.uploadProfileImage(_foto!);
           if (fotoUrl == null) {
+            if (!mounted) return;
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Error al subir la foto')),
             );
-            setState(() => _isLoading = false);
+            setState(() {
+              _isLoading = false;
+            });
             return;
           }
         }
 
         Cliente newCliente = Cliente(
-          id: user.id,
+          id: newUser.id,
           nombre: _nombreController.text.trim(),
           apellido: _apellidoController.text.trim(),
           dni: _dniController.text.trim(),
@@ -116,7 +129,7 @@ class _RegisterPageState extends State<RegisterPage> {
         );
 
         await _dataService.addCliente(newCliente);
-        widget.onResult(true);
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -126,6 +139,7 @@ class _RegisterPageState extends State<RegisterPage> {
             backgroundColor: primaryColor,
           ),
         );
+
         final pushNotificationService =
             GetIt.instance<PushNotificationService>();
         pushNotificationService.sendNotification(
@@ -133,10 +147,22 @@ class _RegisterPageState extends State<RegisterPage> {
           title: 'Mondongo',
           body: 'Nuevo Cliente registrado',
         );
+
+        widget.onResult(true);
+        Navigator.pop(context);
       } catch (e) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Error al registrar el cliente: ${e.toString()}',
+              style: TextStyle(color: Colors.white),
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
         setState(() {
           _isLoading = false;
-          _errorMessage = 'Error: ${e.toString()}';
         });
       }
     }
@@ -153,6 +179,24 @@ class _RegisterPageState extends State<RegisterPage> {
         borderRadius: BorderRadius.circular(12.0),
         borderSide: BorderSide.none,
       ),
+      suffixIcon: labelText == 'DNI' && icon != null
+          ? IconButton(
+              icon: Icon(
+                icon,
+                color: textColor,
+              ),
+              onPressed: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => QRReaderPage(
+                      onQRRead: _processQRData,
+                    ),
+                  ),
+                );
+              },
+            )
+          : null,
     );
   }
 
@@ -222,6 +266,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       validator: (val) => val == null || val.isEmpty
                           ? 'Ingresa el nombre'
                           : null,
+                      onSaved: (val) => _nombreController.text = val!.trim(),
                     ),
                     SizedBox(height: 15),
                     TextFormField(
@@ -231,6 +276,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       validator: (val) => val == null || val.isEmpty
                           ? 'Ingresa el apellido'
                           : null,
+                      onSaved: (val) => _apellidoController.text = val!.trim(),
                     ),
                     SizedBox(height: 15),
                     TextFormField(
@@ -244,11 +290,15 @@ class _RegisterPageState extends State<RegisterPage> {
                         LengthLimitingTextInputFormatter(8),
                       ],
                       validator: (val) {
-                        if (val == null || val.isEmpty) return 'Ingresa el DNI';
-                        if (val.length != 8)
+                        if (val == null || val.isEmpty) {
+                          return 'Ingresa el DNI';
+                        }
+                        if (val.length != 8) {
                           return 'El DNI debe tener exactamente 8 dígitos';
+                        }
                         return null;
                       },
+                      onSaved: (val) => _dniController.text = val!.trim(),
                     ),
                     SizedBox(height: 15),
                     TextFormField(
@@ -259,6 +309,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       validator: (val) => val == null || !val.contains('@')
                           ? 'Ingresa un email válido'
                           : null,
+                      onSaved: (val) => _emailController.text = val!.trim(),
                       keyboardType: TextInputType.emailAddress,
                     ),
                     SizedBox(height: 15),
@@ -275,6 +326,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       validator: (val) => val == null || val.isEmpty
                           ? 'Ingresa la contraseña'
                           : null,
+                      onSaved: (val) => _passwordController.text = val!.trim(),
                     ),
                     SizedBox(height: 20),
                     _isLoading

@@ -158,7 +158,11 @@ class ProductsListPageState extends State<ProductsListPage> {
               } else if (snapshot.hasError) {
                 return Center(child: Text('Error: ${snapshot.error}'));
               } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return Center(child: Text('No hay productos disponibles.'));
+                return Center(
+                    child: Text(
+                  'No hay productos disponibles.',
+                  style: TextStyle(fontSize: 20),
+                ));
               } else {
                 final productos = snapshot.data!;
                 return Column(

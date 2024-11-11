@@ -37,7 +37,8 @@ class SurveyScreenState extends State<SurveyScreenRoute>
   // Instancias de los servicios
   final DataService _dataService = GetIt.instance.get<DataService>();
   final AuthService _authService = GetIt.instance.get<AuthService>();
-  final PushNotificationService _pushNotificationService = GetIt.instance.get<PushNotificationService>();
+  final PushNotificationService _pushNotificationService =
+      GetIt.instance.get<PushNotificationService>();
 
   // Controlador de animación para el formulario
   late AnimationController _controller;
@@ -100,7 +101,10 @@ class SurveyScreenState extends State<SurveyScreenRoute>
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Encuesta completada exitosamente.')),
         );
-        _pushNotificationService.sendNotification(topic: 'mozo', title: 'Mondongo Pedido', body: 'Han solicitado la cuenta de la mesa ${pedido.mesaNumero}');
+        _pushNotificationService.sendNotification(
+            topic: 'mozo',
+            title: 'Mondongo Pedido',
+            body: 'Han solicitado la cuenta de la mesa ${pedido.mesaNumero}');
         // Opcional: Navegar a otra pantalla después de completar la encuesta
         // context.router.pop(); // Volver a la pantalla anterior
         // context.router.push(SomeOtherRoute());
@@ -134,7 +138,7 @@ class SurveyScreenState extends State<SurveyScreenRoute>
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(
-              'OK',
+              'Confirmar',
               style: TextStyle(color: Colors.white70, fontSize: 16.0),
             ),
           ),

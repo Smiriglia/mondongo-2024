@@ -20,7 +20,8 @@ class RealizarPedidosPage extends StatefulWidget {
 class _RealizarPedidosPageState extends State<RealizarPedidosPage> {
   final _authService = GetIt.instance.get<AuthService>();
   final _dataService = GetIt.instance.get<DataService>();
-  final _pushNotificationService = GetIt.instance.get<PushNotificationService>();
+  final _pushNotificationService =
+      GetIt.instance.get<PushNotificationService>();
 
   late String _userSector;
   late Future<List<DetallePedidoProducto>> _detallePedidoFuture;
@@ -100,7 +101,7 @@ class _RealizarPedidosPageState extends State<RealizarPedidosPage> {
                 'No hay pedidos disponibles.',
                 style: TextStyle(
                   color: Color(0xFF4B2C20),
-                  fontSize: 18,
+                  fontSize: 22,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -203,7 +204,11 @@ class _RealizarPedidosPageState extends State<RealizarPedidosPage> {
                                   ? 'en preparacion'
                                   : 'listo';
                           _updateEstado(detalle.detallePedido.id, nextState);
-                          _pushNotificationService.sendNotification(topic: 'mozo', title: 'Mondongo Pedidos', body: '${detalle.producto.nombre} Ahora esta: $nextState');
+                          _pushNotificationService.sendNotification(
+                              topic: 'mozo',
+                              title: 'Mondongo Pedidos',
+                              body:
+                                  '${detalle.producto.nombre} Ahora esta: $nextState');
                         },
                         child: Text(
                           detalle.detallePedido.estado == 'ordenado'

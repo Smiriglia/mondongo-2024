@@ -59,7 +59,7 @@ class _PedidosListPageState extends State<PedidosListPage> {
             return Center(
               child: Text(
                 'No hay pedidos pendientes',
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: Colors.white, fontSize: 34),
               ),
             );
           }
@@ -77,7 +77,7 @@ class _PedidosListPageState extends State<PedidosListPage> {
                 child: ListTile(
                   leading: Icon(Icons.restaurant_menu, color: Colors.white),
                   title: Text(
-                    'Pedido de Cliente ID: ${pedido.clienteId}',
+                    'Pedido Numero: ${index + 1}',
                     style: TextStyle(
                         color: Colors.white, fontWeight: FontWeight.bold),
                   ),

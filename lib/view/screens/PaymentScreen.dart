@@ -153,7 +153,7 @@ class _PaymentPageState extends State<PaymentPage> {
           return const Center(
             child: Text(
               'No hay detalles del pedido.',
-              style: TextStyle(color: Color(0xFF4B2C20)),
+              style: TextStyle(color: Color(0xFF4B2C20), fontSize: 34),
             ),
           );
         } else {
@@ -331,9 +331,9 @@ class _PaymentPageState extends State<PaymentPage> {
               elevation: 4,
               child: ListTile(
                 title: const Text(
-                  'TOTAL a pagar',
+                  'TOTAL',
                   style: TextStyle(
-                    fontSize: 22,
+                    fontSize: 26,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
@@ -342,7 +342,7 @@ class _PaymentPageState extends State<PaymentPage> {
                   '\$${_calculateTotalWithTip().toStringAsFixed(2)}',
                   style: const TextStyle(
                     color: Colors.greenAccent,
-                    fontSize: 24,
+                    fontSize: 26,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
