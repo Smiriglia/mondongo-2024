@@ -1,0 +1,54 @@
+1b37a33 - massimo bosco (2024-11-08): Agregar lógica para enviar notificaciones push en las pantallas de productos y confirmación de pedidos.
+76cbd72 - smiriglia (2024-11-08): aplicar push notification en los casos correspondientes
+d7d4070 - smiriglia (2024-11-08): crear un servicio de mensajeria con firebase backend propio con posibilidad de notificaciones personalizadas
+f67d09f - massimo bosco (2024-11-08): Mejorar la presentación visual y la usabilidad en varias pantallas. Ajustar estilos de texto y colores, actualizar lógica de navegación y gestionar estados de pedidos.
+213d474 - massimo bosco (2024-11-08): Agregar lógica para pasar información de pedido y descuento a la pantalla de encuesta. Implementar nuevas rutas para la pantalla de pago y mejorar la navegación en la aplicación.
+70b9386 - massimo bosco (2024-11-08): Mejorar la interfaz y la usabilidad de los juegos de adivinanza y tapping. Ajustar la lógica de finalización y la presentación de resultados, incluyendo cambios en colores y estilos de texto.
+c03f9cd - massimo bosco (2024-11-08): Actualizar estado del pedido a 'recibido' y agregar función para calcular el total del pedido. Eliminar opciones de menú de Juegos y Encuestas de la pantalla principal. Mejorar la navegación en la página de escaneo de QR.
+3299676 - massimo bosco (2024-11-08): Agregar lógica para gestionar consultas de clientes y mejorar el flujo de diálogo al servir pedidos, incluyendo confirmación de recepción y notificación de descuentos.
+a898c51 - smiriglia (2024-11-08): real time en todos los estados del pedido
+f36ed4d - smiriglia (2024-11-08): servir pedido
+5498c3c - massimo bosco (2024-11-08): Agregar opciones de menú para Juegos y Encuestas en la pantalla principal. Mejorar el diseño y la usabilidad de la página de pedidos, incluyendo cambios en el estilo y la presentación de mensajes de error y éxito.
+b57ace0 - massimo bosco (2024-11-08): Agregar roles de cocinero y bartender en el sistema de perfiles y actualizar la interfaz de registro de empleados. Mejorar la funcionalidad de inicio de sesión con botones de acceso rápido para nuevos roles.
+b0e3bc0 - massimo bosco (2024-11-08): Agregar lógica para realizar pedidos y sector en productos como tambien las encuestas con juegos
+228f4cc - massimo bosco (2024-11-08): Agregar lógica de encuesta y nuevos juegos en la aplicación
+5575484 - smiriglia (2024-11-07): manejo de realizacion de pedidos
+30df191 - smiriglia (2024-11-07): logica de estado de pedido
+93d79c3 - massimo bosco (2024-11-07): Actualizacion en confirmar pedido por mozo
+9a4a452 - smiriglia (2024-11-07): logica del pedido
+32069e5 - smiriglia (2024-11-07): fix al sistema de consultas
+741a83f - smiriglia (2024-11-07): fix fetchProductos
+f3da042 - smiriglia (2024-11-07): mejora estetica home
+fa06183 - smiriglia (2024-11-07): mejorar la interfaz de la seccion de creacion de productos
+cac203f - smiriglia (2024-11-07): logica para añadir producto
+0fd8f8f - massimo bosco (2024-11-06): Agregar modelos de Producto y Consulta, implementar métodos para gestionar productos y consultas en el servicio de datos, y actualizar la navegación en la aplicación.
+306b699 - massimo bosco (2024-11-06): Agregar página de espera para asignación de mesas y mejorar la lógica de pedidos
+cd5eb06 - smiriglia (2024-11-06): scaneo de qr de mesa y ingreso
+0e8222d - massimo bosco (2024-11-06): Agregar funcionalidad para escanear códigos QR y añadir a la lista de espera; implementar modelo de Pedido y métodos relacionados
+f43cddb - smiriglia (2024-11-06): emails automaticos cuando es rechazado o aceptado
+baaefe5 - smiriglia (2024-11-06): añadir email al perfil del usuario
+03f8f91 - smiriglia (2024-11-06): creacion del servicio de email
+2321226 - massimo bosco (2024-11-05): Agregar validación para verificar si el DNI ya está registrado en el formulario de registro
+8c3e36d - massimo bosco (2024-11-05): Agregar validación de DNI y CUIL en el registro de clientes y empleados; implementar métodos para verificar existencia en la base de datos
+7d78e57 - massimo bosco (2024-11-05): Escaneo De DNI funcional
+06d7ce8 - massimo bosco (2024-11-05): Agregar funcionalidad de escaneo de DNI mediante QR en formularios de registro
+253fedc - smiriglia (2024-11-05): cambio completo del sistema de login, perfiles y roles
+ebd1210 - smiriglia (2024-11-05): automatizacion de generacion de modelos
+d7978a6 - massimo bosco (2024-11-04): Aprobacion de cliente por el admin
+fbbf469 - smiriglia (2024-11-04): fix generacion de qr
+dfab94a - massimo bosco (2024-11-04): Actualizacion de registro de empleado,supervisor y cliente.
+aff8218 - smiriglia (2024-11-04): Merge branch 'main' of https://github.com/Smiriglia/mondongo-2024
+eb9bcb7 - smiriglia (2024-11-04): registrar empleado funcionalidad
+57ab247 - massimo bosco (2024-11-04): Actualizacion de interfaz en la pantalla de home
+1a17fd2 - smiriglia (2024-11-04): fix palabras en ingles y abreviadas y cambio de texto a imagenes en el login rapido
+72c766e - smiriglia (2024-10-31): fix a sistema de rutas y login
+34e78ab - massimo bosco (2024-10-30): Actualiza el color de fondo del ícono y mejora la pantalla de inicio con nuevos textos y estilos
+0f26a03 - massimo bosco (2024-10-29): Merge branch 'main' of https://github.com/Smiriglia/mondongo-2024
+2df3d9c - massimo bosco (2024-10-29): funcionalidad para subir empleados,dueños,clientes y mesas con sus qrs
+84f75f9 - Fausto Smiriglia (2024-10-29): Update README.md
+946fb48 - massimo bosco (2024-10-29): Rediseño LOGIN Y REGISTER
+96d19c7 - massimo bosco (2024-10-29): Login y Register Funcional totalmente
+596c525 - massimo bosco (2024-10-28): Sistema Login y register semi funcional
+741a04f - smiriglia (2024-10-28): implementacion y configuracion de sistema de rutas y conexion con supabase
+36b513d - smiriglia (2024-10-28): configuracion gitignore
+ec97ac1 - smiriglia (2024-10-28): first commit

@@ -100,7 +100,6 @@ class _PedidosListPageState extends State<PedidosListPage> {
 
   void _assignMesaDialog(Pedido pedido) async {
     final mesas = await dataService.fetchAvailableMesas();
-    int? selectedMesaNumero;
 
     showDialog(
       context: context,
@@ -111,32 +110,91 @@ class _PedidosListPageState extends State<PedidosListPage> {
             'Asignar Mesa',
             style: TextStyle(color: Colors.white),
           ),
-          content: DropdownButtonFormField<int>(
-            dropdownColor: Color(0xFF4B2C20),
-            items: mesas.map((Mesa mesa) {
-              return DropdownMenuItem<int>(
-                value: mesa.numero,
-                child: Text(
-                  'Mesa ${mesa.numero} - ${mesa.tipo}',
-                  style: TextStyle(color: Colors.white),
-                ),
-              );
-            }).toList(),
-            onChanged: (value) {
-              selectedMesaNumero = value;
-            },
-            decoration: InputDecoration(
-              labelText: 'Selecciona una mesa',
-              labelStyle: TextStyle(color: Colors.white70),
-              enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.white70),
-              ),
-              focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.white),
-              ),
+          content: Container(
+            width: double.maxFinite,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: mesas.length,
+              itemBuilder: (context, index) {
+                final mesa = mesas[index];
+
+                return GestureDetector(
+                  onTap: () async {
+                    try {
+                      await dataService.assignMesaToPedido(
+                          pedido.id, mesa.numero);
+                      Navigator.of(context).pop(); // Cerrar el diálogo
+                      setState(() {
+                        _futurePedidos = dataService.fetchPendingPedidos();
+                      });
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Mesa asignada exitosamente'),
+                          backgroundColor: Color(0xFF4B2C20),
+                        ),
+                      );
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Error: ${e.toString()}'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
+                  },
+                  child: Card(
+                    color: Color(0xFF5A3B28),
+                    margin: EdgeInsets.symmetric(vertical: 8),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: ListTile(
+                      leading: mesa.fotoUrl != null
+                          ? Image.network(
+                              mesa.fotoUrl!,
+                              width: 40,
+                              height: 40,
+                              fit: BoxFit.cover,
+                            )
+                          : Icon(
+                              Icons.table_restaurant,
+                              color: Colors.white,
+                              size: 40,
+                            ),
+                      title: Text(
+                        'Mesa ${mesa.numero}',
+                        style: TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Tipo: ${mesa.tipo}',
+                            style: TextStyle(color: Colors.white70),
+                          ),
+                          Row(
+                            children: [
+                              Icon(Icons.person,
+                                  size: 16, color: Colors.white70),
+                              SizedBox(width: 4),
+                              Text(
+                                '${mesa.cantidadComensales} comensales',
+                                style: TextStyle(color: Colors.white70),
+                              ),
+                            ],
+                          ),
+                          Text(
+                            'Disponible',
+                            style: TextStyle(color: Colors.greenAccent),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
             ),
-            style: TextStyle(color: Colors.white),
-            iconEnabledColor: Colors.white,
           ),
           actions: [
             TextButton(
@@ -145,44 +203,6 @@ class _PedidosListPageState extends State<PedidosListPage> {
                 style: TextStyle(color: Colors.white70),
               ),
               onPressed: () => Navigator.of(context).pop(),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFF4B2C20),
-              ),
-              child: Text('Asignar', style: TextStyle(color: Colors.white)),
-              onPressed: () async {
-                if (selectedMesaNumero == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Debes seleccionar una mesa'),
-                      backgroundColor: Color(0xFF4B2C20),
-                    ),
-                  );
-                  return;
-                }
-                try {
-                  await dataService.assignMesaToPedido(
-                      pedido.id, selectedMesaNumero!);
-                  Navigator.of(context).pop();
-                  setState(() {
-                    _futurePedidos = dataService.fetchPendingPedidos();
-                  });
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Mesa asignada exitosamente'),
-                      backgroundColor: Color(0xFF4B2C20),
-                    ),
-                  );
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Error: ${e.toString()}'),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                }
-              },
             ),
           ],
         );

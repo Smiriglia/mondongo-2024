@@ -78,7 +78,7 @@ class EmailService {
       <body>
         <div class="container">
           <div class="header">
-            <img src="https://i.postimg.cc/BnKbmTNd/icon.png" alt="Logo" class="logo">
+            <img src="https://i.postimg.cc/ht8nZk6J/icon.png" alt="Logo" class="logo">
             <h2>Mondongo Restaurante</h2>
           </div>
           <div class="content">

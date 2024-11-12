@@ -166,13 +166,15 @@ class _EstatoPedidoPageState extends State<EstatoPedidoPage> {
   }
 
   int _calculateTotalEstimatedTime(List<DetallePedido> detalles) {
-    return detalles.fold(0, (sum, detalle) {
+    int tiempoMaximo = 0;
+    for (var detalle in detalles) {
       final producto = _productosMap[detalle.productoId];
-      if (producto != null) {
-        return sum + (producto.tiempoElaboracion * detalle.cantidad);
+      final tiempoEstimado = detalle.cantidad * producto!.tiempoElaboracion;
+      if (tiempoEstimado > tiempoMaximo) {
+        tiempoMaximo = tiempoEstimado;
       }
-      return sum;
-    });
+    }
+    return tiempoMaximo;
   }
 
   @override

@@ -40,9 +40,12 @@ class ProductsListPageState extends State<ProductsListPage> {
   }
 
   int _calculateEstimatedTime() {
-    return _cart.entries.fold(0, (sum, entry) {
-      return sum + (entry.key.tiempoElaboracion * entry.value);
-    });
+    if (_cart.isEmpty) return 0;
+
+    return _cart.entries.map((entry) {
+      return entry.key.tiempoElaboracion * entry.value;
+    }).reduce((maxTime, currentTime) =>
+        maxTime > currentTime ? maxTime : currentTime);
   }
 
   void _addToCart(Producto producto) {
@@ -278,18 +281,18 @@ class ProductsListPageState extends State<ProductsListPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                'Total: \$${_calculateTotal().toStringAsFixed(2)}',
+                                'Estimado: ${_calculateEstimatedTime()} min',
                                 style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
+                                  fontSize: 18,
+                                  color: Colors.white70,
                                 ),
                               ),
-                              Text(
-                                'Tiempo estimado: ${_calculateEstimatedTime()} min',
+                               Text(
+                                'TOTAL: \$${_calculateTotal().toStringAsFixed(2)}',
                                 style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.white70,
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
                                 ),
                               ),
                             ],
