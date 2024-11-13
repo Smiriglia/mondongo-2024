@@ -218,21 +218,21 @@ class GamesScreenState extends State<GamesScreen>
               Text(
                 'Precio Total: \$${totalPedido.toStringAsFixed(2)}',
                 style: TextStyle(
-                  fontSize: 18.0,
+                  fontSize: 20.0,
                   color: Colors.white,
                 ),
               ),
               Text(
                 'Descuento Seleccionado: $discount%',
                 style: TextStyle(
-                  fontSize: 16.0,
-                  color: Colors.white70,
+                  fontSize: 20.0,
+                  color: Colors.white,
                 ),
               ),
               Text(
                 'Precio Final: \$${finalPrice.toStringAsFixed(2)}',
                 style: TextStyle(
-                  fontSize: 18.0,
+                  fontSize: 22.0,
                   fontWeight: FontWeight.bold,
                   color: Colors.greenAccent,
                 ),

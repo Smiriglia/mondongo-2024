@@ -146,7 +146,7 @@ class WaiterQueriesPageState extends State<WaiterQueriesPage>
               child: Text(
                 'No hay consultas pendientes.',
                 style: TextStyle(
-                  color: Colors.white70,
+                  color: Colors.white,
                   fontSize: 22,
                 ),
               ),

@@ -100,7 +100,7 @@ class _RealizarPedidosPageState extends State<RealizarPedidosPage> {
               child: Text(
                 'No hay pedidos disponibles.',
                 style: TextStyle(
-                  color: Color(0xFF4B2C20),
+                  color: Colors.white,
                   fontSize: 22,
                   fontWeight: FontWeight.w600,
                 ),
@@ -170,7 +170,7 @@ class _RealizarPedidosPageState extends State<RealizarPedidosPage> {
                             'Cantidad: ${detalle.detallePedido.cantidad}',
                             style: TextStyle(
                               color: Color(0xFF4B2C20),
-                              fontSize: 14,
+                              fontSize: 16,
                             ),
                           ),
                           SizedBox(height: 2),
@@ -184,7 +184,7 @@ class _RealizarPedidosPageState extends State<RealizarPedidosPage> {
                                       ? Colors.blue
                                       : Colors.green,
                               fontWeight: FontWeight.bold,
-                              fontSize: 14,
+                              fontSize: 16,
                             ),
                           ),
                           SizedBox(height: 2),
@@ -192,7 +192,7 @@ class _RealizarPedidosPageState extends State<RealizarPedidosPage> {
                             'Tiempo estimado: ${detalle.producto.tiempoElaboracion * detalle.detallePedido.cantidad} min',
                             style: TextStyle(
                               color: Color(0xFF4B2C20),
-                              fontSize: 14,
+                              fontSize: 16,
                             ),
                           ),
                         ],

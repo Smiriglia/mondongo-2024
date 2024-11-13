@@ -329,6 +329,28 @@ class _RegisterPageState extends State<RegisterPage> {
                       onSaved: (val) => _passwordController.text = val!.trim(),
                     ),
                     SizedBox(height: 20),
+                    TextFormField(
+                      controller: _confirmPasswordController,
+                      decoration: _buildInputDecoration(
+                        'Confirmar Contraseña',
+                        icon: _obscureText
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                      ),
+                      obscureText: _obscureText,
+                      style: _buildTextStyle(),
+                      validator: (val) {
+                        if (val == null || val.isEmpty) {
+                          return 'Confirme la contraseña';
+                        } else if (val != _passwordController.text) {
+                          return 'Las contraseñas no coinciden';
+                        }
+                        return null;
+                      },
+                      onSaved: (val) =>
+                          _confirmPasswordController.text = val!.trim(),
+                    ),
+                    SizedBox(height: 20),
                     _isLoading
                         ? CircularProgressIndicator(color: textColor)
                         : SizedBox(

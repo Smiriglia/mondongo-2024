@@ -20,7 +20,8 @@ class CustomerQueryPageState extends State<CustomerQueryPage> {
   final _formKey = GlobalKey<FormState>();
   final DataService _dataService = GetIt.instance.get<DataService>();
   final AuthService _authService = GetIt.instance.get<AuthService>();
-  final PushNotificationService _pushNotificationService = GetIt.instance.get<PushNotificationService>();
+  final PushNotificationService _pushNotificationService =
+      GetIt.instance.get<PushNotificationService>();
 
   String _consultaText = '';
   late Future<List<Consulta>> _consultasFuture;
@@ -77,7 +78,10 @@ class CustomerQueryPageState extends State<CustomerQueryPage> {
           SnackBar(content: Text('Consulta enviada al mozo.')),
         );
 
-        _pushNotificationService.sendNotification(topic: 'mozo', title: 'Mondongo Consulta', body: 'Mesa $mesaNumero: $_consultaText');
+        _pushNotificationService.sendNotification(
+            topic: 'mozo',
+            title: 'Mondongo Consulta',
+            body: 'Mesa $mesaNumero: $_consultaText');
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -144,7 +148,10 @@ class CustomerQueryPageState extends State<CustomerQueryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Mis Consultas'),
+        title: Text(
+          'Mis Consultas',
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: Color(0xFF4B2C20),
       ),
       body: RefreshIndicator(
@@ -162,7 +169,7 @@ class CustomerQueryPageState extends State<CustomerQueryPage> {
                     children: [
                       Text(
                         'Escribe tu consulta al mozo:',
-                        style: TextStyle(fontSize: 16),
+                        style: TextStyle(fontSize: 22),
                       ),
                       SizedBox(height: 8),
                       TextFormField(
@@ -175,7 +182,7 @@ class CustomerQueryPageState extends State<CustomerQueryPage> {
                             value!.isEmpty ? 'Ingrese su consulta' : null,
                         onSaved: (value) => _consultaText = value!,
                       ),
-                      SizedBox(height: 12),
+                      SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: _sendConsulta,
                         style: ElevatedButton.styleFrom(
@@ -186,7 +193,7 @@ class CustomerQueryPageState extends State<CustomerQueryPage> {
                         child: Text(
                           'Enviar Consulta',
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),

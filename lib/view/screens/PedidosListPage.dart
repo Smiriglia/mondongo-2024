@@ -58,7 +58,7 @@ class _PedidosListPageState extends State<PedidosListPage> {
           if (pedidos.isEmpty) {
             return Center(
               child: Text(
-                'No hay pedidos pendientes',
+                'No hay pedidos \n    pendientes',
                 style: TextStyle(color: Colors.white, fontSize: 34),
               ),
             );

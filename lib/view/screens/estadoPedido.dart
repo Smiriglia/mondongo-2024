@@ -256,7 +256,7 @@ class _EstatoPedidoPageState extends State<EstatoPedidoPage> {
                                 Text(
                                   producto.nombre,
                                   style: const TextStyle(
-                                    fontSize: 20,
+                                    fontSize: 22,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white,
                                   ),
@@ -323,7 +323,7 @@ class _EstatoPedidoPageState extends State<EstatoPedidoPage> {
                         const Text(
                           'Tiempo total estimado:',
                           style: TextStyle(
-                            fontSize: 14,
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
@@ -331,7 +331,7 @@ class _EstatoPedidoPageState extends State<EstatoPedidoPage> {
                         Text(
                           '$totalTiempo min',
                           style: const TextStyle(
-                            fontSize: 14,
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),

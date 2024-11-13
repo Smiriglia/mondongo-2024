@@ -204,7 +204,7 @@ class _ConfirmacionMozoPageState extends State<ConfirmacionMozoPage> {
               ? Center(
                   child: Text(
                     'No hay pedidos para\n   confirmar o servir',
-                    style: TextStyle(color: Colors.white, fontSize: 34),
+                    style: TextStyle(color: Colors.white, fontSize: 28),
                   ),
                 )
               : ListView.builder(
@@ -244,8 +244,8 @@ class _ConfirmacionMozoPageState extends State<ConfirmacionMozoPage> {
                               leading: detalle.producto.fotosUrls.isNotEmpty
                                   ? Image.network(
                                       detalle.producto.fotosUrls[0],
-                                      width: 50,
-                                      height: 50,
+                                      width: 100,
+                                      height: 100,
                                       fit: BoxFit.cover,
                                     )
                                   : const Icon(Icons.fastfood),
@@ -259,6 +259,7 @@ class _ConfirmacionMozoPageState extends State<ConfirmacionMozoPage> {
                                   color: detalle.detallePedido.estado == 'listo'
                                       ? Colors.green
                                       : Colors.red,
+                                  fontSize: 16,
                                 ),
                               ),
                             );

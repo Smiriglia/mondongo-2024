@@ -139,7 +139,10 @@ class ProductsListPageState extends State<ProductsListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Lista de Productos'),
+        title: Text(
+          'Lista de Productos',
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: Color(0xFF4B2C20),
         actions: [
           IconButton(
@@ -189,19 +192,18 @@ class ProductsListPageState extends State<ProductsListPage> {
                                     title: Text(
                                       producto.nombre,
                                       style: TextStyle(
-                                        fontSize: 20,
+                                        fontSize: 22,
                                         fontWeight: FontWeight.bold,
                                         color: Color(0xFF4B2C20),
                                       ),
                                     ),
                                     subtitle: Text(
                                       '${producto.descripcion ?? ''}',
-                                      style: TextStyle(fontSize: 14),
+                                      style: TextStyle(fontSize: 18),
                                     ),
                                   ),
                                   SizedBox(
-                                    height:
-                                        100, // Altura del slider de imágenes
+                                    height: 300,
                                     child: PageView.builder(
                                       itemCount: producto.fotosUrls.length,
                                       itemBuilder: (context, imgIndex) {
@@ -211,9 +213,16 @@ class ProductsListPageState extends State<ProductsListPage> {
                                           child: ClipRRect(
                                             borderRadius:
                                                 BorderRadius.circular(8.0),
-                                            child: Image.network(
-                                              producto.fotosUrls[imgIndex],
-                                              fit: BoxFit.contain,
+                                            child: SizedBox(
+                                              width: double
+                                                  .infinity, // Asegura el ancho completo
+                                              height:
+                                                  300, // Mantiene la altura establecida
+                                              child: Image.network(
+                                                producto.fotosUrls[imgIndex],
+                                                fit: BoxFit
+                                                    .cover, // Asegura que la imagen ocupe todo el espacio disponible
+                                              ),
                                             ),
                                           ),
                                         );
@@ -236,7 +245,7 @@ class ProductsListPageState extends State<ProductsListPage> {
                                         ),
                                         Text(
                                           'Tiempo: ${producto.tiempoElaboracion} min',
-                                          style: TextStyle(fontSize: 14),
+                                          style: TextStyle(fontSize: 18),
                                         ),
                                       ],
                                     ),
@@ -287,10 +296,10 @@ class ProductsListPageState extends State<ProductsListPage> {
                                   color: Colors.white70,
                                 ),
                               ),
-                               Text(
+                              Text(
                                 'TOTAL: \$${_calculateTotal().toStringAsFixed(2)}',
                                 style: TextStyle(
-                                  fontSize: 25,
+                                  fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
                                 ),

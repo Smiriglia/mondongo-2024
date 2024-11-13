@@ -245,7 +245,7 @@ class _PaymentPageState extends State<PaymentPage> {
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
-                color: const Color.fromARGB(255, 61, 39, 31),
+                color: Colors.white,
               ),
             ),
             const SizedBox(height: 16),
