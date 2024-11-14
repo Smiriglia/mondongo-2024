@@ -117,6 +117,8 @@ Este proyecto tiene como objetivo la creación de una aplicación móvil para la
 - Añadido campo de "repetir contraseña" en el registro.
 - Ajuste del precio total en la pantalla de pago, destacándolo en grande.
 - Eliminación de términos en inglés como "OK" y optimización de la visualización de precios.
+- Estandarizacion de los tamaños de fuente
+- Añadir tamaño a las imagenes de los productos
 
 ---
 
